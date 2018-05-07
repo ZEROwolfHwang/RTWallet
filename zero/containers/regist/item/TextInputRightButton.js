@@ -37,8 +37,6 @@ export default class TextInputRightButton extends Component {
         if (str.length > 0) {
             result = false;
         }
-        // console.log('result'+result);
-
         return result;
     }
 
@@ -67,7 +65,6 @@ export default class TextInputRightButton extends Component {
                         maxLength={props.maxLength}
                         value={this.state.inputValue}
                         onChangeText={(text)=> {
-                            console.log('text'+text);
                             this.setState({
                                 inputValue: text
                             });

@@ -20,7 +20,7 @@ export default class ButtonView extends Component {
         var params = this.props;
         return (
             <TouchableOpacity activeOpacity={0.5}
-                              style={params.style ? params.style :
+                              style={[
                                   {
                                       marginTop:10,
                                       width: SizeUtil.width - 20,
@@ -31,11 +31,11 @@ export default class ButtonView extends Component {
                                       // borderWidth:2,
                                       justifyContent:'center',
                                       alignItems:'center'
-                                  }}
+                                  },params.style]}
                               onPress={()=>{
                                   params.onPress();
                               }}>
-                <Text style={{fontSize:16,color:'white'}}>
+                <Text style={{fontSize:18,color:'white'}}>
                     {this.props.title}
                 </Text>
             </TouchableOpacity>

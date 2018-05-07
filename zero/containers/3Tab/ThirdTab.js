@@ -7,13 +7,10 @@ import {
 } from 'react-native';
 const {width, height} = Dimensions.get('window');
 import MyTabView from '../../views/MyTabView';
-export default class ThirdTab extends Component{
-    static navigationOptions = ({navigation, screenProps}) => ({
-            headerTitle: '',
-            header: null,
-            headerBackTitle: null,
-        }
-    );
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import  BaseComponent from '../global/BaseComponent'
+class ThirdTab extends BaseComponent{
 
     constructor(props){
         super(props);
@@ -26,10 +23,26 @@ export default class ThirdTab extends Component{
                 <MyTabView titleColor={'black'} title={'第三页'}
                            navigation={this.props.navigation}/>
 
+                <TouchableOpacity onPress={()=>{
+                    this.props.navigation.dispatch({
+                        type:'WebView1'
+                    })
+                }}>
+
                 <Text style={{color: 'blue', fontSize: 18}}>
                     3New Page !
                 </Text>
+                </TouchableOpacity>
             </View>
         )
     }
 }
+const mapStateToProps = (state) => {
+    return {
+        nav: state.nav,
+    }
+
+};
+
+
+export default connect(mapStateToProps)(ThirdTab);

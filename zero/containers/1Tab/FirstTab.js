@@ -14,6 +14,7 @@ import {bindActionCreators} from 'redux';
 import Page_Auto from './Page_Auto';
 import {Page_AutoPay, Pay_Navigator} from './reduce/index'
 import BaseComponent from '../global/BaseComponent';
+import MyProgressBar from "../../views/MyProgressBar";
 class FirstTab extends BaseComponent {
 
     constructor(props) {
@@ -26,12 +27,14 @@ class FirstTab extends BaseComponent {
     }
 
 
+
     render() {
+        console.log(this.props.nav);
         return (
             this.props.RS_AutoPay ?
-                <Page_Auto />
+                <Page_Auto navigation={this.props.navigation} />
                 :
-                <Text style={{marginTop: 200}}>pppppppp</Text>
+                <MyProgressBar/>
         );
 
 
@@ -41,6 +44,7 @@ class FirstTab extends BaseComponent {
 const mapStateToProps = (state) => {
     return {
         RS_AutoPay: state.RS_AutoPay.data,
+        nav:state.nav
         // RS_Navigate:state.RS_Navigate.data,
     }
 

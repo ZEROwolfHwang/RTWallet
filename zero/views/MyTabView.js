@@ -8,7 +8,7 @@ import {
     Text, Alert,
     View,
     TouchableOpacity,
-    Image, Dimensions
+    Image, Dimensions,StatusBar
 } from 'react-native';
 const {width, height} = Dimensions.get('window');
 import SizeUtil from '../utils/SizeUtil';
@@ -44,6 +44,13 @@ export default class MyTabView extends Component {
                           style={{color: 'black', backgroundColor: 'transparent'}}/>
 
                 </TouchableOpacity> : <View style={{width: width / 3}}/>}
+                <StatusBar
+                    hidden={false}
+                    translucent={true}
+                    barStyle={'dark-content'}//'default', 'light-content', 'dark-content'
+                    backgroundColor={'#fff6fd00'}
+                    networkActivityIndicatorVisible={false}
+                />
 
                 <View style={{
                     flex: 1,
@@ -85,13 +92,14 @@ export default class MyTabView extends Component {
 const styles = StyleSheet.create({
     linearGradient: {
         width: SizeUtil.width,
-        height: Platform.OS === 'ios' ? 60 : 50,
+        height: Platform.OS === 'ios' ? 60 : 60,
         backgroundColor: '#00f',
         flexDirection: 'row',
         justifyContent: 'space-around',
-        paddingTop:Platform.OS==='ios'?20:0,
+        paddingTop:Platform.OS==='ios'?20:20,
         alignItems: 'center'
     },
+
     selectedText: {
         color: 'grey',
         fontSize: 14,

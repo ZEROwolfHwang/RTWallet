@@ -1,223 +1,162 @@
 /**
- * Created by zerowolf on 2018/3/26.
+ * Created by zerowolf Date: 2018/4/25 Time: 下午8:24
  */
 import React, {Component} from 'react';
 import {
-    BackHandler, Platform, StyleSheet, Text, Alert, View, TouchableOpacity, Image, Dimensions
+    Platform,
+    StyleSheet,
+    Text,
+    Alert,
+    View,
+    TouchableOpacity,
+    Image,
+    StatusBar,
+    Dimensions,
+    ListView,
+    ScrollView,
+    ViewPagerAndroid, ProgressBarAndroid
 } from 'react-native';
 
-import {connect} from 'react-redux';
-import {
-    NavigationActions,
-    StackNavigator,
-    addNavigationHelpers,
-} from 'react-navigation';
-import {bindActionCreators} from 'redux';
-import MyTabView from '../../../views/MyTabView';
 const {width, height} = Dimensions.get('window');
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import Swiper from 'react-native-swiper';
 import LinearGradient from 'react-native-linear-gradient';
-import BaseComponent from '../../global/BaseComponent';
-class RedPlan extends BaseComponent {
+import MyTabView from '../../../views/MyTabView'
+import BaseComponent from '../../global/BaseComponent'
+import RedPlanTop from "./RedPlanTop";
+import RedPlanBottom from './RedPlanBottom';
+import {fetchRequest} from "../../../utils/FetchUtil";
 
+import {actions} from '../reduce/index';
+import MyProgressBar from "../../../views/MyProgressBar";
+import {fetchRequestHeader} from "../../../utils/FetchUtilHeader";
+import {fetchRequestToken} from "../../../utils/FetchUtilToken";
+
+class RedPlan extends BaseComponent {
 
     constructor(props) {
         super(props);
-        console.log(this.props.nav);
-        console.log(this.props.naviga);
-        console.log(this.props.navigation);
+
+        this.state = {
+            showBottom: false
+        }
+
+    }
+
+    componentWillMount() {
+        console.log(this.props.navigation.state.params.id);
+
+        var requestId = this.props.navigation.state.params.id;
+
+
+        console.log(this.props.redData);
+        fetchRequest(`detail/${requestId}`, 'GET')
+            .then(res => {
+                if (res.respCode === 200) {
+                    this.props.initRedData(res.data)
+                    console.log(res);
+                } else {
+                    // this.props.initGetWebData(netData)
+                }
+            })
+            .then(err => {
+                if (err) {
+                    console.log(err);
+                }
+            });
 
     }
 
 
-    // 1,'9.00%',15,'10万起投','剩余5万元可投'
     render() {
-        var data = this.props.data;
-        console.log(data.aaa + '   ' + data.bbb);
-        // console.log(data);
-        var split = data.bbb.split('.');
+        console.log(this.props.redData);
 
+        const Tab = <RedPlanBottom/>;
+// ${this.props.redData.pay_type}  D0这个
         return (
             <View style={{flex: 1, backgroundColor: 'white'}}>
-                <MyTabView titleColor={'black'} color1={'white'} color2={'white'} title={'分红计划'} leftView={true}
-                           hasRight={true} rightView={<TouchableOpacity activeOpacity={0.5}
-                                                                        style={{
-                                                                            width: width / 3,
-                                                                            justifyContent: 'center',
-                                                                            alignItems: 'flex-end',
-                                                                            paddingRight: 15
+                <MyTabView titleColor={'black'} color1={'white'} color2={'white'}
+                           title={this.props.redData ? `${this.props.redData.title}` : '快捷取现'}
+                           leftView={true}
+                           hasRight={true} rightView={
+                    <TouchableOpacity activeOpacity={0.5}
+                                      style={{
+                                          width: width / 3,
+                                          justifyContent: 'center',
+                                          alignItems: 'flex-end',
+                                          paddingRight: 15
 
-                                                                        }}
-                                                                        onPress={() => {
-                                                                            Alert.alert('帮助');
-                                                                        }}><Text
-                    style={{fontSize: 14, color: 'black', backgroundColor: 'transparent'}}>帮助</Text></TouchableOpacity>}
-
-
+                                      }}
+                                      onPress={() => {
+                                          this.props.navigation.navigate('IssueHelp');
+                                      }}><Text
+                        style={{
+                            fontSize: 14,
+                            color: 'black',
+                            backgroundColor: 'transparent'
+                        }}>帮助</Text>
+                    </TouchableOpacity>}
                            navigation={this.props.navigation}/>
 
+                {this.props.redData ?
+                    this.state.showBottom ?
+                        <View style={{flex: 1}}>
+                            <TouchableOpacity activeOpacity={0.5}
+                                              style={{
+                                                  width,
+                                                  height: 40,
+                                                  justifyContent: 'center',
+                                                  alignItems: 'center'
+                                              }}
+                                              onPress={() => {
+                                                  this.setState({
+                                                      showBottom: false
+                                                  })
+                                              }
+                                              }
+                            >
+
+                                <Text style={{
+                                    fontSize: 13,
+                                    color: '#837d82',
+                                    marginTop: 10,
+                                    marginBottom: 10
+                                }}>---------点击回返上一页---------</Text>
+                            </TouchableOpacity>
+
+                            {Tab}
+                            {/*<RedPlanBottom/>*/}
+                        </View>
+                        :
+                        <RedPlanTop
+                            onPress={() => {
+                                this.setState({
+                                    showBottom: true
+                                })
+                            }
+                            }/> :
+                    <MyProgressBar/>}
 
                 <View style={{
-                    flex: Platform.OS === 'ios' ? 1.8 : 2,
-                    backgroundColor: 'white',
-                    justifyContent: 'flex-start',
-                    alignItems: 'center'
-                }}>
-                    <LinearGradient
-                        start={{x: 0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
-                        locations={[0, 1]}
-                        colors={['#ff7e3f', '#ff2f33']}
-                        style={styles.linearStyle}>
-
-                        <Text style={{
-                            paddingLeft: 20,
-                            fontSize: 14,
-                            color: 'white',
-                            backgroundColor: 'transparent'
-                        }}>新手标</Text>
-                    </LinearGradient>
-                    <View style={{marginTop: 10, height: 25, justifyContent: 'center', alignItems: 'center'}}>
-
-                        <Text style={{color: '#605a5f', fontSize: 14}}>
-                            分红计划 0326-2222
-                        </Text>
-                    </View>
-
-                    <View style={{
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}>
-
-                        <Text style={{
-                            fontSize: 45,
-                            // color: params.type === 1 ? 'red' : params.type === 2 ? '#6170ff' : '#ff823a',
-                            color: 'red',
-                            fontWeight: 'bold'
-                        }}>{split[0] + '.'}
-
-                            <Text style={{fontSize: 32, fontWeight: 'normal'}}>{split[1]}</Text>
-                        </Text>
-                    </View>
-
-                    <Text style={{color: '#605a5f', fontSize: 14}}>
-                        历史年化收益率
-                    </Text>
-
-
-                    <View style={{
-                        flex: 1,
-                        height: 45,
-                        flexDirection: 'row',
-                        marginTop: 10,
-                        justifyContent: 'space-around',
-                        alignSelf: 'center'
-                    }}>
-                        <View style={{flex: 1, height: 45, justifyContent: 'space-around', alignItems: 'center'}}>
-                            <Text style={{color: '#605a5f', fontSize: 14}}>总募集额</Text>
-                            <Text style={{color: 'red', fontSize: 14}}>¥5,000,000</Text>
-
-                        </View>
-                        <View style={{backgroundColor: '#837d82', width: 0.5, marginTop: 10, height: 30}}/>
-                        <View style={{flex: 1, height: 45, justifyContent: 'space-around', alignItems: 'center'}}>
-                            <Text style={{color: '#605a5f', fontSize: 14}}>项目期限</Text>
-                            <Text style={{color: 'red', fontSize: 14}}>{data.ccc}天</Text>
-
-                        </View>
-                        <View style={{backgroundColor: '#837d82', width: 0.5, marginTop: 10, height: 30}}/>
-                        <View style={{flex: 1, height: 45, justifyContent: 'space-around', alignItems: 'center'}}>
-                            <Text style={{color: '#605a5f', fontSize: 14}}>起投金额</Text>
-                            <Text style={{color: 'red', fontSize: 14}}>¥100</Text>
-
-                        </View>
-
-
-                    </View>
-
-                </View>
-
-                <View style={{
-                    backgroundColor: '#837d82',
-                    alignSelf: 'center',
-                    width: width - 40,
-                    height: 0.5,
-                    marginTop: 5
-                }}/>
-
-
-                <View style={{flex: 3, padding: 20, justifyContent: 'center', alignItems: 'center'}}>
-                    <View style={{flex: 4, flexDirection: 'row'}}>
-                        <View style={{flex: 1, justifyContent: 'center', marginLeft: 10, alignItems: 'flex-start'}}>
-                            <Text style={{fontSize: 12, color: '#837d82'}}>加入上限</Text>
-                            <Text style={{fontSize: 13, color: 'black', marginTop: 5, marginBottom: 10}}>50,000</Text>
-                            <Text style={{fontSize: 12, color: '#837d82'}}>开始计息时间</Text>
-                            <Text style={{fontSize: 13, color: 'black', marginTop: 5, marginBottom: 10}}>2018-03-27
-                                00:00:00</Text>
-                            <Text style={{fontSize: 12, color: '#837d82'}}>开始计息时间</Text>
-                            <Text style={{fontSize: 13, color: 'black', marginTop: 5, marginBottom: 10}}>2018-04-23
-                                00:00:00</Text>
-                        </View>
-                        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                            <Image style={{width: 120, height: 120, marginTop: 10, alignSelf: 'center'}}
-                                   source={require('../../../../AImages/red/redPlan1x2.png')}/>
-                        </View>
-
-                    </View>
-                    <View style={{
-                        flex: 1,
-                        width: width - 40,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                    }}>
-                        <Image style={{width: 20, height: 20, alignSelf: 'center'}}
-                               source={require('../../../../AImages/red/redPlan2x2.png')}/>
-                        <Text style={{fontSize: 13, color: '#686367', margin: 15}}>隔日计息</Text>
-                        <Image style={{width: 20, height: 20, alignSelf: 'center'}}
-                               source={require('../../../../AImages/red/redPlan3x2.png')}/>
-                        <Text style={{fontSize: 13, color: '#686367', margin: 15}}>灵活取存</Text>
-                        <Image style={{width: 20, height: 20, alignSelf: 'center'}}
-                               source={require('../../../../AImages/red/redPlan4x2.png')}/>
-                        <Text style={{fontSize: 13, color: '#686367', margin: 15}}>支持自动复投</Text>
-
-                    </View>
-                    <View style={{
-                        flex: 1,
-                        width: width - 40,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginTop: 10,
-                        flexDirection: 'row'
-                    }}>
-                        <Image style={{width: 20, height: 20,}}
-                               source={require('../../../../AImages/red/redPlan5x2.png')}/>
-                        <Text style={{fontSize: 13, color: '#837d82', marginLeft: 20}}>账户资金安全由众安保险和贝米钱包保障</Text>
-                    </View>
-                    <Text style={{fontSize: 13, color: '#837d82', marginTop: 10, marginBottom: 10}}>---------向上滑动可查看更多---------</Text>
-
-                </View>
-                <View style={{
-                    flex: 1,
-                    width: width - 40,
-                    marginBottom: 20,
+                    width,
+                    height: 80,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    alignSelf: 'center'
+                    backgroundColor: '#ece4ff33',
+                    position: 'absolute',
+                    bottom: 0
                 }}>
-                    <Text style={{fontSize: 13, color: '#686367'}}>
-                        标的剩余可投资<Text style={{color: 'red'}}>¥4,207,000</Text>
-                    </Text>
+                        <TouchableOpacity activeOpacity={0.5}
+                                          onPress={// Alert.alert('立即加入');
+                                              this.joinNow
+                                          }>
                     <LinearGradient
                         start={{x: 0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
                         locations={[0, 1]}
                         colors={['#ff6843', '#ff4d47']}
                         style={styles.linearStyle1}>
 
-                        <TouchableOpacity activeOpacity={0.5}
-                                          onPress={() => {
-                                              // Alert.alert('立即加入');
-                                              this.props.navigation.dispatch({
-                                                  type: 'WebView1'
-                                              })
-                                          }}>
 
                             <Text style={{
                                 paddingLeft: 20,
@@ -225,38 +164,61 @@ class RedPlan extends BaseComponent {
                                 color: 'white',
                                 backgroundColor: 'transparent'
                             }}>立即加入</Text>
-                        </TouchableOpacity>
                     </LinearGradient>
+                        </TouchableOpacity>
                 </View>
-
-
+                {/*{this.state.showBottom?:}*/}
+                {/*<View style={[{backgroundColor: 'white'}, pageStyle]}>*/}
+                {/*</View>*/}
             </View>
-
         );
 
-
     }
-}
-const styles = StyleSheet.create({
 
-    linearStyle: {
-        position: 'absolute',
-        alignSelf: 'center',
-        borderRadius: 20,
-        marginTop: 10,
-        left: -40,
-        width: 90,
-        height: 25,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: 20,
-        shadowColor: '#ff5a4f',
-        shadowOffset: {width: 1, height: 1},
-        shadowOpacity: 0.6,
-        shadowRadius: 2,
-    },
+    joinNow = () => {
+        console.log('join');
+
+        // storage.load({
+        //     key: 'token',
+        //     autoSync: true,
+        //     syncInBackground: true
+        // }).then(ret => {
+        //     console.log(ret)
+        // }).catch(err=>{
+        //     console.log(err);
+        // })
+
+        let token = this.props.globalInfo.token;
+        console.log(this.props.globalInfo);
+        console.log(token);
+        if (token) {
+            fetchRequestToken('isRegister ', 'POST',token)
+                .then(res => {
+                    if (res.respCode === 200) {
+                        // this.props.initGetWebData(res.data)
+                        console.log(res);
+                        if (res.data.status === 1) {
+                            this.props.navigation.navigate('InvestBuy')
+                        } else {
+                            this.props.navigation.navigate('ShiMing')
+                        }
+                    } else {
+                        console.log('有返回,但状态错误');
+                        // this.props.initGetWebData(netData)
+                    }
+                })
+                .then(err => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+        }
+    };
+}
+
+const styles = StyleSheet.create({
     linearStyle1: {
-        marginTop: 10,
+        alignSelf: 'center',
         borderRadius: 30,
         alignItems: 'center',
         justifyContent: 'center',
@@ -267,16 +229,24 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.6,
         shadowRadius: 2,
     }
-});
+})
 const mapStateToProps = (state) => {
     return {
-        data: state.bills.payload,
-        // nav: state.RS_Nav,
-        // nav:state.nav,
-        // naviga :state.RS_NEW
+        nav: state.nav,
+        globalInfo: state.globalInfo.data,
+        redData: state.bills.redData
     }
 
 };
 
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        initRedData: actions.fetchRedData
+    }, dispatch);
+};
 
-export default connect(mapStateToProps)(RedPlan);
+export default connect(mapStateToProps, mapDispatchToProps)(RedPlan);
+
+
+
+

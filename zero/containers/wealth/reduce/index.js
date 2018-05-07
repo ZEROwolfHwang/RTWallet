@@ -10,18 +10,14 @@ export const types = {
 export const bills = (state = {}, action) => {
     switch (action.type) {
         case types.Action_RedData:
+            console.log(action.data);
             return Object.assign(
                 {},
                 state,
-                {payload: action.payload}
+                {redData: action.data}
             );
-        default:
-            return state;
-    }
-};
-export const bills1 = (state = {}, action) => {
-    switch (action.type) {
         case types.Action_FetchData:
+            console.log(action.data);
             return Object.assign(
                 {},
                 state,
@@ -32,20 +28,11 @@ export const bills1 = (state = {}, action) => {
     }
 };
 
+
 export const actions = {
-    redData: (a, b, c, d, e) => ({type: types.Action_RedData, payload: {aaa: a, bbb: b, ccc: c, ddd: d, eee: e}}),
+    fetchRedData: (data) => ({type: types.Action_RedData, data: data}),
     fetchData: (data) => ({type: types.Action_FetchData, data: data})
 };
-//添加list
-// export const fetchData = (data) => {
-//     return {
-//         type: types.Action_FetchData,
-//         data
-//     }
-// }
-// export const getWebData = () => {
-//     return initFetch(fetchData)('http://sjpay.githubshop.com/app/wikilist')
-// }
 
 export function initFetch(action) {
     return (url) => {
@@ -60,17 +47,4 @@ export function initFetch(action) {
         }
     }
 }
-// const initFetch = (action) => {
-//     return (url) => {
-//         return (dispatch) => {
-//             fetch(url)
-//                 .then(res => res.json())
-//                 .then(json => {
-//                     console.log(json);
-//                     dispatch(action(json));
-//                     // dispatch(fetchLoading(false));
-//                 })
-//                 .catch(msg => console.log('usshowList-err  ' + msg));
-//         }
-//     }
-// }
+

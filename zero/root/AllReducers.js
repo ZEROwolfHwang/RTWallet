@@ -5,12 +5,15 @@
 import {combineReducers} from 'redux';
 import {autopay,pay_manage,pay_navigator} from '../containers/1Tab/reduce/index';
 import {nav} from './Navigators';
-import {bills,bills1} from '../containers/wealth/reduce/index';
+import {bills} from '../containers/wealth/reduce/index';
+import {globalInfo} from "./GlobalAction";
+// import {globalInfo} from "./GlobalAction";
 
 export default AllReducers = combineReducers({
     nav:nav,
+    globalInfo:globalInfo,
     bills:bills,
-    bills1:bills1,
+    // bills1:bills1,
     RS_AutoPay : autopay,
     RS_Pay_Manage : pay_manage,
     RS_Navigate: pay_navigator,

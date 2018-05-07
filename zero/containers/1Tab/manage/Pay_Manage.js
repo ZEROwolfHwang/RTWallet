@@ -324,7 +324,7 @@ const mapStateToProps = (state) => {
     return {
 
         RS_Pay_Manage: state.RS_Pay_Manage,
-        RS_Nav: state.RS_Nav.data,
+        nav: state.nav,
     };
 };
 

@@ -8,10 +8,10 @@ import {
     Text,
     View
 } from 'react-native';
-
+import {connect} from 'react-redux';
 import BaseComponent from '../global/BaseComponent';
 import MyTabView from '../../views/MyTabView';
-export default class Pay_Query extends BaseComponent{
+ class Pay_Query extends BaseComponent{
     constructor(props){
         super(props);
 
@@ -29,3 +29,12 @@ export default class Pay_Query extends BaseComponent{
         );
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        nav:state.nav
+    }
+
+};
+
+export default connect(mapStateToProps)(Pay_Query);

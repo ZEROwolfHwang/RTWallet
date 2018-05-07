@@ -26,7 +26,7 @@ export default class Item extends Component {
                                   style={{
                                       alignItems: 'center',
                                       justifyContent: 'center',
-                                      marginTop: 20,
+                                      marginBottom: 20,
                                       height: 40,
                                       width: Dimensions.get('window').width / 1.2,
                                       borderRadius: 10,

@@ -32,7 +32,7 @@ class Pay_Plan extends BaseComponent {
 
 
     _iconClick = () => {
-        Alert.alert('123')
+        // Alert.alert('123')
     };
 
     constructor(props) {
@@ -49,16 +49,27 @@ class Pay_Plan extends BaseComponent {
     }
 
     componentDidUpdate() {
-        Alert.alert('123')
+        // Alert.alert('123')
+    }
+    // componentDidMount() {
+    //     super
+    // }
+
+
+
+
+
+
+    componentWillUnmount() {
     }
 
-    componentDidMount() {
-        Alert.alert('456')
 
-    }
+
+
+
 
     componentWillReceiveProps(nextProps) {
-        Alert.alert('789')
+        // Alert.alert('789')
         this.setState({
             dataSource: this.state.dataSource.cloneWithRows(this._renderList())
         });
@@ -66,8 +77,8 @@ class Pay_Plan extends BaseComponent {
     }
 
     componentWillMount() {
-        Alert.alert('000')
-
+        // Alert.alert('000')
+        console.log(this.props.navigation.state.params.id);
     }
 
 
@@ -132,10 +143,11 @@ class Pay_Plan extends BaseComponent {
     }
 
     render() {
-        Alert.alert('000100000')
+        // Alert.alert('000100000')
+        console.log(this.props.nav);
         return (
             <View style={{flex: 1, marginTop: 10, justifyContent: 'flex-start', alignItems: 'center'}}>
-                <MyTabView titleColor={'black'} title={'还款计划'} leftView={true} rightView={true}
+               {/* <MyTabView titleColor={'black'} title={'还款计划'} leftView={true} rightView={true}
                            navigation={this.props.navigation}/>
                 <ListView
                     dataSource={this.state.dataSource}
@@ -149,7 +161,8 @@ class Pay_Plan extends BaseComponent {
                     })
                 }}>
                     <Text>删除所有卡片</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>*/}
+                <Text>usaiudu</Text>
             </View>
         );
     }
@@ -157,17 +170,19 @@ class Pay_Plan extends BaseComponent {
 
 const mapStateToProps = (state) => {
     return {
+        nav:state.nav
         // RS_AutoPay: state.RS_AutoPay.data,
         //data: state.RS_Nav.data,
+
+
+
+
         // navigation: state.RS_Navigate.data,
     };
 
 };
-const mapDispatchToProps = (dispatch) => {
-    return bindActionCreators({
-        // initNavigationAction: Pay_Navigator,
-    }, dispatch);
-};
+
+
 
 const styles = StyleSheet.create({
     addBorderStyle: {
@@ -184,4 +199,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Pay_Plan);
+export default connect(mapStateToProps)(Pay_Plan);

@@ -56,7 +56,8 @@ export default class FourthTab extends BaseComponent {
 
                         <View style={styles.centerView}>
                             <Item onPress={() => {
-                                Alert.alert('点击条目')
+                                // Alert.alert('点击条目')
+                                this.props.navigation.navigate('Pay_Plan')
                             }}
                                   title={'邀请好友'}
                                   image={require('../../../XImages/setting/Slice7x1.png')}

@@ -9,22 +9,34 @@ export const nav = (state, action) => {
                 NavigationActions.navigate({routeName: 'ShiMing'}),
                 {...state, data: action.data}
             );
- case 'RedPlan':
-            return SNavigator.router.getStateForAction(
-                NavigationActions.navigate({routeName: 'RedPlan'}),
-                {...state, data: action.data}
-            );
+        // case 'RedPlan':
+        //     return SNavigator.router.getStateForAction(
+        //         NavigationActions.navigate({routeName: 'RedPlan'}),
+        //         {...state, data: action.data}
+        //     );
 
         case 'WebView1':
             return SNavigator.router.getStateForAction(
                 NavigationActions.navigate({routeName: 'WebView1'}),
                 {...state, webViewURL: action.webViewURL}
             );
-        case 'Pay_Plan':
+
+        // case 'Pay_Plan':
+        //     return SNavigator.router.getStateForAction(
+        //         NavigationActions.navigate({routeName: 'Pay_Plan'}),
+        //         {...state, data: action.data}
+        //     );
+        case 'Page_Auto':
             return SNavigator.router.getStateForAction(
-                NavigationActions.navigate({routeName: 'Pay_Plan'}),
+                NavigationActions.navigate({routeName: 'Page_Auto'}),
                 {...state, data: action.data}
             );
+        case 'Wealth':
+            return SNavigator.router.getStateForAction(
+                NavigationActions.navigate({routeName: 'Wealth'}),
+                {...state, data: action.data}
+            );
+
         case 'Pay_Plan_AddCard':
             return SNavigator.router.getStateForAction(
                 NavigationActions.navigate({routeName: 'Pay_Plan_AddCard'}),
@@ -35,11 +47,11 @@ export const nav = (state, action) => {
                 NavigationActions.navigate({routeName: 'Pay_New_Plan'}),
                 {...state, data: action.data}
             );
-        case 'Pay_Query':
-            return SNavigator.router.getStateForAction(
-                NavigationActions.navigate({routeName: 'Pay_Query'}),
-                {...state, data: action.data}
-            );
+        // case 'Pay_Query':
+        //     return SNavigator.router.getStateForAction(
+        //         NavigationActions.navigate({routeName: 'Pay_Query'}),
+        //         {...state, data: action.data}
+        //     );
         case 'Pay_Manager':
             return SNavigator.router.getStateForAction(
                 NavigationActions.navigate({routeName: 'Pay_Manager'}),

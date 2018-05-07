@@ -4,6 +4,7 @@
 
 import * as Types from './Types';
 //Home
+
 export const Page_AutoPay = (data) => {
     return {
         type: Types.ACTION_AUTOPAY,

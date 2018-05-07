@@ -16,20 +16,12 @@ export default class Navigator extends Component {
 
     render() {
         var params = this.props;
-        // type={'red'} left1_title={'新手标'}
-        // left2_number={'11.00%'}
-        // center_top_big={27}
-        // center_top_small={'天'}
-        // center_bottom={'100元起投'}
-        // right_top_type={1}
-        // right_bottom={'剩余5万元可投'}
 
         let number = params.left2_number;
+        let channelfeeList = params.channelfee.split('.');
+        console.log(number);
         let split = number.split('.');
-        // for (let obj in split) {
-        //     console.log(obj+'');
-        //     console.log(split[obj]);
-        // }
+
         return (
             <View style={styles.topView}>
                 <View style={{flex: 1, height: 80}}>
@@ -56,10 +48,14 @@ export default class Navigator extends Component {
                         <Text style={{
                             fontSize: 24,
                             color: params.type === 1 ? 'red' : params.type === 2 ? '#6170ff' : '#ff823a',
-                            fontWeight: 'bold'
+                            fontWeight: 'normal'
                         }}>{split[0] + '.'}
 
-                            <Text style={{fontSize: 18, fontWeight: 'normal'}}>{split[1]}</Text>
+                            <Text style={{fontSize: 18, fontWeight: 'normal'}}>{split[1]}
+
+                            <Text style={{fontSize: 24, color: params.type === 1 ? 'red' : params.type === 2 ? '#6170ff' : '#ff823a',
+                                fontWeight: 'normal'}}>{`+${channelfeeList[0]}`}</Text>
+                            </Text>
                         </Text>
                     </View>
                     <Text style={{
@@ -70,25 +66,21 @@ export default class Navigator extends Component {
                     }}>历史年化收益率</Text>
                 </View>
 
-                <View style={{flex: 1, height: 80}}>
+                <View style={{flex: 0.8, height: 80}}>
 
                     <View style={{
                         flex: 6,
-                        marginLeft: 30,
+                        marginLeft: 40,
                         justifyContent: 'flex-end',
                         alignItems: 'flex-start',
                         marginBottom: 8
                     }}>
+
                         <Text style={{
-                            fontSize: params.center_top_small ? 20 : 13,
+                            fontSize: 24,
                             color: '#545454',
                             fontWeight: 'bold'
                         }}>{params.center_top_big}
-                            <Text style={{
-                                fontSize: 13,
-                                color: 'grey',
-                                fontWeight: 'normal'
-                            }}>{params.center_top_small}</Text>
                         </Text>
                     </View>
                     <Text style={{flex: 3, marginLeft: 30, fontSize: 11, color: 'grey'}}>{params.center_bottom}</Text>
@@ -101,7 +93,7 @@ export default class Navigator extends Component {
                  */}
 
                 <View style={{flex: 1, height: 80, justifyContent: 'center', alignItems: 'center',}}>
-                    {params.right_top_type == 1 ?
+                    {params.right_top_type === 1 ?
                         <View style={{flex: 6, justifyContent: 'flex-end', alignItems: 'center', marginBottom: 8}}>
                             <LinearGradient
                                 start={{x: 0.0, y: 1.0}} end={{x: 1.0, y: 1.0}}
@@ -132,12 +124,12 @@ export default class Navigator extends Component {
                                     }}>
 
                                     <Text
-                                        style={{fontSize: 12, color: 'white', backgroundColor: 'transparent'}}>加入</Text>
+                                        style={{fontSize: 12, color: 'white', backgroundColor: 'transparent'}}>详情</Text>
                                 </TouchableOpacity>
                             </LinearGradient>
                         </View>
                         :
-                        params.right_top_type == 2 ?
+                        params.right_top_type === 0 ?
                             <View style={{flex: 6, justifyContent: 'flex-end', alignItems: 'center', marginBottom: 8}}>
                                 <TouchableOpacity
                                     activeOpacity={0.5}
@@ -150,7 +142,7 @@ export default class Navigator extends Component {
                                         borderRadius: 10
                                     }}>
 
-                                    <Text style={{fontSize: 12, color: 'white'}}>售完</Text>
+                                    <Text style={{fontSize: 12, color: 'white'}}>维护</Text>
                                 </TouchableOpacity>
                             </View>
                             :

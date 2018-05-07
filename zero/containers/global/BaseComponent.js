@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 import {
-    BackHandler,Platform, StyleSheet, Text, Alert, View, TouchableOpacity, Image, Dimensions
+    BackHandler
 } from 'react-native';
 
 import {
@@ -11,7 +11,7 @@ import {
 } from 'react-navigation';
 
 export default class BaseComponent extends Component {
-    static navigationOptions = ({navigation, screenProps}) => ({
+    static navigationOptions = ({
             headerTitle: '分红计划',
             header: null,
             headerBackTitle: null,
@@ -20,36 +20,32 @@ export default class BaseComponent extends Component {
 
     constructor(props) {
         super(props);
-        console.log('父类');
-
     }
 
     componentDidMount() {
-        console.log('已经完成');
         BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
     }
 
     componentWillUnmount() {
-        console.log('将要完成');
         BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
     }
 
     onBackPress = () => {
-        console.log(this.props.navigation);
-        console.log(this.props.dispatch);
-        console.log(this.props.nav);
-        console.log('退出');
-
+        console.log(this.props);
         const {dispatch, nav} = this.props;
         if (nav.index === 0) {
+            console.log('nav.index === 0 为真   返回false');
             return false;
+        }else if (nav.index === 1) {
+            console.log('nav.index === 1 为真   返回true');
+            BackHandler.exitApp();
+        return true;
+
         }
 
-
-        dispatch(NavigationActions.back());
+        // dispatch(NavigationActions.back());
+        this.props.navigation.goBack();
         return true;
     };
-
-
 }
 
