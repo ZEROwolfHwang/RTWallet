@@ -4,6 +4,7 @@
 import React,{Component} from 'react';
 import PropTypes from 'react';
 import {View,Text,TouchableOpacity} from 'react-native';
+import {zdp, zsp} from "../../../utils/ScreenUtil";
 export default class TimerButton extends Component {
     constructor(props) {
         super(props)
@@ -63,8 +64,8 @@ export default class TimerButton extends Component {
                     onClick(this._shouldStartCountting)
                 };
             }}>
-                <View style={{width:100, height:44,flex:1,justifyContent:'center',alignItems:'center'}}>
-                    <Text style={[{fontSize: 16},textStyle,{color: ((!counting && enable && selfEnable) ? textStyle.color : disableColor || 'gray')}]}>{timerTitle}</Text>
+                <View style={{width:zdp(100), height:44,flex:1,justifyContent:'center',alignItems:'center'}}>
+                    <Text style={[{fontSize: zsp(16)},textStyle,{color: ((!counting && enable && selfEnable) ? textStyle.color : disableColor || 'gray')}]}>{timerTitle}</Text>
                 </View>
             </TouchableOpacity>
         )

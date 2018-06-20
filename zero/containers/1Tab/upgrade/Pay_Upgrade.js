@@ -18,7 +18,7 @@ export default class Pay_Upgrade extends BaseComponent{
     render(){
        return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{color: 'blue', fontSize: 18}}>
+                <Text style={{color: 'blue', fontSize: zsp(18)}}>
                     还款升级 !
                 </Text>
             </View>

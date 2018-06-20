@@ -1,389 +1,360 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {
-    Platform, StyleSheet, Text, Alert, View, TouchableOpacity, Image, Dimensions, TextInput
+    Text,
+    View,
+    Dimensions,
+    StatusBar, PixelRatio,
+    Alert, Image, TouchableOpacity, Animated, Platform
 } from 'react-native';
 
 const {width, height} = Dimensions.get('window');
-import MyTabView from '../../views/MyTabView';
 import BaseComponent from '../global/BaseComponent';
-import MyTextInput from "../../views/MyTextInput";
-import ButtonView from "../../views/ButtonView";
-import {fetchRequest} from "../../utils/FetchUtil";
-import TimerButton from "./item/TimerButton";
-import TextInputRightButton from "./item/TextInputRightButton";
-import CountdownUtil from "./item/CountdownUtil";
-import ToastUtil from "../../utils/ToastUtil";
-import dismissKeyboard from 'dismissKeyboard';
-import NavigationUtil from '../../utils/NavigationUtil';
-import addPayCard from "../wealth/redPlan/buy/addPayCard";
-import realm from "../../storage/realm";
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {getCardList, getDebitCardList, getPayCardList} from "../../storage/schema_card";
-import {actions} from "../../root/GlobalAction";
-import {getUserList} from "../../storage/schema_user";
+import MyButtonView from "../../views/MyButtonView";
 
-// import storage from '../../storage/Storage'
+import MyLinearGradient from "../../views/MyLinearGradient";
+import MyTextInputWithIcon from "../../views/MyTextInputWithIcon";
+import {fetchRequest} from "../../utils/FetchUtil";
+import {actions} from "../../root/GlobalAction";
+import ToastUtil from "../../utils/ToastUtil";
+import realm from "../../storage/realm";
+import PageSetting from "../4Tab/set/PageSetting";
+import BankManageTabAll from "../4Tab/BankManage/tabItem/BankManageTabAll";
+import {checkMobile} from "../../utils/CheckUitls";
+import {
+    addSingleBankCard,
+    getAllCard,
+    getCardLength, getCreditCardDefault, getDebitCardDefault,
+    getDebitCardList,
+    getCreditCardList, deleteAllCard
+} from "../../storage/schema_card";
+import {save2Realm} from "./SaveRealmUtil";
+import {getGestureData, isGestureLogin} from "../../storage/schema_gesture";
+import {actions_register} from "./reduces/register";
+import {zdp, zsp} from "../../utils/ScreenUtil";
+import ZText from "../../views/ZText";
+
+import *as wechat from 'react-native-wechat'
+import {updateApp} from "../global/AllModuleUtils";
+import {G, Path, Svg} from "react-native-svg";
+import {updateAppByLogin} from "../../utils/updateAppUtil";
+import NavigationUtil from "../../utils/NavigationUtil";
+
+
+let AnimatedPath = Animated.createAnimatedComponent(Path);
+
+
 class RegisterApp extends BaseComponent {
+
+
     constructor(props) {
         super(props);
-
-
         this.state = {
             phone: '',
-            verifyCode: '',
-            isSentVerify: true,
-            timerTitle: '获取验证码'
-        };
+            // phone: '13262972222',
+            // phone: '13262975235',
+            // phone: '13262970000',
+            // phone: '13262975265',
+            // phone: '15361505102',
+            // phone: '13255556666',
+            // password: '123456',m
+            // password: 'qqqqqq',
+            password: '',
+            // process: 0,
+            // lineFillAnimation: new Animated.Value(0),
+        }
+        // this.lineAnimation = this.state.lineFillAnimation.interpolate({
+        //     inputRange: [
+        //         0,
+        //         100
+        //     ],
+        //     outputRange: [
+        //         `M5 8 l0 0`,
+        //         `M5 8 l215 0`,
+        //     ]
+        // });
 
-        // this.props.initGlobalInfo({
-        //         //     phone: '1326297',
-        //         //     token: 'ajsda3812323qwsdq42'
-        //         // })
-    }
+        // deleteAllCard();
 
-    // 删除
-    removeData() {
-        realm.write(() => {
-            // 获取Person对象
-            let User = realm.objects('User');
-            let Card = realm.objects('Card');
-            // 删除
-            realm.delete(User);
-            realm.delete(Card);
-        })
+        // addSingleBankCard('12345', '622848003121', '中国农业银行', '13262975235', 'ABC', 'DC', true);
+
+
+        /*
+                realm.write(()=>{
+                    let anies = realm.objects('Card');
+                    realm.delete(anies);
+                })*/
+
+        // alert(Dimensions.get('window').width * PixelRatio.get());
+
+
+        // let payCardList = getCreditCardList('13262975235');
+        // for (let i in payCardList) {
+        //
+        //     console.log(payCardList[i]);
+        // }
+
     }
 
     componentWillMount() {
-        // global.storage = storage;
+        // wechat.registerApp('wx8385a09b99f48b45')
+        wechat.registerApp('wx6da45a3d441b507c');
+        /* wechat.addListener(
+             'SendMessageToWX.Resp',
+             (response) => {
+                 if (parseInt(response.errCode) === 0) {
+                     ToastUtil.showShort('分享成功');
+                 } else {
+                     ToastUtil.showShort('分享失败');
+                 }
+             }
+         );*/
+
     }
 
+    componentDidMount() {
+        // this.pressLogin();
+
+    }
+
+
+    /**
+     *
+     * @returns {*}
+     */
     render() {
-        // this.removeData();
-
         return (
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
+                <Image source={require('../../../resource/image/loginbg.png')}
+                       style={{width, height, position: 'absolute'}}/>
 
-                {/*<Madoka*/}
-                {/*onChangeText={(text) => {*/}
-                {/*console.log(text);*/}
-                {/*}}*/}
-                {/*style={{marginTop: 4, width: width - 20}}*/}
-                {/*label={'手机号'}*/}
-                {/*borderColor={'blue'}*/}
-                {/*labelStyle={{color: 'blue'}}*/}
-                {/*inputStyle={{color: 'grey'}}*/}
-                {/*/>*/}
-                {/*<Madoka*/}
-                {/*style={{width: width - 100}}*/}
-                {/*label={'验证码'}*/}
-                {/*borderColor={'#aee2c9'}*/}
-                {/*labelStyle={{color: '#008445'}}*/}
-                {/*inputStyle={{color: '#f4a197'}}*/}
+                <View
+                    style={{flex: 1, alignItems: 'center'}}>
 
-                {/*/>*/}
+                    <Image source={require('../../../resource/image/appname.png')}
+                           style={{width: zdp(140), height: zdp(66), marginTop: zdp(100)}}
+                           resizeMode={'contain'}/>
 
+                    <StatusBar
+                        hidden={false}
+                        translucent={true}
+                        barStyle={'light-content'}//'default', 'light-content', 'dark-content'
+                        backgroundColor={'#fff6fd00'}
+                        networkActivityIndicatorVisible={false}
+                    />
 
-                <TextInputRightButton
-                    keyboardType={'numeric'}
-
-                    width={width}
-                    maxLength={11}
-                    title={"手机号"}
-                    placeholder={"请输入您的手机号"}
-                    // ref={(c) => this.email = c}
-                    onChangeText={(text) => {
-                        this.setState({
-                            phone: text
-                        })
-                    }}
-                    onBackClear={() => {
-                        this.setState({
-                            phone: ''
-                        });
-                    }}
-                />
-
-                <View style={{width: width, height: 0.5, backgroundColor: 'lightgrey'}}/>
-
-
-                <View style={{
-                    width: width,
-                    height: 50,
-                    flexDirection: 'row',
-                    backgroundColor: 'white'
-                }}>
-
-                    <TextInputRightButton
+                    <MyTextInputWithIcon
+                        style={{marginTop: zdp(40)}}
                         maxLength={11}
-                        width={width - 120}
-                        title={"验证码"}
-                        placeholder={"请输入手机验证码"}
+                        placeholder={'请输入手机号'}
+                        keyboardType={'numeric'}
+                        iconName={'phone'}
                         onChangeText={(text) => {
                             this.setState({
-                                verifyCode: text
+                                phone: text
                             })
                         }}
-                        onBackClear={() => {
+                    />
+                    <MyTextInputWithIcon
+                        secureTextEntry={true}
+                        placeholder={'密码登录'}
+                        // keyboardType={'email-address'}
+                        iconName={'lock'}
+                        onChangeText={(text) => {
                             this.setState({
-                                verifyCode: ''
-                            });
+                                password: text
+                            })
                         }}
                     />
 
-                    <TouchableOpacity activeOpacity={this.state.isSentVerify ? 0.5 : 1}
-                                      onPress={() => {
-                                          if (this.state.phone.length === 11) {
-                                              dismissKeyboard();
-                                              if (this.state.isSentVerify === true) {
-                                                  // 倒计时时间
-                                                  let countdownDate = new Date(new Date().getTime() + 5 * 1000);
-                                                  // 点击之后验证码不能发送网络请求
-                                                  this.setState({
-                                                      isSentVerify: false
-                                                  });
+                    <View style={{
+                        width,
+                        height: zdp(40),
+                        backgroundColor: 'transparent',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}>
+                        <Text
+                            style={{
+                                fontSize: zsp(16),
+                                color: 'white',
+                                padding: zdp(10),
+                                textAlign: 'center',
+                                marginLeft: zdp(40),
+                                alignSelf: 'flex-end'
+                            }}
+                            onPress={this.pressLoginByVerify}>{`验证码登录`}</Text>
 
-                                                  let formData = new FormData();
-                                                  formData.append('phone', this.state.phone);
-                                                  fetchRequest('sms', 'POST', formData)
-                                                      .then(res => {
-                                                          console.log(res);
-                                                          if (res.respCode === 200) {
 
-                                                              CountdownUtil.setTimer(countdownDate, (time) => {
-                                                                  console.log(time.sec);
-                                                                  this.setState({
-                                                                      timerTitle: time.sec > 0 ? time.sec + 's' : '重新获取'
-                                                                  }, () => {
-                                                                      if (this.state.timerTitle == "重新获取") {
-                                                                          this.setState({
-                                                                              isSentVerify: true
-                                                                          })
-                                                                      }
-                                                                  })
-                                                              });
-                                                          } else {
-                                                              ToastUtil.showShort(res.respMsg);
-                                                          }
-                                                      }).then(err => {
-                                                      console.log(err);
-                                                  });
+                        <Text
+                            style={{
+                                fontSize: zsp(16),
+                                color: 'white',
+                                padding: zdp(10),
+                                textAlign: 'center',
+                                marginRight: zdp(40),
+                                alignSelf: 'flex-end'
+                            }}
+                            onPress={this.pressForgetPsw}>{`忘记密码?`}</Text>
 
-                                              }
-                                          } else {
-                                              ToastUtil.showShort('请输入正确的手机号');
-                                          }
-                                      }}>
-                        <View style={{
-                            width: 120,
-                            height: 50,
-                            flex: 1,
-                            justifyContent: 'center',
-                            alignItems: 'center'
-                        }}>
-                            <Text
-                                style={{
-                                    fontSize: 14,
-                                    color: this.state.isSentVerify ? 'grey' : this.state.timerTitle.endsWith('s') ? 'red' : '#999999'
-                                }}>{this.state.timerTitle}</Text>
+                    </View>
 
-                        </View>
-                    </TouchableOpacity>
+
+                    <MyButtonView style={{width: width / 1.3, marginTop: zdp(5)}} modal={1}
+                                  title={'登 录'}
+                                  onPress={this.pressLogin}/>
+
+
+                    <Text
+                        style={{
+                            fontSize: zsp(16),
+                            color: 'lightgrey',
+                            padding: zdp(10),
+                            paddingRight: zdp(40),
+                            textAlign: 'center',
+                            alignSelf: 'center'
+                        }}
+                    >{`没有账号? `}<Text style={{color: 'white'}}
+                                     onPress={this.pressRegister}>点击注册</Text></Text>
+
                 </View>
-                <ButtonView title={'登录'}
-                            onPress={this.pressLogin}/>
             </View>
         )
             ;
 
     }
 
-
-    componentWillUnmount() {
-        CountdownUtil.stop()
-    }
-
+    /**
+     * 点击登录
+     */
     pressLogin = () => {
-        // NavigationUtil.reset(this.props.navigation, 'ShiMing');
-        dismissKeyboard();
-        // fetchRequest('http://localhost:8080/ThirdServlet','POST',formData)
-        if (this.state.verifyCode.length < 4) {
-            ToastUtil.showShort('验证码长度错误')
-        } else {
-            let formData = new FormData();
-            formData.append('phone', this.state.phone);
-            formData.append('code', this.state.verifyCode);
-            fetchRequest('Login', 'POST', formData)
-                .then(res => {
-                        console.log(res);
-                        console.log(res.data);
-                        if (res.respCode === 200) {
 
-                            // global.storage.save({
-                            //     key:'token',
-                            //     data: res.data.token,
-                            //     expires: null
-                            // });
-
-                            // storage.save({
-                            //     key: 'token',
-                            //     data: {
-                            //         token: res.data.token,
-                            //         phone: this.state.phone
-                            //     },
-                            //     expires: null
-                            // });
+        if (!checkMobile(this.state.phone)) {
+            return;
+        }
 
 
-                            /*   storage.load({
-                                   key: 'token',
-                                   autoSync: true,
-                                   syncInBackground: true
-                               }).then(ret => {
-                                   console.log(ret)
-                               }).catch(err => {
-                                   console.log(err);
-                               })*/
+        let formData = new FormData();
+        formData.append('phone', this.state.phone);
+        formData.append('password', this.state.password);
+        fetchRequest('Login', 'POST', formData)
+            .then(res => {
+                    console.log(res);
+                    console.log(res.data);
 
-
-                            // let cardList = getCardList(res.data.phone);
-                            // if (cardList) {
-                            //     ToastUtil.showShort('有数据')
-                            // } else {
-                            //     ToastUtil.showShort('无数据')
-                            // }
-
-                            // realm.write(()=>{
-                            //     realm.create('User',{
-                            //         username:'1621',
-                            //         CardLen:7,
-                            //         IDCard: '3408241994',
-                            //         phone:'13262975235',
-                            //         card:[{
-                            //             phone:'13262975235'
-                            //         }]
-                            //     })
-                            // })
-
-                            /*   let UserList = realm.objects('User');
-                               // console.log(UserList.find(0));
-                               console.log(this.state.phone);
-                               console.log(typeof this.state.phone);
-                               let phone = this.state.phone;
-                               let ts = UserList.filtered(`phone == '${phone}'`);
-                               if (ts) {
-                                   for (const i in ts) {
-
-                                       console.log(ts[i]);
-                                   }
-                                       console.log(ts[0]);
-                                   ToastUtil.showShort('有数据')
-                               } else {
-                                   ToastUtil.showShort('无数据')
-
-                               }*/
-
-                            let userList = getUserList(res.data.phone);
-
-                            console.log(userList);
-                            if (userList) {
-                                console.log('不存储网络中返回的银行卡列表');
-                                this.props.initGlobalInfo({
-                                    token: res.data.token,
-                                    phone: res.data.phone,
-                                    IDCard: res.data.identity,
-                                    username: res.data.name
-                                });
-
-                                this.props.initCardList(getCardList(res.data.phone));
-                            } else {
-                                console.log('读取网络中银行卡列表');
-                                if (res.data.CardLen !== 0) {
-                                    console.log('银行卡列表' + res.data.CardLen);
-                                    this._save2Realm(res.data);
-
-                                    this.props.initGlobalInfo({
-                                        token: res.data.token,
-                                        phone: res.data.phone,
-                                        IDCard: res.data.identity,
-                                        username: res.data.name
-                                    });
-
-                                } else {
-                                    console.log('银行卡列表' + res.data.CardLen);
-                                    this.props.initGlobalInfo({
-                                        token: res.data.token,
-                                        phone: res.data.phone,
-                                        IDCard: '',
-                                        username: ''
-                                    });
-                                }
-
-                            }
-
-                            console.log(this.props.globalInfo);
-
-                            this.props.navigation.navigate('Tab');
-
-                        } else{
-                            ToastUtil.showShort(res.respMsg);
+                    if (res.respCode === 200) {
+                        let allCard = getAllCard(res.data.merCode);
+                        console.log(...allCard);
+                        let cardLength = getCardLength(res.data.merCode);
+                        console.log(cardLength);
+                        console.log(res.data.CardLen);
+                        if (cardLength !== res.data.CardLen) {
+                            //长度不同则刷新本地数据库
+                            save2Realm(res.data);
                         }
+                        this.save2Global(res.data)
+
+                        console.log(this.props.globalInfo);
+                        /*
+                                                if (this.params.type === 0) {
+                                                    this.props.navigation.navigate('PageSetGesturePsw', {
+                                                        type: 0,
+                                                        onGoBack: () => {
+
+                                                        }
+                                                    });
+                                                } else {
+
+                                                    this.props.navigation.navigate('Tab');
+                                                }*/
+                        // this.props.navigation.navigate('BankCardManage');
+                        // this.props.navigation.navigate('PageSetting');
+
+                        //登录检查版本升级
+
+
+                        // this.props.navigation.navigate('addPayCard',{cardType: 'DC',onGoBack:()=>{
+                        //     alert('back')
+                        //     }});
+
+                        if (isGestureLogin()) {
+                            // this.props.navigation.navigate('Tab');
+                            NavigationUtil.reset(this.props.navigation,'Tab');
+                        } else {
+                            this.props.navigation.navigate('PageSetGesturePsw', {type: 0});
+                        }
+                        // this.props.navigation.navigate('BankManageTabAll');
+                        // this.props.navigation.navigate('BankCardManage');
+                        // this.props.navigation.navigate('PageSetting');
+                        // this.props.navigation.navigate('PageChangePhoneNext');
+                        // this.props.navigation.navigate('MerchantInfo');
+                        // this.props.navigation.navigate('CardDefault');
+
+                    } else {
+                        ToastUtil.showShort(res.respMsg);
                     }
-                ).then(err => {
-
-                console.log(err);
-            });
-        }
-    }
-
-    _save2Realm(data) {
-        var cardList = [];
-        console.log(data.CardList);
-        let resList = data.CardList;
-
-        for (const carItem of resList) {
-            cardList.push({
-                loginPhone: data.phone,   //预留手机号
-                bankPhone: carItem.phone,   //预留手机号
-                bankCard: carItem.Card,//银行卡号
-                bank: carItem.bankname,//银行卡号
-                cardType: carItem.type,//1  储蓄卡     0 支付卡
-                cardDefault: carItem.defaultType
-            })
-        }
-
-        realm.write(() => {
-            realm.create('User', {
-                username: data.name,
-                CardLen: data.CardLen,
-                IDCard: data.identity,
-                phone: data.phone,
-                card: cardList
-            })
+                }
+            ).catch(err => {
+            console.log(err);
+            ToastUtil.showShort(err)
         });
+    };
 
-        this.props.initCardList(getCardList(data.phone));
+    /**
+     * 存储全局信息
+     * @param resData
+     */
+    save2Global = (resData) => {
+        this.props.initGlobalInfo({
+            token: resData.token,
+            phone: resData.phone,
+            IDCard: resData.identity,
+            username: resData.name,
+            merCode: resData.merCode,
+            appUser: resData.appUser,
+            recommend: resData.recommend
+        });
     }
+
+    /**
+     * 验证码登录
+     */
+    pressLoginByVerify = () => {
+        this.props.navigation.navigate('LoginByVerify');
+    }
+
+
+    /**
+     * 忘记密码
+     */
+    pressForgetPsw = () => {
+        this.props.initRegisterNav(this.props.navigation);
+        this.props.navigation.navigate('ForgetPsw');
+    };
+    /**
+     * 点击注册
+     */
+    pressRegister = () => {
+        this.props.initRegisterNav(this.props.navigation);
+        this.props.navigation.navigate('RegisterMerchant');
+    }
+
 }
 
-RegisterApp.propTypes = {
-    phone: PropTypes.string
-};
 const mapStateToProps = (state) => {
     return {
-        nav: state.nav,
-        globalInfo: state.globalInfo,
-        // cardList:state.globalInfo
+        nav: state.nav
     }
+
 };
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         initGlobalInfo: actions.getGlobalInfo,
-        initCardList: actions.getCardList
+        initRegisterNav: actions_register.putNavigation,
     }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterApp);
-
 

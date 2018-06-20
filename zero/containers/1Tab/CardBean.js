@@ -12,6 +12,7 @@ import {
     TouchableOpacity,
     Alert,
 } from 'react-native';
+import {zdp, zsp} from "../../utils/ScreenUtil";
 const {width, height} = Dimensions.get('window');
 
 export default class CardBean extends Component {
@@ -27,12 +28,12 @@ export default class CardBean extends Component {
                 activeOpacity={0.5}
                 style={{
                     width: width / 1.05,
-                    height: 90,
+                    height: zdp(90),
                     borderColor: 'gray',
                     borderWidth: 1,
                     borderStyle: 'dashed',
                     justifyContent: 'center',
-                    borderRadius: 5,
+                    borderRadius: zdp(5),
                     backgroundColor: 'white',
                     flexDirection: 'column'
                 }}
@@ -42,21 +43,21 @@ export default class CardBean extends Component {
                 <View style={{
                     flex: 1,
                     justifyContent: 'flex-start',
-                    marginLeft: 20,
-                    marginTop: 10,
+                    marginLeft: zdp(20),
+                    marginTop: zdp(10),
                     flexDirection: 'row'
                 }}>
                     <Image style={{width: 35, height: 35, alignSelf: 'center'}} resizeMode={'contain'}
                            source={require('../../../resource/image/unionPay.png')}/>
-                    <Text style={{color: '#00f', fontSize: 15, marginLeft: 5, alignSelf: 'center'}}>交通银行</Text>
+                    <Text style={{color: '#00f', fontSize: zsp(15), marginLeft: zdp(5), alignSelf: 'center'}}>交通银行</Text>
                 </View>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Text style={{
-                        fontSize: 16,
+                        fontSize: zsp(16),
                         color: '#00f',
-                        marginLeft: 20
+                        marginLeft: zdp(20)
                     }}>{params.number_credit_card }</Text>
-                    <Text style={{marginRight: 20, fontSize: 14, color: '#696b6b'}}>还款日: {params.card_data_repay}
+                    <Text style={{marginRight: zdp(20), fontSize: zsp(14), color: '#696b6b'}}>还款日: {params.card_data_repay}
                         账单日: {params.card_data_bill}</Text>
                 </View>
 

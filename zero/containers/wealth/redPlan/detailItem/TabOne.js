@@ -3,64 +3,143 @@
  */
 import React, {Component} from 'react';
 import {
-    Platform, StyleSheet,ScrollView, Text, Alert, View, TouchableOpacity, Image, Dimensions, ListView
+    Platform,
+    StyleSheet,
+    ScrollView,
+    Text,
+    Alert,
+    View,
+    TouchableOpacity,
+    Image,
+    Dimensions,
+    ListView,
+    AppState,
+    BackHandler
 } from 'react-native';
 
 import {connect} from 'react-redux';
+
 const {width, height} = Dimensions.get('window');
 import BaseComponent from '../../../global/BaseComponent';
+import {cusColors} from "../../../../value/cusColor/cusColors";
+
+let navigation;
+let lastBackPressed
+import {zdp, zsp} from "../../../../utils/ScreenUtil";
+import {onAppStateChanged} from "../../../../utils/GoBackUtil";
+import ZText from "../../../../views/ZText";
+
 class TabOne extends BaseComponent {
 
     constructor(props) {
         super(props);
-
+        navigation = this.props.navigation;
     }
+
+    componentDidMount() {
+        BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+        AppState.addEventListener('change', this._onAppStateChanged);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+        AppState.removeEventListener('change', this._onAppStateChanged);
+    }
+
+
+    _onAppStateChanged(nextState) {
+        onAppStateChanged(nextState, lastBackPressed, navigation, () => {
+            lastBackPressed = Date.now();
+        });
+    }
+
+
+    onBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
+    };
+
 
     render() {
         var redData = this.props.redData;
         console.log(this.props.redData);
         return (
             <ScrollView style={{flex: 1}}
-                        contentContainerStyle={{justifyContent: 'flex-start', alignItems: 'center'}}>
-                {this.getTextView('产品名称',redData.title)}
-                {this.getTextView('结算方式',`${redData.pay_time}(${redData.pay_type})`)}
-                {this.getTextView('交易额度',redData.limit)}
-                {this.getTextView(`${redData.pay_type}时间`,redData.time)}
-                {this.getTextView(`${redData.other_name}时间`,redData.other_time)}
-                <View style={{flexDirection:'row',width:width,margin:5,padding:5}}>
-                    <Text style={{color: 'black', fontSize: 16, width: 80}}>收款方式</Text>
-                    <Text style={{flex:1,flexWrap:'wrap'}}>{redData.pay_way}</Text>
-                </View>
-                <View style={{flexDirection:'row',width:width,margin:5,padding:5}}>
-                    <Text style={{color: 'black', fontSize: 16, width: 80}}>交易流程</Text>
-                    <Text style={{flex:1,flexWrap:'wrap'}}>{redData.process}</Text>
-                </View>
-                <View style={{flexDirection:'row',width:width,margin:5,padding:5}}>
-                    <Text style={{color: 'black', fontSize: 16, width: 80}}>交易失败</Text>
-                    <Text style={{flex:1,flexWrap:'wrap'}}>{redData.pay_fail}</Text>
-                </View>
-                <View style={{flexDirection:'row',width:width,margin:5,padding:5,marginBottom:60}}>
-                    <Text style={{color: 'black', fontSize: 16, width: 80}}>协议文本</Text>
-                    <Text style={{flex:1,flexWrap:'wrap', color:'red'}}>{`<<分红计划服务协议>>\n<<我的钱包"分红计划"借款协议>>`}</Text>
+                        contentContainerStyle={{
+                            justifyContent: 'flex-start',
+                            alignItems: 'center'
+                        }}>
+
+                <View style={{flexDirection: 'row'}}>
+                    <View style={{flex: 3}}>
+
+
+                        {this.getTextView('产品名称', '快捷收款')}
+                        {this.getTextView('结算方式', `${redData.pay_time}(${redData.pay_type})`)}
+                        {this.getTextView('交易额度', redData.limit)}
+                        {this.getTextView(`${redData.pay_type}时间`, redData.time)}
+                        {this.getTextView(`${redData.other_name}时间`, redData.other_time)}
+                    </View>
+                   {/* <View style={{
+                        flex: 2,
+                        paddingRight: zdp(20),
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <Image style={{
+                            width: zdp(160),
+                            height: zdp(160),
+                            marginTop: zdp(10),
+                            alignSelf: 'center'
+                        }}
+                               source={require('../../../../../resource/image/guildimage.png')}/>
+                    </View>
+*/}
                 </View>
 
-            </ScrollView>)
+
+                {this.viewCommend('收款方式',redData.pay_way)}
+                {this.viewCommend('交易流程',redData.process)}
+                {this.viewCommend('交易失败',redData.pay_fail)}
+
+
+
+            </ScrollView>);
+
     }
 
-    getTextView(title,content) {
+    viewCommend(title ,content){
         return <View style={{
+            flexDirection: 'row',
             width: width,
-            height: 30,
+            margin: zdp(zdp(5)),
+            padding: zdp(5)
+        }}>
+            <ZText parentStyle={{alignSelf: 'flex-start',width:zdp(80)}} content={title} fontSize={zsp(17)} color={'black'}/>
+            <ZText parentStyle={{alignSelf: 'flex-start',flex:1, marginRight:zdp(20)}} content={content} fontSize={zsp(16)} color={'grey'} textAlign={'left'} textStyle={{flexWrap:'wrap'}}/>
+
+        </View>
+    }
+
+
+    getTextView(title, content) {
+        return <View style={{
+            height: zdp(30),
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            margin:5,
-            padding:5
+            margin: zdp(5),
+            padding: zdp(5)
         }}>
 
-            <Text style={{color: 'black', fontSize: 16, width: 80}}>{title}</Text>
-            <Text style={{color: 'red', fontSize: 14, flex: 1}}>{content}</Text>
-        </View>
+            <Text style={{color: 'black', fontSize: zsp(17), width: zdp(80)}}>{title}</Text>
+            <Text style={{
+                color: cusColors.linear_default,
+                fontSize: zsp(16),
+                flex: 1
+            }}>{content}</Text>
+        </View>;
+
 
     }
 }
@@ -68,9 +147,9 @@ class TabOne extends BaseComponent {
 const mapStateToProps = (state) => {
     return {
         nav: state.nav,
-        redData:state.bills.redData
+        redData: state.bills.redData,
+        navigation: state.bills.redPlanNav
     };
-
 };
 
 export default connect(mapStateToProps)(TabOne);

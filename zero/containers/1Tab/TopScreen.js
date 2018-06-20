@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import SizeUtil from '../../utils/SizeUtil';
 import Swiper from 'react-native-swiper';
+import {zdp, zsp} from "../../utils/ScreenUtil";
 //var ViewPager = require('./ViewPager');
 var deviceWidth = Dimensions.get('window').width;
 // var IMGS = [
@@ -75,7 +76,7 @@ export default class TopScreen extends Component {
             swiper = <Swiper dotColor={'white'}
                 // showsButtons
                              activeDotColor={'#FF0A0A'}
-                             height={200} horizontal={true}
+                             height={zdp(200)} horizontal={true}
                              loop={false} bounces={true}
                              onMomentumScrollEnd={this._onMomentumScrollEnd}
                 // removeClippedSubviews={false}
@@ -108,7 +109,7 @@ export default class TopScreen extends Component {
             swiper = <View></View>;
         }
         return (
-            <View style={{height: 200}}>
+            <View style={{height: zdp(200)}}>
                 {swiper}
 
             </View>)
@@ -182,7 +183,7 @@ var styles = StyleSheet.create({
     },
     text: {
         color: '#fff',
-        fontSize: 30,
+        fontSize: zsp(30),
         fontWeight: 'bold'
     },
     image: {

@@ -3,17 +3,46 @@
  */
 import React, {Component} from 'react';
 import {
-    Platform, StyleSheet,WebView, Text, Alert, View, TouchableOpacity, Image, Dimensions,ListView
+    Platform, StyleSheet,WebView, Text, Alert, View, TouchableOpacity, Image, Dimensions,ListView,
+    AppState,BackHandler
 } from 'react-native';
 import {connect} from 'react-redux';
 const {width, height} = Dimensions.get('window');
 import BaseComponent from '../../../global/BaseComponent';
+import {onAppStateChanged} from "../../../../utils/GoBackUtil";
+     let navigation ;
+     let lastBackPressed
 class TabThree extends BaseComponent {
 
     constructor(props) {
         super(props);
+     navigation = this.props.navigation;
 
     }
+
+
+     componentDidMount() {
+         BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+         AppState.addEventListener('change', this._onAppStateChanged);
+     }
+
+     componentWillUnmount() {
+         BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+         AppState.removeEventListener('change', this._onAppStateChanged);
+     }
+
+
+     _onAppStateChanged(nextState) {
+         onAppStateChanged(nextState, lastBackPressed, navigation, () => {
+             lastBackPressed = Date.now();
+         });
+     }
+
+
+     onBackPress = () => {
+         this.props.navigation.goBack();
+         return true;
+     };
 
     render() {
         var url = this.props.redDataUrl;
@@ -40,7 +69,9 @@ class TabThree extends BaseComponent {
 const mapStateToProps = (state) => {
     return {
         nav:state.nav,
-        redDataUrl:state.bills.redData.problem_url
+        redDataUrl:state.bills.redData.problem_url,
+        navigation:state.bills.redPlanNav
+
     }
 
 };

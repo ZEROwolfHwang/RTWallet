@@ -6,10 +6,19 @@ import {
     Platform,
     StyleSheet,
     Text,
-    View, ScrollView,
-    Dimensions, ListView, TouchableOpacity
+    View,
+    ScrollView,
+    Alert,
+    Dimensions,
+    ListView,
+    TouchableOpacity,
+    Image,
+    BackHandler,
+    AppState,
+    ProgressBarAndroid,
+    RefreshControl
 } from 'react-native';
-import Item from './item/Item';
+import PropTypes from 'prop-types';
 
 const {width, height} = Dimensions.get('window');
 import {connect} from 'react-redux';
@@ -20,14 +29,34 @@ import PlanItem from './item/PlanItem';
 import SizeUtil from '../../utils/SizeUtil';
 
 import BaseComponent from '../global/BaseComponent';
+import {actions_wealth} from "./reduce";
+import {actions_card} from "../reduce/CardReduce";
+import {zdp, zsp, zWidth} from "../../utils/ScreenUtil";
+import ZText from "../../views/ZText";
+import ToastUtil from "../../utils/ToastUtil";
+import {cusColors} from "../../value/cusColor/cusColors";
+import NavigationUtil from "../../utils/NavigationUtil";
+import realm from "../../storage/realm";
+import {TYPES} from "../../root/GlobalAction";
+import {onAppStateChanged, onBackPress} from "../../utils/GoBackUtil";
+import {fetchRequest} from "../../utils/FetchUtil";
+import MarqueeText from "../../views/MarqueeText";
+import {updateAppByLogin} from "../../utils/updateAppUtil";
+
+let lastBackPressed;
+let navigation;
 
 class Wealth extends BaseComponent {
 
+
     constructor(props) {
         super(props);
+        lastBackPressed = null;
 
+        navigation = this.props.navigation;
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.state = {
+            isRefreshing: false,
             dataSource: ds.cloneWithRows(this._renderList())
         }
         this.renderRow = this._renderRow.bind(this);
@@ -35,51 +64,39 @@ class Wealth extends BaseComponent {
     }
 
 
-    componentWillMount() {
-
-    }
-
-    /*
-
-        passport_fetch = async (url, method, params = '') => {
-            //获取存储Token
-            var common_url = 'http://sjpay.githubshop.com/app/';
-            // let token = await global.storage.load({
-            //     key: 'token'
-            // })
-            // console.log(token);
-            let header = {
-                // "Content-Type": "application/json;charset=UTF-8",
-                "Content-Type": "application/form-data;charset=UTF-8",
-                // 'platform': 2,
-            };
-            // if (token.length) {
-            //     header['token'] = token
-            // }
-            return new Promise(function (resolve, reject) {
-                fetch(common_url + url, {
-
-                    method: method,
-                    headers: header,
-                    // body: JSON.stringify(params)
-
-
-                }).then((response) => response.json())
-                // .then(checkStatus)
-                    .then((responseData) => {
-                        resolve(responseData);
-                    })
-                    .catch((err) => {
-                        console.log('err:', url, err);
-                        reject(err);
-                    });
-            });
-        }
-    */
-
     componentDidMount() {
-        console.log(this.props.bills);
+        // this.pressEnterRedPlan(28, 1)
+
+        this.timer = setTimeout(() => {
+            //登录检查版本升级
+            updateAppByLogin();
+            clearTimeout(this.timer)
+        }, 3000);
+
+        BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+        AppState.addEventListener('change', this._onAppStateChanged);
     }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+        AppState.removeEventListener('change', this._onAppStateChanged);
+    }
+
+
+    _onAppStateChanged(nextState) {
+        onAppStateChanged(nextState, lastBackPressed, navigation, () => {
+            lastBackPressed = Date.now();
+        });
+    }
+
+
+    onBackPress = () => {
+
+       return onBackPress(lastBackPressed,this.props.navigation,()=>{
+            lastBackPressed = Date.now();
+        })
+    };
+
 
 
     _renderList() {
@@ -87,131 +104,97 @@ class Wealth extends BaseComponent {
         console.log(bills);
         var row = [];
 
-        var topList;
-        var bottomList = [];
-        for (let i in bills.content) {
-            console.log(i);
 
-            if (i == 0) {
-                topList = bills.content[i]
-            } else {
-                bottomList.push(bills.content[i])
-            }
-        }
+        for (let index in bills.content) {
+            let billItem = bills.content[index];
 
-        console.log(topList);
-        console.log(bottomList);
-        // console.log(dataList);
-        let split = topList.feerat.split('.');
-        let channelfeeList = topList.channelfee.split('.');
-        row.push(
-            <TouchableOpacity
-                activeOpacity={0.8}
-                style={{
-                width: width - 30,
-                backgroundColor: 'white',
-                borderRadius: 5,
-                shadowColor: '#909191',
-                shadowOffset: {width: 1, height: 1},
-                shadowOpacity: 0.6,
-                shadowRadius: 2,
-                alignItems: 'center',
-                justifyContent: 'flex-start',
+            let channelfee = billItem.channelfee;
+            let id = billItem.id;
+            let feerat = billItem.feerat;
+            let pay_type = billItem.pay_type;
+            let name = billItem.name;
+            let pay_time = billItem.time;
+            let status = billItem.status;
+            let pay_limit = billItem.pay_limit;
+            let pay_uper = billItem.pay_uper;
 
-                elevation: 2,
-                marginTop: 10,
-                marginBottom: 10
-            }}
-                onPress={()=>{
-                    this.props.navigation.navigate('RedPlan',{id:topList.id})
-                }}>
+            row.push(<TouchableOpacity key={index}
+                                       activeOpacity={0.9}
+                                       style={{
+                                           marginTop: zdp(20),
+                                           backgroundColor: 'white',
+                                           justifyContent: 'flex-start',
+                                           alignItems: 'center',
+                                           flexDirection: 'column',
+                                           width: zWidth-zdp(20),
+                                           elevation: zdp(5),
+                                           shadowOffset: {width: zdp(5), height: 5},
+                                           shadowColor: 'lightgrey',
+                                           shadowOpacity: 0.6,
+                                           shadowRadius: 2,
+                                           paddingLeft: zdp(10),
+                                           paddingRight: zdp(10),
+                                       }}
+                                       onPress={() => {
+                                           this.pressEnterRedPlan(id, status)
+                                       }}>
+
 
                 <View style={{
-                    width: width - 50,
-                    height: 30,
-                    justifyContent: 'space-around',
-                    alignItems: 'center',
+                    width: width - zdp(20),
+                    height: zdp(45),
+                    backgroundColor: status === 1 ? cusColors.linear_default : 'lightgrey',
                     flexDirection: 'row',
-                    paddingLeft: 10,
-                    paddingRight: 10
+                    alignItems: 'center'
                 }}>
 
-                    <View style={{
-                        width: 80,
-                        height: 1,
-                        alignSelf: 'center',
-                        backgroundColor: 'lightgrey'
-                    }}/>
-                    <View style={{
-                        flex: 1,
-                        height: 30,
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
+                    <Image source={{uri: status === 1 ? 'unionpay' : 'unionpay_dark'}}
+                           resizeMode={'contain'}
+                           style={{
+                               width: zdp(40),
+                               height: zdp(20),
+                               marginLeft: zdp(10),
+                               marginRight: zdp(5),
+                               backgroundColor: 'transparent'
+                           }}/>
+                    <ZText content={`${name}`} color={'white'} fontSize={zsp(18)}
+                           parentStyle={{marginRight: zdp(10)}}/>
+                    <View style={{flex: 1}}/>
+                    <ZText content={`${status === 1 ? `费率${feerat}` : '维护中'}`} color={'white'}
+                           fontSize={zsp(16)} parentStyle={{marginRight: zdp(10)}}/>
+                </View>
 
-
-                        <Text style={{
-                            fontSize: 12,
-                            color: 'lightgrey',
-                        }}>为您推荐首选项目</Text>
-                    </View>
-
-                    <View style={{width: 80, height: 1, backgroundColor: 'lightgrey'}}/>
+                <View style={{
+                    flex: 1,
+                    width: width - zdp(20),
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    paddingLeft: zdp(5),
+                    paddingRight: zdp(5)
+                }}>
+                    <Item color={cusColors.main_light} title={'下发费'} content={channelfee}/>
+                    <Item title={'单笔额度'} content={`${pay_limit}~${pay_uper}`}/>
+                    <Item title={'带积分'} content={`是`}/>
+                    <Item title={'到账时间'} content={`立即`}/>
+                    <Item title={'交易时间'} content={pay_time}/>
 
 
                 </View>
+                {/*<View style={{justifyContent:'center', alignItems:'center',padding:zdp(5)}}>
+                    <MarqueeText style={{width: zWidth-zdp(20), backgroundColor: 'white'}}
+                                 text='中国农业银行,汇丰银行,中国银行,中国建设银行,中国邮政储蓄银行,交通银行,招商银行,上海浦东发展银行,兴业银行,华夏银行,广东发展银行,中国民生银行,中信银行,' onBack={(timer) => {
+                        // clearInterval(timer);
+                        console.log(timer);
+                        this.timer = timer;
+                    }}/>
+                </View>*/}
 
-                <Text style={{fontSize: 16, color: 'black'}}>
-                    保卡提额 自动还款
-                </Text>
-
-
-                <Text style={{
-                    fontSize: 24,
-                    color:'red',
-                    margin:5,
-                    fontWeight: 'normal'
-                }}>{split[0] + '.'}
-
-                    <Text style={{fontSize: 18, fontWeight: 'normal'}}>{split[1]}
-
-                        <Text style={{
-                            fontSize: 24, color: 'red',
-                            fontWeight: 'normal'
-                        }}>{`+${channelfeeList[0]}`}</Text>
-                    </Text>
-                </Text>
-                <Text style={{fontSize: 12, color: 'lightgrey'}}>
-                    用户交易费率
-                </Text>
-
-                <Text style={{margin:5,fontSize:14,color:'grey'}}>
-                    {`${topList.pay_time}  丨  ${topList.pay_limit}元起(首投1千元1起)`}
-                </Text>
-
-            </TouchableOpacity>
-        );
-
-
-        row.push(<Item type={1} title={bills.title} content={bills.description}/>);
-
-        for (let i in bottomList) {
-            console.log(bottomList[i].feerat);
-            console.log(bottomList[i].channelfee);
-            row.push(<PlanItem type={1}
-                               channelfee={bottomList[i].channelfee}
-                               left2_number={bottomList[i].feerat}
-                               center_top_big={bottomList[i].pay_type}
-                               center_bottom={bottomList[i].pay_time}
-                               right_top_type={bottomList[i].status === 0 ? 0 : 1}
-                               right_bottom={`${bottomList[i].pay_limit}起交易`}
-                               onPress={()=>{
-                                   this.props.navigation.navigate('RedPlan',{id:bottomList[i].id})
-                               }}
-            />);
+            </TouchableOpacity>);
 
         }
 
+        row.push(<View style={{height: zdp(80)}}/>)
         return row;
     }
 
@@ -224,49 +207,143 @@ class Wealth extends BaseComponent {
     }
 
 
+    _onRefresh = () => {
+        this.setState({isRefreshing: true});
+
+        fetchRequest('enchashment ', 'GET')
+            .then(res => {
+                console.log(res);
+                if (res.respCode === 200) {
+                    this.props.initGetWebData(res.data)
+                } else {
+                    ToastUtil.showShort(res.respMsg)
+                }
+            })
+            .then(err => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+
+        var timer = setTimeout(() => {
+            // let cardList1 = getAllCard(this.globalInfo.phone);
+            this.setState({
+                isRefreshing: false,
+                dataSource: this.state.dataSource.cloneWithRows(this._renderList())
+            });
+            clearTimeout(timer);
+        }, 2000);
+    };
+
+
     render() {
-        console.log(this.props.bills);
+        // console.log(this.props.bills);
         return (
+
             <View style={{backgroundColor: 'white'}}>
-                <TouchableOpacity style={{width,height:30,backgroundColor:'lightyellow',justifyContent:'space-around',alignItems:'center',flexDirection:'row'}}>
-                    <Text style={{fontSize:12, color:'orange'}}>完成投资前准备即可随时随地的进行投资</Text>
+                <TouchableOpacity style={{
+                    width,
+                    height: zdp(30),
+                    backgroundColor: 'lightyellow',
+                    justifyContent: 'space-around',
+                    alignItems: 'center',
+                    flexDirection: 'row'
+                }}>
+                    <Text style={{fontSize: zsp(14), color: 'orange'}}>立即到账、短信验证、资金安全</Text>
 
                 </TouchableOpacity>
                 <ListView
                     style={{
-                        height: Platform.OS === 'ios' ? height - 105 : height - 115,
-                        paddingLeft: 10,
-                        paddingRight: 10
+                        width: zWidth,
+                        height: Platform.OS === 'ios' ? height - zdp(105) : height - zdp(115),
                     }}
                     enableEmptySections={true}
+                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
                     dataSource={this.state.dataSource}
-                    renderRow={this.renderRow}/>
+                    renderRow={this.renderRow}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={this.state.isRefreshing}
+                            onRefresh={this._onRefresh.bind(this)}
+                            tintColor='#00f'
+                            title="Loading..."
+                            titleColor="#00ff00"
+                            colors={['#ff0000', '#1318ff', '#c8e7ff']}
+                            progressBackgroundColor={"white"}
+                        />
+                    }
+
+                />
 
             </View>
         );
     }
 
+    i
+    pressEnterRedPlan = (entranceId, status) => {
+        if (status === 1) {
+
+            this.props.initEntranceId(`${entranceId}`);
+            console.log(this.props.entranceId);
+
+            this.props.navigation.navigate('RedPlan');
+
+        } else {
+            Alert.alert(
+                '正在维护中...',
+                '该通道正在维护中,请等待通道维护完成',
+                [
+                    {text: '确定', onPress: () => console.log('OK Pressed')},
+                ],
+                {cancelable: false}
+            )
+        }
+    }
 }
 
-const styles = StyleSheet.create({
-    linearGradient: {
-        width: SizeUtil.width,
-        height: 60,
-        backgroundColor: '#00f',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    selectedText: {
-        color: 'grey',
-        fontSize: 14,
-    }
-});
 const mapStateToProps = (state) => ({
+    nav: state.nav,
     bills: state.bills.data,
-    nav:state.nav
+    globalInfo: state.globalInfo,
+    entranceId: state.bills.entranceId
 });
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        initEntranceId: actions_wealth.getEntranceId,
+        initGetWebData: actions_wealth.fetchData,
+        // initCardList: actions_card.getCardList,
+    }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Wealth);
 
 
-export default connect(mapStateToProps)(Wealth);
+class Item extends Component {
+
+    constructor(props) {
+        super(props);
+
+    }
+
+    static defaultProps = {
+        color: 'black'
+    };
+
+    render() {
+        var params = this.props;
+        return (
+            <View style={{height: zdp(65), justifyContent: 'space-around', alignItems: 'center'}}>
+                <ZText content={params.title} fontSize={zsp(14)} color={'grey'}
+                       textAlign={'center'}/>
+                <ZText content={params.content} fontSize={zsp(15)} color={params.color}
+                       textAlign={'center'}/>
+            </View>);
+    }
+}
+
+Item.propTypes = {
+    color: PropTypes.string,
+    title: PropTypes.string,
+    content: PropTypes.string
+}

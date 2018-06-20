@@ -73,7 +73,7 @@ const Home = TabNavigator({
                 // height: 44
             },
             labelStyle: {
-                fontSize: 10, // 文字大小
+                fontSize: zsp(10), // 文字大小
             },
         },
     });

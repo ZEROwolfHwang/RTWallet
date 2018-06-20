@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     Alert
 } from 'react-native';
+import {zdp} from "../../utils/ScreenUtil";
 let post = [];
 export default class TodoList extends Component {
 
@@ -49,7 +50,7 @@ export default class TodoList extends Component {
             <View>
 
                 <ListView
-                    style={{marginTop: 40}}
+                    style={{marginTop: zdp(40)}}
                     dataSource={this.state.dataSource}
                     renderRow={this.renderRow}
                 />

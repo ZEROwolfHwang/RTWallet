@@ -6,129 +6,156 @@ import Realm from 'realm';
 import realm from "./realm";
 
 export class CardSchema extends Realm.Object {
-    /*_loginPhone: '';
-    _bankPhone: '';
-    _bankCard: '';
-    _bank: '';
-    _cardType: 0;
-    _cardDefault: 0;
 
-
-    constructor(loginPhone: string,bankPhone: string, bankCard: string, bank: string, cardType: number, cardDefault: number) {
-        super();
-        this._loginPhone = loginPhone;
-        this._bankPhone = bankPhone;
-        this._bankCard = bankCard;
-        this._bank = bank;
-        this._cardType = cardType;
-        this._cardDefault = cardDefault;
-    }*/
 }
 
 CardSchema.schema = {
     name: 'Card',
     properties: {
-        loginPhone: 'string',   //登录手机号
-        bankPhone: 'string',   //预留手机号
-        bankCard: {type: 'string', default: '62284'},//银行卡号
-        bank: {type: 'string', default: '招商银行'},//所属银行
-        cardType: {type: 'int', default: 0},//0  储蓄卡     1 支付卡
-        cardDefault: {type: 'int', default: 0},//0  其他卡     1 默认卡
+        merCode: 'int',                                               //用户ID 用作多账号管理的唯一标识
+        bankPhone: 'string',                                            //银行卡预留手机号(根据卡片,可以不同)
+        bankCard: {type: 'string', default: '6228480038115651200'},    //银行卡号
+        bank: {type: 'string', default: '招商银行'},                   //所属银行
+        bankMark: {type: 'string', default: 'abc'},                  //银行唯一标识  例如:abc 中国农业银行
+        cardType: {type: 'string', default: 'DC'},                  //CC  信用卡     DC 储蓄卡    SCC 准贷记卡  PC 预付费卡
+        isDefault: {type: 'bool', default: false},                 //false  非默认卡     true 默认卡
+
+        creditCvn2: {type: 'string', default: ''},               //信用卡cvn2(cardType==CC时可以有值)
+        creditValidDay: {type: 'string', default: ''},               //信用卡有效期(cardType==CC时可以有值)
+        creditRepayDay: {type: 'string', default: ''},          //信用卡还款日(cardType==CC时可以有值)
+        creditBillingDay: {type: 'string', default: ''}        //信用卡账单日(cardType==CC时可以有值)
+
     }
 };
 
-/**
- * 拿到支付卡
- * @param phone
- * @returns {Realm.Results<T>}
- */
-const getPayCardList = (loginPhone) => {
-    let cardPayList = [];
-    let allCard = realm.objects('Card');
-    console.log(allCard);
-    let filterList = allCard.filtered(`cardType == 0 and loginPhone == '${loginPhone}'`);
-    for (const t of filterList) {
-        let cardBean = new CardSchema(t.loginPhone, t.bankPhone,t.bankCard, t.bank, t.cardType, t.cardDefault);
-        cardPayList.push(cardBean);
-    }
-    return cardPayList;
-};
 
 /**
- * 拿到结算卡   cardType  1  表示结算卡
+ * 拿到商户下所有银行卡
+ * @param merCode
  * @returns {Realm.Results<T>}
  */
-const getDebitCardList = (loginPhone) => {
-    let cardDebitList = [];
+const getAllCard = (merCode) => {
     let allCard = realm.objects('Card');
-    console.log(allCard);
-    let filterList = allCard.filtered(`cardType == 1 and loginPhone == '${loginPhone}'`);
-    for (const t of filterList) {
-        let cardBean = new CardSchema(t.loginPhone,t.bankPhone, t.bankCard, t.bank, t.cardType, t.cardDefault);
-        cardDebitList.push(cardBean);
+    let filterList = allCard.filtered(`merCode == '${merCode}'`);
+    return filterList;
+}
+
+/**
+ * 拿到卡片长度
+ * @param merCode
+ * @returns {number}
+ */
+const getCardLength = (merCode) => {
+    console.log(merCode);
+    let allCard = realm.objects('Card');
+    let allCardList = allCard.filtered(`merCode == '${merCode}'`);
+    for (let key in allCardList) {
+        console.log(allCardList[key]);
     }
-    return cardDebitList;
+    console.log(allCardList.length);
+    return allCardList.length;
+};
+
+
+/**
+ *
+ * @param merCode
+ * @param bankCard
+ * @param bank
+ * @param bankPhone
+ * @param bankMark
+ * @param cardType
+ * @param isDefault
+ * @param creditCvn2
+ * @param creditValidDay
+ * @param creditRepayDay
+ * @param creditBillingDay
+ */
+const addSingleBankCard = (merCode, bankCard, bank, bankPhone, bankMark, cardType, isDefault,
+                           creditCvn2,
+                           creditValidDay,
+                           creditRepayDay,
+                           creditBillingDay) => {
+    realm.write(() => {
+        realm.create('Card', {
+            merCode: merCode,   //预留手机号
+            bankCard: bankCard,//银行卡号
+            bank: bank,
+            bankPhone: bankPhone,   //预留手机号
+            bankMark: bankMark,
+            cardType: cardType,//0  支付卡     1 储蓄卡
+            isDefault: isDefault,
+
+            creditCvn2: creditCvn2? creditCvn2 : '',               //信用卡cvn2(cardType==CC时可以有值)
+            creditValidDay: creditValidDay?creditValidDay : '',               //信用卡有效期(cardType==CC时可以有值)
+            creditRepayDay: creditRepayDay ?creditRepayDay : '',          //信用卡还款日(cardType==CC时可以有值)
+            creditBillingDay: creditBillingDay ? creditBillingDay : ''
+        });
+    });
+
 };
 
 /**
  * 拿到默认结算卡   cardType  1  表示结算卡
  * @returns {Realm.Results<T>}
  */
-const getDebitCardDefault = (loginPhone) => {
-    // let cardDebitList = [];
+const getDebitCardDefault = (merCode) => {
     let allCard = realm.objects('Card');
     console.log(allCard);
-    let filterList = allCard.filtered(`cardType == 1 and cardDefault == 1 and loginPhone == '${loginPhone}'`);
-    // for (const t of filterList) {
-        let cardBean = new CardSchema(filterList[0].loginPhone,filterList[0].bankPhone, filterList[0].bankCard,
-            filterList[0].bank, filterList[0].cardType, filterList[0].cardDefault);
-        // cardDebitList.push(cardBean);
-    // }
-    return cardBean;
+    let filterList = allCard.filtered(`cardType == 'DC' and isDefault == true and merCode == '${merCode}'`);
+    return filterList[0];
+};
+
+
+/**
+ * 拿到默认结算卡   cardType  1  表示结算卡
+ * @returns {Realm.Results<T>}
+ */
+const getCreditCardDefault = (merCode) => {
+    let allCard = realm.objects('Card');
+    console.log(allCard);
+    let filterList = allCard.filtered(`cardType == 'CC' and isDefault == true and merCode == '${merCode}'`);
+    return filterList[0];
 };
 
 /**
- * 拿到默认支付卡   cardType  0  表示支付卡
- * @returns {Realm.Results<T>}
- */
-const getPayCardDefault = (phone) => {
-    // let cardDebitList = [];
-    let allCard = realm.objects('Card');
-    console.log(allCard);
-    let filterList = allCard.filtered(`cardType == 0 and cardDefault == 1 and loginPhone == '${phone}'`);
-    // for (const t of filterList) {
-        let cardBean = new CardSchema(filterList[0].loginPhone, filterList[0].bankPhone,filterList[0].bankCard,
-            filterList[0].bank, filterList[0].cardType, filterList[0].cardDefault);
-        // cardDebitList.push(cardBean);
-    // }
-    return cardBean;
-};
-/**
  * 拿到支付卡
- * @param phone
- * @returns {Realm.Results<T>}
+ * @returns {Results<T>}
+ * @param merCode
  */
-const getCardList = (phone) => {
-    let cardList = [];
+const getCreditCardList = (merCode) => {
     let allCard = realm.objects('Card');
-    console.log(allCard);
-    let filterList = allCard.filtered(`loginPhone == '${phone}'`);
-    for (const t of filterList) {
-        console.log(t);
-    //     let cardBean = new CardSchema(t.loginPhone, t.bankPhone,t.bankCard, t.bank, t.cardType, t.cardDefault);
-    //     cardList.push(cardBean);
-    }
-    // return cardList;
+    let filterList = allCard.filtered(`cardType == 'CC' and merCode == '${merCode}'`);
     return filterList;
 };
 
+/**
+ * 拿到结算卡   cardType  DC  表示结算卡
+ * @returns {Realm.Results<T>}
+ */
+const getDebitCardList = (merCode) => {
+    let allCard = realm.objects('Card');
+    let filterList = allCard.filtered(`cardType == 'DC' and merCode == '${merCode}'`);
+    return filterList;
+};
 
+const deleteAllCard = () => {
+    realm.write(() => {
 
+        let allCard = realm.objects('Card');
+        realm.delete(allCard);
+    })
+}
 
 export {
-    getCardList,
-    getPayCardList,
+    addSingleBankCard,
+
+
+    getCardLength,
+    getCreditCardList,
     getDebitCardList,
     getDebitCardDefault,
-    getPayCardDefault
-}
+    getCreditCardDefault,
+    getAllCard,
+    deleteAllCard
+};

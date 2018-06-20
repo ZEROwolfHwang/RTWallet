@@ -10,6 +10,7 @@ import {
     Image,
     TouchableOpacity,
 } from 'react-native';
+import {zdp, zsp} from "../../utils/ScreenUtil";
 
 export default class Navigator extends Component{
     constructor(props){
@@ -27,8 +28,8 @@ export default class Navigator extends Component{
 
                 activeOpacity={0.5}
                 style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center'}}>
-                <Image style={{width: 30, height: 30}} source={this.props.image}/>
-                <Text style={{fontSize: 13, color: '#4b4d4d', marginTop: 5}}>{this.props.title}</Text>
+                <Image style={{width: zdp(30), height: zdp(30)}} source={this.props.image}/>
+                <Text style={{fontSize: zsp(13), color: '#4b4d4d', marginTop: zdp(5)}}>{this.props.title}</Text>
             </TouchableOpacity>
         );
     }

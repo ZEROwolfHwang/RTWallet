@@ -24,6 +24,7 @@ import {
     Right,
     Body
 } from "native-base";
+import {zdp, zsp} from "../../utils/ScreenUtil";
 
 export default class WXShare extends BaseComponent {
 
@@ -60,21 +61,21 @@ export default class WXShare extends BaseComponent {
                              return <View><Text>这是自定义Loading...</Text></View>
                          }}>
                 </WebView>
-                <View style={{width: width, height: 80, backgroundColor: '#fffbff99',justifyContent:'center',alignItems:'center',bottom:0,position:'absolute'}}>
+                <View style={{width: width, height: zdp(80), backgroundColor: '#fffbff99',justifyContent:'center',alignItems:'center',bottom:0,position:'absolute'}}>
                     <TouchableOpacity activeOpacity={0.5}
                                       onPress={this.wxShare}
                                       style={{
-                        width: width - 40,
-                        height: 45,
+                        width: width - zdp(40),
+                        height: zdp(45),
                         justifyContent: 'center',
                         backgroundColor:'red',
                         alignItems: 'center',
-                        borderRadius: 20,
+                        borderRadius: zdp(20),
                         shadowColor: 'grey',
                         shadowOffset: {width: 0, height: 5},
-                        elevation: 5
+                        elevation: zdp(5)
                     }}>
-                        <Text style={{fontSize: 20, color: 'white'}}>
+                        <Text style={{fontSize: zsp(20), color: 'white'}}>
                             立即邀请好友加入
                         </Text>
                     </TouchableOpacity>
@@ -102,8 +103,8 @@ export default class WXShare extends BaseComponent {
         // const card =
         return (
             <Content style={{
-                width: width - 60,
-                marginTop: 150,
+                width: width - zdp(60),
+                marginTop: zdp(150),
                 alignSelf: 'center',
                 position: 'absolute'
             }} padder>
@@ -155,10 +156,10 @@ const styles = StyleSheet.create({
     },
     text: {
         alignSelf: "center",
-        marginBottom: 7
+        marginBottom: zdp(7)
     },
     mb: {
-        marginBottom: 15
+        marginBottom: zdp(15)
 
 
     }

@@ -17,6 +17,7 @@ import {
 } from "react-native";
 const {width, height} = Dimensions.get('window');
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {zdp, zsp} from "../../../utils/ScreenUtil";
 export default class TextInputRightButton extends Component {
 
     // 构造
@@ -46,13 +47,13 @@ export default class TextInputRightButton extends Component {
         return (
                 <View style={{
                     width: props.width,
-                    height: 50,
+                    height: zdp(50),
                     backgroundColor: 'white',
                     flexDirection: 'row',
                     justifyContent: 'center',
                     alignItems: 'center'
                 }}>
-                    <Text style={{paddingLeft:10,width: 80, fontSize: 16, color: 'grey', backgroundColor: 'transparent'}}>
+                    <Text style={{paddingLeft:zdp(10),width: zdp(80), fontSize: zsp(16), color: 'grey', backgroundColor: 'transparent'}}>
                         {props.title}
                     </Text>
                     <TextInput
@@ -86,9 +87,9 @@ export default class TextInputRightButton extends Component {
                               style={{
                                   position: 'absolute',
                                   right: 0,
-                                  height: 50,
-                                  width: 50,
-                                  paddingRight:10,
+                                  height: zdp(50),
+                                  width: zdp(50),
+                                  paddingRight:zdp(10),
                                   justifyContent: 'center',
                                   alignItems:'flex-end',
                                   backgroundColor:'transparent'
@@ -101,7 +102,7 @@ export default class TextInputRightButton extends Component {
                                   this.props.onBackClear();
                               }}>
 
-                <Ionicons size={25} name={'md-close-circle'}
+                <Ionicons size={zdp(25)} name={'md-close-circle'}
                           style={{color: 'grey', backgroundColor: 'transparent'}}/>
 
             </TouchableOpacity>
@@ -117,8 +118,8 @@ const styles = StyleSheet.create(
             alignItems: 'center'
         },
         closeStyle: {
-            height: 18,
-            width: 18,
+            height: zdp(18),
+            width: zdp(18),
         },
 
     }

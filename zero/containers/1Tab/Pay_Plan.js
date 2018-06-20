@@ -23,6 +23,7 @@ import realm from '../../storage/realm';
 import NavigationUtil from '../../utils/NavigationUtil';
 import BaseComponent from '../global/BaseComponent';
 import MyTabView from '../../views/MyTabView';
+import {zdp, zsp} from "../../utils/ScreenUtil";
 
 
 let width = Dimensions.get('window').width;
@@ -112,7 +113,7 @@ class Pay_Plan extends BaseComponent {
                                        });
                                    }}
                                    style={[styles.addBorderStyle,{marginTop:row.length===0?0:10}]}>
-            <Text style={{color: 'gray', fontSize: 18, alignSelf: 'center'}}>
+            <Text style={{color: 'gray', fontSize: zsp(18), alignSelf: 'center'}}>
                 + 添加信用卡
             </Text>
         </TouchableOpacity>);
@@ -127,7 +128,7 @@ class Pay_Plan extends BaseComponent {
     _renderRow(data) {
         return (
             <View style={{
-                marginTop: 10
+                marginTop: zdp(10)
             }}>{data}</View>
         );
     }
@@ -146,7 +147,7 @@ class Pay_Plan extends BaseComponent {
         // Alert.alert('000100000')
         console.log(this.props.nav);
         return (
-            <View style={{flex: 1, marginTop: 10, justifyContent: 'flex-start', alignItems: 'center'}}>
+            <View style={{flex: 1, marginTop: zdp(10), justifyContent: 'flex-start', alignItems: 'center'}}>
                {/* <MyTabView titleColor={'black'} title={'还款计划'} leftView={true} rightView={true}
                            navigation={this.props.navigation}/>
                 <ListView
@@ -186,16 +187,16 @@ const mapStateToProps = (state) => {
 
 const styles = StyleSheet.create({
     addBorderStyle: {
-        marginTop: 10,
+        marginTop: zdp(10),
         width: width / 1.1,
-        height: 50,
+        height: zdp(50),
         borderColor: 'gray',
         borderWidth: 1,
         borderStyle: 'dashed',
         justifyContent: 'center',
         alignSelf: 'center',
         marginBottom: 20,
-        borderRadius: 5
+        borderRadius: zdp(5)
     }
 });
 

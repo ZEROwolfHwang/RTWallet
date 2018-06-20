@@ -17,6 +17,7 @@ import {
     Right,
     Body
 } from "native-base";
+import {zdp} from "../../utils/ScreenUtil";
 
 class NHCardList extends Component {
     render() {
@@ -107,10 +108,10 @@ const styles = StyleSheet.create({
     },
     text: {
         alignSelf: "center",
-        marginBottom: 7
+        marginBottom: zdp(7)
     },
     mb: {
-        marginBottom: 15
+        marginBottom: zdp(15)
     }
 });
 export default NHCardList;

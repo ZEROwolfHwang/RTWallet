@@ -10,7 +10,8 @@ import MyTabView from '../../views/MyTabView';
 import BaseComponent from '../global/BaseComponent';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-
+import {actions} from "../../root/GlobalAction";
+import {zsp} from "../../utils/ScreenUtil";
 
  class WebView1 extends BaseComponent{
     constructor(props){
@@ -23,7 +24,9 @@ import {bindActionCreators} from 'redux';
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
                   <MyTabView titleColor={'black'} title={'询价'}
                            navigation={this.props.navigation}/>
-                <Text style={{color: 'blue', fontSize: 18}}>
+                <Text style={{color: 'blue', fontSize: zsp(18)}} onPress={()=>{
+                    this.props.navigation.navigate('RecordTabs');
+                }}>
                     New Page !
                 </Text>
             </View>

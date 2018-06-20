@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 const {width, height} = Dimensions.get('window');
 import LinearGradient from 'react-native-linear-gradient';
+import {zdp, zsp} from "../../../utils/ScreenUtil";
 export default class Navigator extends Component {
     constructor(props) {
         super(props);
@@ -21,10 +22,10 @@ export default class Navigator extends Component {
         var params = this.props;
         return (
             <View style={{
-                width: width - 20,
-                height: 25,
-                marginTop: 5,
-                marginBottom: 5,
+                width: width - zdp(20),
+                height: zdp(25),
+                marginTop: zdp(5),
+                marginBottom: zdp(5),
                 alignItems: 'center',
                 flexDirection: 'row'
             }}>
@@ -42,18 +43,18 @@ export default class Navigator extends Component {
                     style={ {
                         flex: 0,
                         // backgroundColor: params.color,
-                        borderRadius: 2,
-                        paddingLeft: 5,
-                        paddingRight: 5,
-                        paddingTop: 3,
-                        paddingBottom: 3
+                        borderRadius: zdp(2),
+                        paddingLeft: zdp(5),
+                        paddingRight: zdp(5),
+                        paddingTop: zdp(3),
+                        paddingBottom: zdp(3)
                     }}>
 
 
-                    <Text style={{fontSize: 13, backgroundColor: 'transparent', color: 'white'}}>{params.title}</Text>
+                    <Text style={{fontSize: zsp(13), backgroundColor: 'transparent', color: 'white'}}>{params.title}</Text>
 
                 </LinearGradient>
-                <Text style={{marginLeft: 5, color: 'grey', fontSize: 13}}>{params.content}</Text>
+                <Text style={{marginLeft: zdp(5), color: 'grey', fontSize: zsp(13)}}>{params.content}</Text>
             </View>
         );
     }

@@ -3,24 +3,36 @@
  */
 import React, {Component} from 'react';
 import {
-    Platform, StyleSheet, Text, Alert, View, TouchableOpacity, Image,WebView, Dimensions,ListView
+    Platform,
+    StyleSheet,
+    Text,
+    Alert,
+    View,
+    TouchableOpacity,
+    Image,
+    WebView,
+    Dimensions,
+    ListView,
+    StatusBar
 } from 'react-native';
 import BaseComponent from "../../../global/BaseComponent";
 const {width, height} = Dimensions.get('window');
 import {connect} from 'react-redux';
+import MyTabView from "../../../../views/MyTabView";
+import {zAppBarHeight, zdp, zsp, zStatusBarHeight} from "../../../../utils/ScreenUtil";
+import Icon from 'react-native-vector-icons/FontAwesome'
+
 class Web extends BaseComponent {
 
     constructor(props) {
         super(props);
 
     }
-
     componentWillMount() {
-        console.log(this.props.navigation.state.params.payUrl);
 
         this.payUrl = this.props.navigation.state.params.payUrl;
+        // this.payUrl = 'http://api.tzpay.cn/api/toPay.do?orderId=2018062014232357994';
     }
-
     render() {
         return (
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
@@ -29,8 +41,13 @@ class Web extends BaseComponent {
                     bounces={false}
                     scalesPageToFit={true}
                     source={{uri: this.payUrl, method: 'GET'}}
-                    style={{width: width, height: height}}>
+                    style={{width: width, height: height, marginTop: zdp(20)}}>
                 </WebView>
+
+                <MyTabView
+                    linear_style={{position:'absolute', top:0}}
+                           globalTitleColor={'white'}
+                           title={'在线支付'} navigation={this.props.navigation}/>
             </View>)
     }
 }

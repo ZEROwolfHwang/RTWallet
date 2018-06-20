@@ -11,194 +11,279 @@ import {
     TouchableOpacity,
     Image,
     Dimensions,
-    ListView,
-    TextInput, Modal, StatusBar
+    ListView, KeyboardAvoidingView, BackHandler, AppState,
+    TextInput, Modal, StatusBar, FlatList
 } from 'react-native';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
 const {width, height} = Dimensions.get('window');
 import MyTabView from '../../../../views/MyTabView';
 import BaseComponent from '../../../../containers/global/BaseComponent';
 import Item from "./Item";
 import ButtonView from "../../../../views/ButtonView";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import realm from "../../../../storage/realm";
 import {fetchRequestHeader} from "../../../../utils/FetchUtilHeader";
-import {getCardList} from "../../../../storage/schema_user";
 import {
-    getDebitCardDefault,
-    getPayCardDefault,
-    getPayCardList
+    getCreditCardDefault,
+    getCreditCardList,
+    getDebitCardDefault, getDebitCardList,
 } from "../../../../storage/schema_card";
 import {fetchRequestToken} from "../../../../utils/FetchUtilToken";
 import ToastUtil from "../../../../utils/ToastUtil";
+import {actions_card} from "../../../reduce/CardReduce";
+import {actions} from "../../../../root/GlobalAction";
+import SwipeDeleteCard from "../../../4Tab/BankManage/SwipeDeleteCard";
+import {checkIsNull} from "../../../../utils/CheckUitls";
+import {cusColors} from "../../../../value/cusColor/cusColors";
+import MyButtonView from "../../../../views/MyButtonView";
+import {zdp, zModalHeight, zModalMarginTop, zsp} from "../../../../utils/ScreenUtil";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import {onAppStateChanged} from "../../../../utils/GoBackUtil";
+import ZText from "../../../../views/ZText";
+import MyTextInput from "../../../../views/MyTextInput";
+import {getBankABC, getBankName, getLimitAmountByMark} from "../../../../utils/BankUtil";
 
 var cardList = null;
+var debitCardList = null;
+var creditCardList = null;
+let globalInfo;
+let navigation;
+let lastBackPressed
+let bankLimitList;
 
 class InvestBuy extends BaseComponent {
 
     constructor(props) {
         super(props);
+        navigation = this.props.navigation;
 
-        cardList = this.props.cardList;
+        // cardList = this.props.cardList;
 
-        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        globalInfo = this.props.globalInfo;
+
+
+        creditCardList = getCreditCardList(globalInfo.merCode);
+        debitCardList = getDebitCardList(globalInfo.merCode);
+
+        let debitCardDefault = getDebitCardDefault(globalInfo.merCode);
+        let creditCardDefault = getCreditCardDefault(globalInfo.merCode);
+
+
+        let redData = this.props.redData;
+
+        bankLimitList = redData.detail;
+
+        console.log(bankLimitList);
+
+        console.log(redData);
+
+        console.log(debitCardDefault);
+        console.log(creditCardDefault);
 
         this.state = {
-            debitCard: [cardList._debitDefault.bank, cardList._debitDefault.bankCard],
-            bankCard: [cardList._payDefault.bank, cardList._payDefault.bankCard],
+            // debitCard: [cardList._debitDefault.bank, cardList._debitDefault.bankCard],
+            // bankCard: [cardList._payDefault.bank, cardList._payDefault.bankCard],
+            debitCard: debitCardDefault,
+            bankCard: creditCardDefault,
             buyMoney: '',
             showModal: false,
-            modalType: 0,
-            dataSource: ds.cloneWithRows(this._renderList(cardList._payList)),
+            modalType: 'CC',
+            dataSource_pay: creditCardList,
+            dataSource_debit: debitCardList,
         };
         this.renderRow = this._renderRow.bind(this);
     }
 
-    componentWillMount() {
-        // let globalInfo = this.props.globalInfo;
 
-        // let payCardDefault = getPayCardDefault(globalInfo.phone);
-        // let debitCardDefault = getDebitCardDefault(globalInfo.phone);
+    componentDidMount() {
+        BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+        AppState.addEventListener('change', this._onAppStateChanged);
+    }
 
-        // this.setState({
-        //     debitCard:cardList._debitDefault,
-        //     bankCard: cardList._bankCard
-        // })
-
-        // storage.load({
-        //     key: 'shiming',
-        //     autoSync: true,
-        //     syncInBackground: true
-        // }).then(ret => {
-        //     console.log(ret);
-        //     this.setState({
-        //         debitCard: ret.register_card
-        //     })
-        // }).catch(err => {
-        //     console.log(err);
-        // })
+    componentWillUnmount() {
+        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+        AppState.removeEventListener('change', this._onAppStateChanged);
     }
 
 
-    // 查询
-    inquireData() {
-        let allData = [];
-        let globalInfo = this.props.globalInfo;
+    _onAppStateChanged(nextState) {
+        onAppStateChanged(nextState, lastBackPressed, navigation, () => {
+            lastBackPressed = Date.now();
+        });
+    }
 
-        // let cardList = getCardList(globalInfo.phone);
-        let cardList = getPayCardList(globalInfo.phone);
-        for (const cardItem of cardList) {
-            // console.log(cardItem);
-            allData.push({
-                phone: cardItem.phone,   //预留手机号
-                bankCard: cardItem.bankCard,//银行卡号
-                cardType: cardItem.cardType,//0  储蓄卡     1 支付卡
-                cardDefault: cardItem.cardDefault,//0  其他卡     1 默认卡
-            });
+
+    onBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
+    };
+
+
+    viewBank(cardType, bankCard, onPress) {
+
+        console.log(bankCard);
+        console.log(bankLimitList);
+        let bankABC = getBankABC(bankCard.bank);
+
+        var bankCard_last = '';
+        console.log(bankCard);
+        if (bankCard) {
+            bankCard_last = bankCard.bankCard.substr(bankCard.bankCard.length - 4);
         }
 
+        return <TouchableOpacity activeOpacity={1}
+                                 style={{
+                                     height: zdp(70),
+                                     flexDirection: 'row',
+                                     justifyContent: 'flex-start',
+                                     backgroundColor: 'white',
+                                     alignItems: 'center'
+                                 }}
 
-        // // 获取Person对象
-        // let Card = realm.objects('Card');
-        //
-        // // 遍历表中所有数据
-        // for (let i in Card) {
-        //     console.log(Card[i]);
-        //     allData.push({
-        //         username: Card[i].username,                 //用户姓名
-        //         IDCard: Card[i].IDCard,  // 身份证号
-        //         phone: Card[i].phone,   //预留手机号
-        //         bankCard: Card[i].bankCard,//银行卡号
-        //         cardType: Card[i].cardType,//0  储蓄卡     1 支付卡
-        //         carDefault: Card[i].carDefault,//0  其他卡     1 默认卡
-        //     });
-        // }
+                                 onPress={onPress}>
 
-        return allData;
+            <Image source={{uri: bankABC}}
+                   resizeMode={'contain'}
+                   style={{
+                       marginLeft: zdp(20),
+                       marginRight: zdp(15),
+                       width: zdp(45),
+                       height: zdp(45),
+                       backgroundColor: 'transparent'
+                   }}/>
+
+            <View style={{flex: 1, justifyContent: 'space-around', alignItems: 'flex-start'}}>
+                <ZText content={bankCard.bank}
+                       fontSize={zsp(18)} color={cusColors.text_main}/>
+                <ZText content={`尾号${bankCard_last}${cardType === 1 ? '储蓄卡' : '信用卡'}`}
+                       fontSize={zsp(17)} color={cusColors.text_secondary}/>
+            </View>
+            {/* {bankCard ?
+                : <ZText parentStyle={{
+                    flex: 1,
+                    justifyContent: 'space-around',
+                    alignItems: 'flex-start'
+                }}
+                         content={`请添加${cardType === 1 ? '结算' : '支付'}银行卡`} fontSize={zsp(18)}
+                         color={cusColors.text_secondary}/>
+            }*/}
+            <Icon size={zdp(30)} name={'angle-right'}
+                  style={{
+                      color: 'grey',
+                      backgroundColor: 'transparent',
+                      marginRight: zdp(20)
+                  }}/>
+
+        </TouchableOpacity>
     }
 
-    _renderList(cardTypeList) {
 
-        // let dataList = this.inquireData();
-        // let globalInfo = this.props.globalInfo;
-        // let dataList = getPayCardList(globalInfo.phone);
-        // for (let i in dataList) {
-        //     console.log(dataList[i]);
-        // }
-        // console.log(dataList);
+    viewMoney() {
+        let bankCard = this.state.bankCard;
+        console.log(bankCard);
+        console.log(bankLimitList);
 
-        // var dataList = ['1', '2', '3'];
-        // this.dataList = dataList;
-        console.log(cardTypeList);
-        var row = [];
-        for (let dataItem of cardTypeList) {
-            let substr = dataItem.bankCard.substr(dataItem.bankCard.length - 4);
-            row.push(<View>
-                    <TouchableOpacity activeOpacity={0.9} style={{
-                        height: 60,
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        paddingRight: 10
-                    }}
-                                      onPress={() => {
-                                          this.setState({
-                                              showModal: false,
-                                              bankCard: [dataItem.bank, dataItem.bankCard]
-                                          })
-                                      }}
-                    >
 
-                        <Text style={{
-                            flex: 1,
-                            fontSize: 17,
-                            marginLeft: 10,
-                            color: 'black'
-                        }}>{`**** **** **** ${substr}`}</Text>
-                        <Text style={{
-                            fontSize: 17,
-                            color: 'black',
-                            marginRight: 10
-                        }}>{dataItem.bank}</Text>
-                    </TouchableOpacity>
+        let bankMark = bankCard.bankMark;
+        let limitAmount = getLimitAmountByMark(bankMark, bankLimitList);
 
+
+        return <View style={{
+            width,
+            marginTop: zdp(20),
+            marginBottom: zdp(5),
+            height: zdp(140),
+            backgroundColor: 'white',
+            paddingLeft: zdp(20),
+            justifyContent: 'space-around',
+            alignItems: 'flex-start'
+        }}>
+            <ZText parentStyle={{paddingTop: zdp(10), paddingBottom: zdp(10)}} content={'收款金额'}
+                   fontSize={zsp(15)} color={cusColors.text_secondary}/>
+
+            <View style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-end'
+            }}>
+                <ZText parentStyle={{marginBottom: zdp(5)}} content={'¥'}
+                       color={cusColors.text_main} fontSize={zsp(45)}/>
+
+                <MyTextInput keyboardType={'numeric'} style={{
+                    fontSize: zsp(32), alignSelf: 'flex-end',
+                    backgroundColor: 'transparent',
+                    textAlign: 'justify',
+                }} placeholder={''} onChangeText={(text) => {
+                    this.setState({
+                        buyMoney: text
+                    })
+                }}/>
+            </View>
+
+            <View style={{
+                width: width - zdp(40),
+                height: zdp(1),
+                backgroundColor: 'grey',
+                opacity: 0.1
+            }}/>
+
+
+            {
+                limitAmount ?
                     <View style={{
-                        height: 0.5,
-                        backgroundColor: 'lightgrey',
-                        marginLeft: 10,
-                        marginRight: 10
-                    }}/>
-                </View>
-            )
-        }
-        return row
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        paddingTop: zdp(10),
+                        paddingBottom: zdp(10)
+                    }}>
+                        <ZText content={`单笔限额${limitAmount.limit}元`} fontSize={zsp(15)}
+                               color={cusColors.text_secondary}
+                               parentStyle={{marginRight: zdp(15)}}/>
+                        <ZText content={`当日限额${limitAmount.upper}元`} fontSize={zsp(15)}
+                               color={cusColors.text_secondary}/>
+                    </View> :
+
+                    <ZText content={`暂无${bankCard.bankName}信用卡的限额额度`} fontSize={zsp(15)}
+                           color={cusColors.text_secondary}/>
+
+            }
+        </View>;
     }
 
-
-    _renderRow(dataRow) {
-        return (<View>
-            {dataRow}
-        </View>)
-    }
 
     render() {
-        // let dataList = this.inquireData();
         return (
-            <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
+            <KeyboardAvoidingView
+                style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
 
 
-                <MyTabView titleColor={'black'} title={'开始投资'}
+                <MyTabView titleColor={'black'} title={'确认支付'}
                            leftView={true}
                            navigation={this.props.navigation}/>
 
                 <View style={{
                     width,
-                    height: 60,
+                    height: zsp(45),
+                    backgroundColor: 'lightyellow',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+                    <Text style={{fontSize: zsp(13), color: 'orange', textAlign: 'center'}}>提示:
+                        支付前请确认信息填写及支付金额无误</Text>
+                </View>
+
+
+                {/*     <View style={{
+                    width,
+                    height: zdp(60),
                     backgroundColor: 'white',
                     marginTop: 1,
-                    paddingLeft: 15,
-                    paddingRight: 15,
+                    paddingLeft: zsp(15),
+                    paddingRight: zsp(15),
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     flexDirection: 'row'
@@ -207,42 +292,95 @@ class InvestBuy extends BaseComponent {
                     <Text style={{fontSize: 16, color: 'black'}}>10.50%</Text>
                 </View>
 
-                <View style={{marginTop: 10}}>
+*/}
 
 
-                    {this.viewBankCard('支付银行卡', 0.5, this.state.bankCard, () => {
+                <View style={{height: zdp(20)}}/>
+
+                {this.viewBank(0, this.state.bankCard, () => {
+                    this.setState({
+                        showModal: true,
+                        modalType: 'CC',
+                        // dataSource: this.state.dataSource.cloneWithRows(this._renderList(cardList._payList))
+                        dataSource: creditCardList
+                    })
+                })}
+
+                {this.viewMoney()}
+
+
+                {this.viewBank(1, this.state.debitCard, () => {
+                    console.log('ajsd');
+                    this.setState({
+                        showModal: true,
+                        modalType: 'DC',
+                        dataSource: debitCardList
+                    })
+                })}
+
+
+                {/*   {this.viewBankCard('支付银行卡', zdp(1), this.state.bankCard, () => {
                         this.setState({
                             showModal: true,
                             modalType: 0,
-                            dataSource: this.state.dataSource.cloneWithRows(this._renderList(cardList._payList))
+                            // dataSource: this.state.dataSource.cloneWithRows(this._renderList(cardList._payList))
+                            dataSource: creditCardList
                         })
-                    })}
+                    })}*/}
 
-                    <Item
-                        keyboardType={'numeric'}
-                        textStyle={{paddingRight: 30}}
-                        title={'买入金额(元)'} onChangeText={(text) => {
-                        this.setState({
-                            buyMoney: text
-                        })
-                    }}/>
+                {/*
+                    <View style={{
+                        width,
+                        height: zdp(60),
+                        backgroundColor: 'white',
+                        justifyContent: 'center',
+                        alignItems: 'center', marginBottom: zdp(10)
+                    }}>
+                        <View style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'row',
+                        }}>
 
-                    {this.viewBankCard('结算银行卡', 0, this.state.debitCard, () => {
+                            <Text style={[{
+                                paddingLeft: zdp(15),
+                                fontSize: zsp(15),
+                                width: zdp(120),
+                                textAlign: 'left'
+                            }]}>{'收款金额(元)'}</Text>
+                            <TextInput underlineColorAndroid={'transparent'}
+                                       keyboardType={'numeric'}
+                                       style={{
+                                           flex: 1,
+                                           backgroundColor: 'transparent',
+                                           fontSize: zsp(15)
+                                       }}
+                                       onChangeText={(text) => {
+                                           this.setState({
+                                               buyMoney: text
+                                           })
+                                       }}
+                            />
+                        </View>
+
+                    </View>*/}
+
+                {/*    {this.viewBankCard('结算银行卡', 0, this.state.debitCard, () => {
                         console.log('ajsd');
                         this.setState({
                             showModal: true,
                             modalType: 1,
-                            dataSource: this.state.dataSource.cloneWithRows(this._renderList(cardList._debitList))
+                            dataSource: debitCardList
                         })
-                    })}
+                    })}*/}
 
-                    <View style={{
+                {/*  <View style={{
                         width,
-                        height: 60,
+                        height: zdp(60),
                         backgroundColor: 'white',
-                        marginTop: 5,
-                        paddingLeft: 20,
-                        paddingRight: 20,
+                        marginTop: zdp(5),
+                        paddingLeft: zdp(20),
+                        paddingRight: zdp(20),
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         flexDirection: 'row'
@@ -250,63 +388,73 @@ class InvestBuy extends BaseComponent {
                         <Text style={{fontSize: 16, color: 'grey'}}>优惠券</Text>
                         <Text style={{fontSize: 16, color: 'grey'}}>无优惠券可用</Text>
                     </View>
+*/}
 
-                </View>
-
-                <View/>
-
-                <Text style={{
+                {/*  <Text style={{
                     color: 'grey',
-                    fontSize: 14,
-                    marginTop: 40,
+                    fontSize: zsp(14),
+                    marginTop: zdp(40),
                     textAlign: 'center'
-                }}>当前余额¥100.00</Text>
+                }}>当前余额¥10000.00</Text>
+*/}
+                <MyButtonView style={{width: width / 1.1, marginTop: zdp(30)}} title={'确认支付'}
+                              onPress={this.pressInvestSure}/>
 
-                <ButtonView title={'确认投资'} style={{marginTop: 10, backgroundColor: 'lightpink'}}
-                            onPress={
-                                this.pressInvestSure
-                            }/>
+                <View style={{flex: 1, height: zdp(150)}}/>
 
                 <View style={{
-                    flex: 1,
-                    width: width - 40,
+                    height: zdp(40),
+                    width: width - zdp(40),
                     justifyContent: 'center',
-                    alignItems: 'flex-end',
+                    alignItems: 'center',
                     flexDirection: 'row',
-                    bottom: 20
+                    marginBottom: zdp(20)
                 }}>
-                    <Image style={{width: 20, height: 20, backgroundColor: 'transparent'}}
-                           source={require('../../../../../AImages/red/redPlan5x2.png')}/>
+
+                    <MaterialIcons size={zdp(20)} name={'security'}
+                                   style={{
+                                       color: cusColors.linear_light,
+                                       backgroundColor: 'transparent'
+                                   }}/>
+
                     <Text style={{
-                        fontSize: 13,
+                        fontSize: zsp(13),
                         color: '#837d82',
-                        marginLeft: 20
+                        marginLeft: zdp(10)
                     }}>用户信息多重机密,防止用户信息泄露</Text>
                 </View>
 
 
                 {this.viewModal()}
 
-            </View>
+            </KeyboardAvoidingView>
 
         );
     }
 
     /**
-     * 确认投资,此处网络请求
+     * 确认支付,此处网络请求
      */
     pressInvestSure = () => {
-        console.log('确认投资');
+        console.log('确认支付');
         var timestamp3 = new Date().getTime();
         // Alert.alert('银行卡号' + this.state.bankCard + '\n买入金额' + this.state.buyMoney)
         let formData = new FormData();
-        formData.append('payCard', this.state.bankCard)
-        formData.append('debitCard', this.state.debitCard)
-        formData.append('total_fee', this.state.buyMoney)
+        formData.append('payCard', this.state.bankCard.bankCard);
+        formData.append('debitCard', this.state.debitCard.bankCard);
+        formData.append('total_fee', this.state.buyMoney);
         formData.append('orderNo', timestamp3);
         let token = this.props.globalInfo.token;
+        let entranceId = this.props.entranceId;
         console.log(token);
-        fetchRequestToken('pay/20', 'POST', token, formData)
+        console.log(entranceId);
+
+
+        if (!checkIsNull('买入金额', this.state.buyMoney)) {
+            return;
+        }
+
+        fetchRequestToken(`pay/${entranceId}`, 'POST', token, formData)
             .then(res => {
                 console.log(res);
                 if (res.respCode === 200) {
@@ -316,7 +464,8 @@ class InvestBuy extends BaseComponent {
                 }
             }).then(err => {
             console.log(err);
-        })
+            ToastUtil.showShort(err)
+        });
 
         // fetchRequestHeader('pay/20', 'POST',formData)
         //     .then(res => {
@@ -335,13 +484,19 @@ class InvestBuy extends BaseComponent {
         // console.log(bankCard);
         // console.log(bankCard[1]);
         var bankCard_last = '';
-        if (bankCard[1]) {
-            bankCard_last = bankCard[1].substr(bankCard[1].length - 4);
+        var showItemText = '';
+        console.log(bankCard);
+        if (bankCard) {
+            bankCard_last = bankCard.bankCard.substr(bankCard.bankCard.length - 4);
+            showItemText = `${bankCard.bank}(${bankCard_last})`
+        } else {
+            showItemText = '请添加支付银行卡'
         }
+
         return <View style={{
-            marginTop: 5,
+            marginTop: zdp(5),
             width,
-            height: 60,
+            height: zdp(60),
             backgroundColor: 'white',
             justifyContent: 'center',
             alignItems: 'center'
@@ -351,31 +506,38 @@ class InvestBuy extends BaseComponent {
                 alignItems: 'center',
                 flexDirection: 'row'
             }}>
-                <Text style={{padding: 20, paddingRight: 30}}>{title}</Text>
+                <Text style={{paddingLeft: zdp(15), width: zdp(120), fontSize: zsp(15)}}
+                      numberOfLines={1}>{title}</Text>
 
-                <TouchableOpacity activeOpacity={0} style={{
+                <TouchableOpacity activeOpacity={0.9} style={{
                     flex: 1,
-                    height: 60,
+                    height: zdp(59),
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     flexDirection: 'row',
-                    paddingRight: 20
                 }}
                                   onPress={onPress}
                 >
 
                     <Text style={{
                         flex: 1,
-                        fontSize: 16,
+                        fontSize: zsp(16),
                         color: 'black'
-                    }}>{`${bankCard[0]}(${bankCard_last})`}</Text>
-                    <Icon size={30} name={'angle-right'}
-                          style={{color: 'grey', backgroundColor: 'transparent'}}/>
+                    }} numberOfLines={1}>{showItemText}</Text>
+                    <Icon size={zdp(30)} name={'angle-right'}
+                          style={{
+                              color: 'grey',
+                              backgroundColor: 'transparent',
+                              marginRight: zdp(20)
+                          }}/>
                 </TouchableOpacity>
             </View>
             <View
-                style={{height: lineHeight, backgroundColor: 'lightgrey', width: width - 30}}/>
+                style={{height: lineHeight, backgroundColor: 'lightgrey', width: width - zdp(30)}}/>
+
         </View>;
+
+
     }
 
 
@@ -385,7 +547,7 @@ class InvestBuy extends BaseComponent {
     viewModal() {
         // let cardList = this.props.cardList;
         return <Modal
-            animationType='fade'
+            animationType='none'
             transparent={true}
             visible={this.state.showModal}
             onRequestClose={() => this.setState({showModal: false})}
@@ -393,109 +555,160 @@ class InvestBuy extends BaseComponent {
             <View
                 style={{
                     width: width,
-                    height: height,
+                    height: zModalHeight,
                     justifyContent: 'center',
+                    marginTop: zModalMarginTop,
                     alignItems: 'center',
                     backgroundColor: 'rgba(0,0,0,0.5)'
                 }}>
                 <View style={{
-                    width: width / 1.1,
+                    width: width / 1.2,
                     backgroundColor: 'white'
                 }}>
 
                     <View style={{
-                        height: 60,
-                        backgroundColor: 'lightsteelblue',
+                        height: zdp(60),
+                        backgroundColor: cusColors.linear_default,
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         alignItems: 'flex-start',
-                        elevation: 5,
+                        elevation: zdp(5),
                         shadowColor: 'grey',
-                        shadowOffset: {width: 0, height: 10}
+                        shadowOffset: {width: 0, height: zdp(5)}
                     }}>
 
                         <View style={{
-                            height: 60,
-                            justifyContent: 'flex-end',
+                            height: zdp(60),
+                            justifyContent: 'center',
                             alignItems: 'flex-start'
                         }}>
 
                             <Text style={{
-                                margin: 10,
-                                fontSize: 18,
+                                marginLeft: zdp(10),
+                                fontSize: zsp(18),
                                 color: 'white',
                                 textAlign: 'left'
-                            }}>{`${this.state.modalType === 0 ? '选择银行卡支付' : '选择结算银行卡'}`}</Text>
+                            }}>{`${this.state.modalType === 'CC' ? '选择银行卡支付' : '选择结算银行卡'}`}</Text>
                         </View>
 
                         <TouchableOpacity activeOpacity={0.5}
                                           style={{
-                                              width: 60,
-                                              height: 60,
+                                              width: zdp(60),
+                                              height: zdp(60),
                                               justifyContent: 'center',
                                               alignItems: 'center',
-                                              backgroundColor: 'steelblue'
+                                              backgroundColor: '#2e81ff'
                                           }}
                                           onPress={() => {
                                               this.setState({showModal: false})
                                           }}>
-                            <Icon size={30} name={'close'}
-                                  style={{color: 'black', backgroundColor: 'transparent'}}/>
+                            <Ionicons size={zdp(30)} name={'md-close'}
+                                      style={{color: 'lightgrey', backgroundColor: 'transparent'}}/>
                         </TouchableOpacity>
                     </View>
 
-                    <ListView
+                    <FlatList
                         style={{
-                            height: this.state.modalType === 0 ? cardList._payList.length > 5 ? 300 : 60 * cardList._payList.length :
-                                cardList._debitList.length > 5 ? 300 : 60 * cardList._debitList.length
+                            height: this.state.modalType === 'CC' ? creditCardList.length > 5 ? zdp(250) : zdp(60) * creditCardList.length :
+                                debitCardList.length > 5 ? zdp(300) : zdp(60) * debitCardList.length
                         }}
+                        ItemSeparatorComponent={this._separator}
+                        renderItem={this.renderRow}
+                        keyExtractor={(item, index) => index.toString()}
                         showsVerticalScrollIndicator={false}
-                        enableEmptySections={true}
-                        dataSource={this.state.dataSource}
-                        renderRow={this.renderRow}
-                        keyboardShouldPersistTaps={'handled'}
+                        data={this.state.modalType === 'CC' ? this.state.dataSource_pay : this.state.dataSource_debit}
                     />
 
                     <TouchableOpacity activeOpacity={0.8} style={{
-                        height: 60,
+                        height: zdp(60),
                         justifyContent: 'center',
                         alignItems: 'flex-start'
                     }}
                                       onPress={this.pressAddCard}>
-                        <Text style={{fontSize: 16, color: 'lightsteelblue', marginLeft: 10}}>
-                            {this.state.modalType === 0 ? '+ 添加新信用卡支付' : '+ 添加新结算卡'}</Text>
+                        <Text style={{
+                            fontSize: zsp(16),
+                            color: cusColors.linear_default,
+                            marginLeft: zdp(10)
+                        }}>
+                            {this.state.modalType === 'CC' ? '+ 添加新信用卡支付' : '+ 添加新结算卡'}</Text>
                     </TouchableOpacity>
                     <View style={{
                         height: 0.5,
                         backgroundColor: 'lightgrey',
-                        marginLeft: 10,
-                        marginRight: 10
+                        marginLeft: zdp(10),
+                        marginRight: zdp(10)
                     }}/>
-                    <TouchableOpacity activeOpacity={0.8} style={{
-                        height: 60,
+                    {/*  <TouchableOpacity activeOpacity={0.8} style={{
+                        height: zdp(60),
                         justifyContent: 'center',
                         alignItems: 'flex-start'
                     }}
                                       onPress={this.pressCardManage}>
-                        <Text style={{fontSize: 16, color: 'lightsteelblue', marginLeft: 10}}>-
+                        <Text style={{fontSize: zsp(16), color: 'lightsteelblue', marginLeft: zdp(10)}}>-
                             卡号管理</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>*/}
 
                 </View>
 
             </View>
-        </Modal>
+        </Modal>;
+
     }
 
+    _renderRow = (dataRow) => {
+        console.log(dataRow);
+        let dataItem = dataRow.item;
+        // var substr = '';
+        // for (let dataItem of cardTypeList) {
+        // }
+        var substr = dataItem.bankCard.substr(dataItem.bankCard.length - 4);
+        return (<TouchableOpacity activeOpacity={0.9} style={{
+                height: zdp(60),
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexDirection: 'row',
+                paddingRight: zdp(10)
+            }}
+                                  onPress={() => {
+                                      this.setState({
+                                          showModal: false,
+                                      })
+                                      if (this.state.modalType === 'CC') {
+                                          this.setState({
+                                              bankCard: dataItem
+                                          });
+                                      } else {
+                                          this.setState({
+                                              debitCard: dataItem
+                                          });
+                                      }
+                                  }}
+            >
 
-    /**
-     * 卡片管理
-     */
-    pressCardManage = () => {
-        this.setState({
-            showModal: false
-        })
+                <Text style={{
+                    flex: 1,
+                    fontSize: zsp(18),
+                    marginLeft: zdp(10),
+                    color: 'black'
+                }}>{`${dataItem.bank}${this.state.modalType === 'DC' ? '储蓄卡' : '信用卡'}(${substr})`}</Text>
+            </TouchableOpacity>
+        );
+    }
+
+    // _renderItem = (item) => {
+    //     <ItemRecord/>
+    // }
+    //
+    _separator = () => {
+        return <View style={{
+            width: width - zdp(10),
+            height: 0.5,
+            backgroundColor: 'lightgrey',
+            alignSelf: 'flex-end'
+        }}/>
+
     };
+
     /**
      * 添加卡片
      */
@@ -503,19 +716,39 @@ class InvestBuy extends BaseComponent {
         this.setState({
             showModal: false
         });
-        this.props.navigation.navigate('addPayCard', {cardType: this.state.modalType})
+        this.props.navigation.navigate('addPayCard', {
+            cardType: this.state.modalType
+            , onGoBack: () => this.refreshCardList()
+        })
+    };
+
+    /**
+     * 添加卡片回退刷新界面
+     */
+    refreshCardList = () => {
+        console.log('asdas');
+        let payCardDefault = getCreditCardDefault(globalInfo.merCode);
+        let debitCardDefault = getDebitCardDefault(globalInfo.merCode);
+        this.setState({
+            debitCard: debitCardDefault,
+            bankCard: payCardDefault,
+        })
     }
-
-
 }
 
 const mapStateToProps = (state) => {
     return {
         nav: state.nav,
         globalInfo: state.globalInfo.data,
-        cardList: state.globalInfo.cardList
+        cardList: state.cardList.data,
+        entranceId: state.bills.entranceId,
+        redData: state.bills.redData,
     }
 
 };
-
-export default connect(mapStateToProps)(InvestBuy);
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        initCardList: actions_card.getCardList,
+    }, dispatch);
+};
+export default connect(mapStateToProps, mapDispatchToProps)(InvestBuy);

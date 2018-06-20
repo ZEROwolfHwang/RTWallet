@@ -21,6 +21,7 @@ import CutUpLine from './CutUpLine';
 import TouchableUtil from '../../views/TouchableUtil';
 import Icon from 'react-native-vector-icons/Ionicons'
 import BaseComponent from '../global/BaseComponent'
+import {zdp, zsp} from "../../utils/ScreenUtil";
 
 class Pay_New_Plan extends BaseComponent {
 
@@ -63,7 +64,7 @@ class Pay_New_Plan extends BaseComponent {
                     </Text>
 
                     <Text style={styles.contentStyle}>
-                        智动还款
+                        完美还款
                     </Text>
 
                 </View>
@@ -77,11 +78,11 @@ class Pay_New_Plan extends BaseComponent {
                     </Text>
 
                     <TextInput style={{
-                        width: 70,
-                        height: 50,
+                        width: zdp(70),
+                        height: zdp(50),
                         alignSelf: 'center',
                         color: '#696b6b',
-                        fontSize: 16
+                        fontSize: zsp(16)
                     }}
                                maxLength={6}
                                keyboardType={'numeric'}
@@ -110,17 +111,17 @@ class Pay_New_Plan extends BaseComponent {
                                                       pay_split: this.state.pay_split - 1
                                                   }) : null;
                                           }}>
-                            <Icon style={{paddingLeft: 10, paddingRight: 10, color: '#c36920'}} size={30}
+                            <Icon style={{paddingLeft: zdp(10), paddingRight: zdp(10), color: '#c36920'}} size={zdp(30)}
                                   name='ios-remove'/>
                         </TouchableOpacity>
                         <View style={{
-                            width: 25, marginLeft: 5,
-                            marginRight: 5, justifyContent: 'center', alignItems: 'center'
+                            width: zdp(25), marginLeft: zdp(5),
+                            marginRight: zdp(5), justifyContent: 'center', alignItems: 'center'
                         }}>
 
                             <Text style={{
                                 color: '#696b6b',
-                                fontSize: 16
+                                fontSize: zsp(16)
                             }}>
                                 {this.state.pay_split}
                             </Text>
@@ -134,7 +135,7 @@ class Pay_New_Plan extends BaseComponent {
                                                   }) : null;
                                           }}>
 
-                            <Icon style={{paddingLeft: 10, paddingRight: 10, color: '#c36920'}} size={30} name='ios-add'
+                            <Icon style={{paddingLeft: zdp(10), paddingRight: zdp(10), color: '#c36920'}} size={zdp(30)} name='ios-add'
                             />
                         </TouchableOpacity>
 
@@ -162,9 +163,9 @@ Pay_New_Plan.PropTypes = {
 };
 const styles = StyleSheet.create({
     viewStyle: {
-        padding: 10,
+        padding: zdp(10),
         width: width,
-        height: 50,
+        height: zdp(50),
         justifyContent: 'space-between',
         flexDirection: 'row',
         alignItems: 'center'
@@ -172,12 +173,12 @@ const styles = StyleSheet.create({
     titleStyle: {
         color: '#1a1915',
         justifyContent: 'center',
-        fontSize: 16
+        fontSize: zsp(16)
     },
     contentStyle: {
         color: '#696b6b',
         justifyContent: 'center',
-        fontSize: 16
+        fontSize: zsp(16)
     }
 });
 

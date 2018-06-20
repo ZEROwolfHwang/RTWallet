@@ -9,6 +9,7 @@ import SliderEntry from './SliderEntry';
 import styles, { colors } from './index.style';
 import { ENTRIES1, ENTRIES2 } from './entries';
 import { scrollInterpolators, animatedStyles } from './animations';
+import {zdp} from "../../../utils/ScreenUtil";
 
 const IS_ANDROID = Platform.OS === 'android';
 const SLIDER_1_FIRST_ITEM = 0;//定义开始加载时滑块的位置
@@ -39,7 +40,7 @@ export default class example extends Component {
 
                     // data={ENTRIES1}
         return (
-            <View style={{flex: 1,paddingVertical: 30}}>
+            <View style={{flex: 1,paddingVertical: zdp(30)}}>
                 <Carousel
                     data={ENTRIES1}
                     ref={c => this._slider1Ref = c}
@@ -51,7 +52,7 @@ export default class example extends Component {
                     inactiveSlideScale={0.94}
                     inactiveSlideOpacity={0.7}
                     // inactiveSlideShift={20}
-                    containerCustomStyle={{  marginTop: 15}}
+                    containerCustomStyle={{  marginTop: zdp(15)}}
                     contentContainerCustomStyle={{ paddingVertical: 10}}
                     loop={false}
                     loopClonesPerSide={2}
@@ -66,7 +67,7 @@ export default class example extends Component {
                     containerStyle={{ paddingVertical: 8}}
                     // dotColor={'rgba(255, 255, 255, 0.92)'}
                     dotColor={'white'}
-                    dotStyle={{ width: 8, height: 8, borderRadius: 4, marginHorizontal: 8}}
+                    dotStyle={{ width: 8, height: 8, borderRadius: zdp(4), marginHorizontal: 8}}
                     inactiveDotColor={colors.black}
                     inactiveDotOpacity={0.4}
                     inactiveDotScale={0.6}

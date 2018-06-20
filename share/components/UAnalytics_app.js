@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import ColorUtil from './ColorUtil'
 import AnalyticsUtil from './../native/AnalyticsUtil'
+import {zdp} from "../../zero/utils/ScreenUtil";
 export default class UserCenter extends Component {
 
     componentWillMount(){
@@ -159,9 +160,9 @@ const styles = StyleSheet.create({
         backgroundColor: ColorUtil.background,
     },
     u_c_item: {
-        margin: 10,
+        margin: zdp(10),
         backgroundColor: ColorUtil.default_primary_color,
-        elevation: 10,
+        elevation: zdp(10),
         borderColor: ColorUtil.default_primary_color,
 
         borderWidth: 1.5,
@@ -174,7 +175,7 @@ const styles = StyleSheet.create({
 
     },
     u_c_text: {
-        fontSize:24,
+        fontSize: zsp(24),
 
         color: ColorUtil.text_primary_color
     },

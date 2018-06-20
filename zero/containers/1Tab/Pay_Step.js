@@ -14,6 +14,7 @@ import s from '../../styles/AllStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import BaseComponent from '../global/BaseComponent';
 import MyTabView from '../../views/MyTabView';
+import {zsp} from "../../utils/ScreenUtil";
 export default class Pay_Step extends BaseComponent {
 
 
@@ -60,7 +61,7 @@ _reload1() {
                 <Button title="777" onPress={()=>{
                     _this._reload();
                 }} />
-                <Text style={{color: 'blue', fontSize: 18}}>
+                <Text style={{color: 'blue', fontSize: zsp(18)}}>
                     操作步骤 !{this.state.name+''}
                 </Text>
             </View>

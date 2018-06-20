@@ -12,6 +12,7 @@ import {
     Dimensions,
     TouchableOpacity
 } from 'react-native';
+import {zdp, zsp} from "../../utils/ScreenUtil";
 
 
 export default class Item extends Component {
@@ -26,14 +27,14 @@ export default class Item extends Component {
                                   style={{
                                       alignItems: 'center',
                                       justifyContent: 'center',
-                                      marginBottom: 20,
-                                      height: 40,
+                                      marginBottom: zdp(20),
+                                      height: zdp(40),
                                       width: Dimensions.get('window').width / 1.2,
-                                      borderRadius: 10,
+                                      borderRadius: zdp(10),
                                       backgroundColor: '#7c72ff'
                                   }}
         >
-            <Text style={{color: 'white', fontSize: 20, alignItems: 'center'}}>
+            <Text style={{color: 'white', fontSize: zsp(20), alignItems: 'center'}}>
                 {this.props.title}
             </Text>
         </TouchableOpacity>);

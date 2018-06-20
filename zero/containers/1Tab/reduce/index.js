@@ -49,7 +49,7 @@ export const Pay_Navigator = (data) => {
     };
 };
 
-// import * as types from '../../actions/Types';
+// import * as types from '../../actions_wealth/Types';
 
 export const autopay = (state = {}, action) => {
     switch (action.type) {

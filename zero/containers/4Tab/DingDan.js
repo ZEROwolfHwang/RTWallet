@@ -22,6 +22,7 @@ import MyTextInput from '../../view/MyTextInput'
 import moment from 'moment';
 
 import DateTimePicker from 'react-native-modal-datetime-picker';
+import {zdp, zsp} from "../../utils/ScreenUtil";
 export default class DingDan extends Component {
     static navigationOptions = ({navigation, screenProps}) => ({
             headerTitle: '账单',
@@ -59,11 +60,11 @@ export default class DingDan extends Component {
                 <MyTabView titleColor={'black'} color1={'white'} color2={'white'} title={'订单明细'} leftView={true} rightView={true}
                            navigation={this.props.navigation}/>
 
-                <View style={{width: SizeUtil.width, height: 100, backgroundColor: 'white', flexDirection: 'column'}}>
+                <View style={{width: SizeUtil.width, height: zdp(100), backgroundColor: 'white', flexDirection: 'column'}}>
 
                     <View style={{
-                        height: 50, marginTop: 10, flexDirection: 'row',
-                        justifyContent: 'space-around', alignItems: 'center', paddingLeft: 10, paddingRight: 10
+                        height: zdp(50), marginTop: zdp(10), flexDirection: 'row',
+                        justifyContent: 'space-around', alignItems: 'center', paddingLeft: zdp(10), paddingRight: zdp(10)
                     }}>
 
                         <TouchableOpacity
@@ -79,7 +80,7 @@ export default class DingDan extends Component {
                                 {this.state.time_start}
                             </Text>
                         </TouchableOpacity>
-                        <Icon style={{paddingLeft: 10, paddingRight: 10, color: '#c36920'}} size={30}
+                        <Icon style={{paddingLeft: zdp(10), paddingRight: zdp(10), color: '#c36920'}} size={zdp(30)}
                               name='ios-remove'/>
                         <TouchableOpacity activeOpacity={0.5}
                                           onPress={() => {
@@ -95,12 +96,12 @@ export default class DingDan extends Component {
                     </View>
 
                     <View style={{
-                        height: 45,
+                        height: zdp(45),
                         justifyContent: 'space-around',
                         flexDirection: 'row',
                         alignItems: 'center',
-                        paddingLeft: 10,
-                        paddingRight: 10
+                        paddingLeft: zdp(10),
+                        paddingRight: zdp(10)
                     }}>
                         <Text style={styles.searchTextStyle}
                               onPress={() => {
@@ -111,14 +112,14 @@ export default class DingDan extends Component {
                         <Text style={styles.dateTextStyle}>本月</Text>
                         <View style={{
                             flex: 1,
-                            paddingLeft: 10,
+                            paddingLeft: zdp(10),
                             justifyContent: 'flex-end',
                             flexDirection: 'row',
-                            paddingRight: 10,
-                            borderRadius: 5
+                            paddingRight: zdp(10),
+                            borderRadius: zdp(5)
                         }}
                         >
-                            <Text style={{flexWrap: 'wrap', fontSize: 16, paddingLeft: 10, color: 'red'}}>总额:
+                            <Text style={{flexWrap: 'wrap', fontSize: zsp(16), paddingLeft: zdp(10), color: 'red'}}>总额:
                                 ¥{this.state.zonge}</Text>
                         </View>
                     </View>
@@ -181,34 +182,34 @@ export default class DingDan extends Component {
 
 const styles = StyleSheet.create({
     textInputStyle: {
-        width: SizeUtil.width - 20,
-        height: 40,
+        width: SizeUtil.width - zdp(20),
+        height: zdp(40),
         backgroundColor: 'white',
-        marginTop: 10,
+        marginTop: zdp(10),
     },
     timeText_contain: {
         flex: 1,
-        height: 40,
+        height: zdp(40),
         justifyContent: 'center',
         alignItems: 'flex-start',
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: zdp(5),
         borderColor: 'blue',
     },
     timeText_style: {
-        fontSize: 16,
-        paddingLeft: 10,
-        paddingRight: 10,
+        fontSize: zsp(16),
+        paddingLeft: zdp(10),
+        paddingRight: zdp(10),
     },
     dateTextStyle: {
         color: '#00bfff',
         textDecorationLine: 'underline',
-        fontSize: 16,
-        paddingLeft: 10,
-        paddingRight: 10,
-        borderRadius: 5
+        fontSize: zsp(16),
+        paddingLeft: zdp(10),
+        paddingRight: zdp(10),
+        borderRadius: zdp(5)
     },
     searchTextStyle: {
-        backgroundColor: '#00bfff', color: 'white', fontSize: 16, paddingLeft: 10, paddingRight: 10, borderRadius: 5
+        backgroundColor: '#00bfff', color: 'white', fontSize: zsp(16), paddingLeft: zdp(10), paddingRight: zdp(10), borderRadius: zdp(5)
     }
 });

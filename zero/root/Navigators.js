@@ -1,14 +1,10 @@
 import {NavigationActions} from 'react-navigation';
 import {SNavigator} from '../root/SNavigator';
 
+
 export const nav = (state, action) => {
     switch (action.type) {
 
-        case 'ShiMing':
-            return SNavigator.router.getStateForAction(
-                NavigationActions.navigate({routeName: 'ShiMing'}),
-                {...state, data: action.data}
-            );
         // case 'RedPlan':
         //     return SNavigator.router.getStateForAction(
         //         NavigationActions.navigate({routeName: 'RedPlan'}),
@@ -18,6 +14,12 @@ export const nav = (state, action) => {
         case 'WebView1':
             return SNavigator.router.getStateForAction(
                 NavigationActions.navigate({routeName: 'WebView1'}),
+                {...state, webViewURL: action.webViewURL}
+            );
+
+        case 'DetailRecord':
+            return SNavigator.router.getStateForAction(
+                NavigationActions.navigate({routeName: 'DetailRecord'}),
                 {...state, webViewURL: action.webViewURL}
             );
 
@@ -78,6 +80,19 @@ export const nav = (state, action) => {
 
 
         default:
-            return SNavigator.router.getStateForAction(action, state) || state;
+            const navigateOnce = (getStateForAction) => (action, state) => {
+                const {type, routeName} = action;
+                return (
+                    state &&
+                    type === NavigationActions.NAVIGATE &&
+                    routeName === state.routes[state.routes.length - 1].routeName
+                ) ? null : getStateForAction(action, state);
+            };
+
+//这是第二步
+//             SNavigator.router.getStateForAction = navigateOnce(SNavigator.router.getStateForAction);
+
+            // return SNavigator.router.getStateForAction(action, state) || state;
+            return navigateOnce(SNavigator.router.getStateForAction)(action, state) || state;
     }
 }

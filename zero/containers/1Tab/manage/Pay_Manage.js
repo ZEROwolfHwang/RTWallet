@@ -25,6 +25,7 @@ import Item from '../ItemManager'
 import realm from '../../../storage/realm';
 import {PullList} from 'react-native-pull';
 import BaseComponent from '../../global/BaseComponent';
+import {zdp, zsp} from "../../../utils/ScreenUtil";
 var list = [];
 class Pay_Manage extends BaseComponent {
 
@@ -90,7 +91,7 @@ class Pay_Manage extends BaseComponent {
             }
         }, 1);
         return (
-            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: 60}}>
+            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: zdp(60)}}>
                 <ActivityIndicator size="small" color='red'/>
                 <Text ref={(c) => {
                     this.txtPulling = c;
@@ -144,7 +145,7 @@ class Pay_Manage extends BaseComponent {
                                         });
                                    }}
                                    style={[styles.addBorderStyle,{marginTop:list.length===0?0:10}]}>
-            <Text style={{color: 'gray', fontSize: 18, alignSelf: 'center'}}>
+            <Text style={{color: 'gray', fontSize: zsp(18), alignSelf: 'center'}}>
                 + 添加信用卡
             </Text>
 
@@ -200,7 +201,7 @@ class Pay_Manage extends BaseComponent {
 
     renderHeader() {
         return (
-            <View style={{height: 50, backgroundColor: '#eeeeee', alignItems: 'center', justifyContent: 'center'}}>
+            <View style={{height: zdp(50), backgroundColor: '#eeeeee', alignItems: 'center', justifyContent: 'center'}}>
                 <Text style={{fontWeight: 'bold'}}>This is header</Text>
             </View>
         );
@@ -212,7 +213,7 @@ class Pay_Manage extends BaseComponent {
                 {item}
             </View>
         );
-            {/*<View style={{height: 50, backgroundColor: '#fafafa', alignItems: 'center', justifyContent: 'center'}}>*/};
+            {/*<View style={{height: zdp(50), backgroundColor: '#fafafa', alignItems: 'center', justifyContent: 'center'}}>*/};
                 {/*<Text>{item.title}</Text>*/}
             {/*</View>*/}
     }
@@ -222,9 +223,9 @@ class Pay_Manage extends BaseComponent {
             return null;
         }
         return (
-            <View style={{height: 100}}>
+            <View style={{height: zdp(100)}}>
 
-                <ActivityIndicator size={40} color= {'red'} style={{marginTop:30,alignSelf:'center'}}/>
+                <ActivityIndicator size={zdp(40)} color= {'red'} style={{marginTop:zdp(30),alignSelf:'center'}}/>
             </View>
         );
     }
@@ -260,7 +261,7 @@ class Pay_Manage extends BaseComponent {
                                         });
                                     }}
                                     style={[styles.addBorderStyle,{marginTop:list.length===0?0:10}]}>
-            <Text style={{color: 'gray', fontSize: 18, alignSelf: 'center'}}>
+            <Text style={{color: 'gray', fontSize: zsp(18), alignSelf: 'center'}}>
                 + 添加信用卡
             </Text>
 
@@ -330,16 +331,16 @@ const mapStateToProps = (state) => {
 
 const styles = StyleSheet.create({
     addBorderStyle: {
-        marginTop: 10,
+        marginTop: zdp(10),
         width: width / 1.1,
-        height: 50,
+        height: zdp(50),
         borderColor: 'gray',
         borderWidth: 1,
         borderStyle: 'dashed',
         justifyContent: 'center',
         alignSelf: 'center',
-        marginBottom: 20,
-        borderRadius: 5
+        marginBottom: zdp(20),
+        borderRadius: zdp(5)
     },
     container: {
         flex: 1,

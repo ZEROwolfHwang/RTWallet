@@ -3,6 +3,7 @@
  */
 import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { colors } from './index.style';
+import {zdp} from "../../../utils/ScreenUtil";
 
 const IS_IOS = Platform.OS === 'ios';
 const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
@@ -72,7 +73,7 @@ export default StyleSheet.create({
     textContainer: {
         justifyContent: 'center',
         paddingTop: 10 - entryBorderRadius,
-        paddingBottom: 5,
+        paddingBottom: zdp(5),
         paddingHorizontal: 6,
         backgroundColor: 'white',
         borderBottomLeftRadius: entryBorderRadius,
@@ -84,7 +85,7 @@ export default StyleSheet.create({
     },
     // title: {
     //     color: colors.black,
-    //     fontSize: 13,
+    //     fontSize: zsp(13),
     //     fontWeight: 'bold',
     //     letterSpacing: 0.5
     // },
@@ -94,7 +95,7 @@ export default StyleSheet.create({
     /*subtitle: {
         marginTop: 6,
         color: colors.gray,
-        fontSize: 12,
+        fontSize: zsp(12),
         fontStyle: 'italic'
     },*/
     /*subtitleEven: {

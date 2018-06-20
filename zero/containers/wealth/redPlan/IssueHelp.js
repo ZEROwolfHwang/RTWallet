@@ -20,6 +20,7 @@ import {
 } from "native-base";
 import MyTabView from '../../../views/MyTabView';
 import BaseComponent from '../../global/BaseComponent';
+import {zdp} from "../../../utils/ScreenUtil";
 
 // import styles from "./styles";
 
@@ -51,7 +52,7 @@ class IssueHelp extends BaseComponent {
                            navigation={this.props.navigation}/>
 
                 <Content >
-                    {/*<Separator style={{height: 20,backgroundColor:'transparent'}} bordered/>*/}
+                    {/*<Separator style={{height: zdp(20),backgroundColor:'transparent'}} bordered/>*/}
 
                     {this.getList('关于贝米', "pizza", "red", () => {
                         this.props.navigation.navigate('AboutApp')
@@ -113,15 +114,15 @@ class IssueHelp extends BaseComponent {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "#FFF",
-        // padding:10,
-        // paddingTop:20
+        // padding: zdp(10),
+        // paddingTop:zdp(20)
     },
     text: {
         alignSelf: "center",
-        marginBottom: 7
+        marginBottom: zdp(7)
     },
     mb: {
-        marginBottom: 15
+        marginBottom: zdp(15)
     }
 })
 export default IssueHelp;

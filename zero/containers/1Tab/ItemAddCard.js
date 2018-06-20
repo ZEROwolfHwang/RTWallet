@@ -8,6 +8,7 @@ import {
     Text,
     View, TextInput, Dimensions
 } from 'react-native';
+import {zdp, zsp} from "../../utils/ScreenUtil";
 
 // import size from '../stylesUtil'
 // const width = size.width;
@@ -21,17 +22,17 @@ export default class ItemAddCard extends Component {
     render() {
         return (
 
-            <View style={{height: 45, backgroundColor: 'white'}}>
+            <View style={{height: zdp(45), backgroundColor: 'white'}}>
                 <View style={{
                     height: 44,
                     width: width,
                     flexDirection: 'row',
-                    marginLeft:30,
+                    marginLeft:zdp(30),
 
                 }}>
-                    <Text style={{flex: 1, color: '#3e3d34', fontSize: 16, alignSelf:'center'}}>{this.props.title}</Text>
+                    <Text style={{flex: 1, color: '#3e3d34', fontSize: zsp(16), alignSelf:'center'}}>{this.props.title}</Text>
                     <TextInput
-                        style={{backgroundColor:null,flex: 2, fontSize: 16, color: '#3e3d34'}}
+                        style={{backgroundColor:null,flex: 2, fontSize: zsp(16), color: '#3e3d34'}}
                         placeholder={this.props.placeholder}
                         onChangeText={this.props.onChangeText}
                         value={this.props.value}

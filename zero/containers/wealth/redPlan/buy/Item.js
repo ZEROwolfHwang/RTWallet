@@ -5,6 +5,8 @@ import React, {Component} from 'react';
 import {
     Platform, StyleSheet, Text, Alert, View, TouchableOpacity, Image, Dimensions,ListView,TextInput
 } from 'react-native';
+import {zdp, zsp} from "../../../../utils/ScreenUtil";
+import PropTypes from 'prop-types';
 const {width, height} = Dimensions.get('window');
 export default class Item extends Component {
 
@@ -13,31 +15,50 @@ export default class Item extends Component {
 
     }
 
+    static defaultProps={
+        isRequired:'',
+        maxLength: 21
+    }
+
     render() {
         var params  = this.props;
         return <View style={[{
             width,
-            height: 60,
+            height: zdp(50),
             backgroundColor: 'white',
             justifyContent: 'center',
             alignItems: 'center'
-        },params.style]}>
+        }, params.style]}>
             <View style={{
                 justifyContent: 'center',
                 alignItems: 'center',
-                flexDirection: 'row'
-            }}>
-                <Text style={[{padding:20,width:120, textAlign:'left'},params.textStyle]}>{params.title}</Text>
+                flexDirection: 'row',paddingLeft:zdp(15)}}>
+
+                <Text style={{fontSize:zsp(16),color:'red',width:zdp(10)}}>{params.isRequired}</Text>
+                <Text style={[{
+                    width: zdp(130),
+                    fontSize: zsp(16),
+                    textAlign: 'left'
+                }, params.textStyle]}>{params.title}</Text>
                 <TextInput underlineColorAndroid={'transparent'}
+                           maxLength={params.maxLength}
                            keyboardType={params.keyboardType}
-                           style={{flex:1,backgroundColor:'transparent'}}
-                           onChangeText={(text)=>{
-                               console.log(text);
+                           placeholder={params.placeholder}
+                           placeholderTextColor={'lightgrey'}
+                           style={{flex: 1, fontSize: zsp(16), backgroundColor: 'transparent'}}
+                           onChangeText={(text) => {
                                params.onChangeText(text);
                            }}
                            value={params.value}/>
             </View>
-            <View style={{height: params.hasLine?0.5:0, backgroundColor: 'lightgrey', width: width - 30}}/>
-        </View>
+            <View style={{
+                height: params.hasLine ? 0.5 : 0,
+                backgroundColor: 'lightgrey',
+                width: width - zdp(30)
+            }}/>
+        </View>;
     }
+}
+Item.propTypes = {
+    maxLength:PropTypes.number
 }

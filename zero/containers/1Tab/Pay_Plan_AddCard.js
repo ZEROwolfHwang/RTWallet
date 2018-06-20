@@ -26,6 +26,7 @@ import TouchableUtil from '../../views/TouchableUtil';
 let width = Dimensions.get('window').width;
 import BaseComponent from '../global/BaseComponent';
 import MyTabView from '../../views/MyTabView';
+import {zdp, zsp} from "../../utils/ScreenUtil";
 
 
 class Pay_Plan_AddCard extends  BaseComponent {
@@ -91,8 +92,8 @@ class Pay_Plan_AddCard extends  BaseComponent {
                       onChangeText={(text) => this.setState({number_id: text})}
                       value={this.state.number_id}/>
 
-                <View style={{width: width, height: 40, marginLeft: 30, justifyContent: 'flex-end'}}>
-                    <Text style={{fontSize: 14, color: '#696b6b', marginBottom: 10}}>
+                <View style={{width: width, height: zdp(40), marginLeft: zdp(30), justifyContent: 'flex-end'}}>
+                    <Text style={{fontSize: zsp(14), color: '#696b6b', marginBottom: 10}}>
                         请填写信用卡信息
                     </Text>
                 </View>
@@ -164,7 +165,7 @@ class Pay_Plan_AddCard extends  BaseComponent {
                 {/*this.query();*/}
                 {/*}}/>*/}
                 {/*<ScrollView>*/}
-                {/*<Text style={{fontSize: 16, color: 'blue'}}>{this.state.data}</Text>*/}
+                {/*<Text style={{fontSize: zsp(16), color: 'blue'}}>{this.state.data}</Text>*/}
                 {/*</ScrollView>*/}
             </View>
         );
@@ -222,12 +223,12 @@ Pay_Plan_AddCard.propTypes = {
 const styles = StyleSheet.create({
     addBorderStyle: {
         width: width / 1.1,
-        height: 50,
+        height: zdp(50),
         borderColor: 'gray',
         borderWidth: 1,
         borderStyle: 'dashed',
         justifyContent: 'center',
-        borderRadius: 5
+        borderRadius: zdp(5)
     }
 });
 

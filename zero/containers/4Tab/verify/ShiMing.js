@@ -8,7 +8,7 @@ import {
     Text, Alert,
     View,
     TextInput,
-    TouchableOpacity, ListView, Dimensions
+    TouchableOpacity, ListView, Dimensions, Modal
 } from 'react-native';
 import PropTypes from 'prop-types'
 import SizeUtil from '../../../utils/SizeUtil';
@@ -29,7 +29,7 @@ import BaseComponent from '../../global/BaseComponent';
 let bankMap = require('../../../../resource/bankMap.json');
 // import storage from '../../../storage/Storage';
 import NavigationUtil from '../../../utils/NavigationUtil';
-import {validateIdCard, isMobileNumber} from './Verification';
+import {validateIdCard, isMobileNumber} from '../../../utils/Verification';
 // export default storage;
 import DropDown from '../../../views/DropDown';
 
@@ -39,6 +39,11 @@ import dataList from '../../../../resource/bankList';
 import {actions} from "../../../root/GlobalAction";
 import {getCardList} from "../../../storage/schema_card";
 import {fetchRequestToken} from "../../../utils/FetchUtilToken";
+import MyTextInputWithIcon from "../../../views/MyTextInputWithIcon";
+import MyLinearGradient from "../../../views/MyLinearGradient";
+import MyButtonView from "../../../views/MyButtonView";
+import MyIconTextWithTextInput from "../../../views/MyIconTextWithTextInput";
+import {zdp, zsp} from "../../../utils/ScreenUtil";
 
 class ShiMing extends BaseComponent {
 
@@ -48,7 +53,7 @@ class ShiMing extends BaseComponent {
 
         var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 != r2});
         this.state = {
-            showListView: false,
+            showModal: false,
             dataSource: ds.cloneWithRows(this._renderList(dataList)),
             register_name: '',
             register_ID: '',
@@ -71,14 +76,14 @@ class ShiMing extends BaseComponent {
         for (let i in dataList) {
 
             row.push(<TouchableOpacity
-                style={{height: 30, width: width, justifyContent: 'center', alignItems: 'center'}}
+                style={{height: zdp(30), width: width, justifyContent: 'center', alignItems: 'center'}}
                 onPress={() => {
                     this.setState({
                         showListView: false,
                         register_bank: `${dataList[i]}储蓄卡`
                     });
                 }}>
-                <Text style={{backgroundColor: 'transparent', fontSize: 16, color: 'grey'}}>
+                <Text style={{backgroundColor: 'transparent', fontSize: zsp(16), color: 'grey'}}>
                     {dataList[i]}
                 </Text>
             </TouchableOpacity>);
@@ -97,258 +102,364 @@ class ShiMing extends BaseComponent {
 
     render() {
         return (
-            <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
+            <MyLinearGradient
+                view={<View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
 
-                <MyTabView titleColor={'black'} title={'实名认证'} rightView={true}
-                           leftView={false}
-                           rightIcon={'md-settings'} navigation={this.props.navigation}/>
 
-                {/*<View style={{height:40, marginTop: 30,marginLeft:20,marginRight:20,justifyContent:'space-between', alignItems:'center',flexDirection:'row'}}>*/}
-                {/*<Text style={{fontSize:16, color:'black', flex:1,justifyContent:'space-around'}}>*/}
-                {/*姓  名 :*/}
-                {/*</Text>*/}
-                <MyTextInput
-                    placeholder={'姓名'}
-                    marginTop={10}
-                    onChangeText={(text) => {
-                        this.setState({
-                            register_name: text
-                        });
-                    }}
-                    value={this.state.register_name}
-                />
-                <MyTextInput
-                    placeholder={'省份证号'}
-                    onChangeText={(text) => {
-                        this.setState({
-                            register_ID: text
-                        });
-                    }}
-                    value={this.state.register_ID}
-                />
-                <MyTextInput
-                    keyboardType="numeric"
-                    placeholder={'银行卡号'}
-                    value={this.state.register_card}
-                    onChangeText={(text) => {
-                        this.setState({
-                            register_card: text
-                        });
-                        if (text.length >= 16) {
-                            //https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo=6221506020009066385&cardBinCheck=true
-                            var bankUrl = `https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo=${text}&cardBinCheck=true`;
-                            fetch(bankUrl)
-                                .then((response) => response.json())
-                                .then((responseData) => {
-                                    console.log(responseData);  //网络请求成功返回的数据
-                                    if (responseData.cardType === 'DC') {
+                    <MyTabView style={{backgroundColor: 'transparent'}}
+                               barStyle={'light-content'}
+                               globalTitleColor={'white'} title={'实名认证'}
+                               leftView={true}
+                               rightIcon={'md-settings'} navigation={this.props.navigation}/>
 
-                                        this.setState({
-                                            // register_bank:responseData.bank,
-                                            register_bank: `${bankMap[responseData.bank]}储蓄卡`,
-                                        });
-                                    } else if (responseData.cardType === 'CC') {
 
-                                        this.setState({
-                                            // register_bank:responseData.bank,
-                                            register_bank: `${bankMap[responseData.bank]}信用卡`,
-                                        });
-                                    } else if (responseData.cardType === 'SCC') {
+                    <MyIconTextWithTextInput title={'姓名:'}
+                                         onChangeText={(text) => {
+                                             this.setState({
+                                                 register_name: text
+                                             });
+                                         }}
+                                         value={this.state.register_name}
+                                         iconName={'phone'}/>
 
-                                        this.setState({
-                                            // register_bank:responseData.bank,
-                                            register_bank: `${bankMap[responseData.bank]}准贷记卡`,
-                                        });
-                                    } else if (responseData.cardType === 'PC') {
-                                        this.setState({
-                                            // register_bank:responseData.bank,
-                                            register_bank: `${bankMap[responseData.bank]}预付费卡`,
-                                        });
-                                    }
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                });
-                        } else {
+
+                    <MyIconTextWithTextInput
+                        title={'省份证号:'}
+                        onChangeText={(text) => {
                             this.setState({
-                                // register_bank:responseData.bank,
-                                register_bank: '',
-                            })
-                        }
-                    }}
-                />
-                <View style={{
-                    marginTop: 10,
-                    borderRadius: 20,
-                    width: SizeUtil.width - 20,
-                    height: 44,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: 'white',
-                    marginBottom: 1,
-                    flexDirection: 'row'
-                }}>
-
-
-                    <TextInput
-                        editable={false}
-                        ref={(bank) => this.bank = bank}
-                        underlineColorAndroid={'transparent'}
-                        style={{
-                            width: SizeUtil.width - 20,
-                            backgroundColor: 'transparent',
-                            textAlign: 'center',
-                            color: 'black'
+                                register_ID: text
+                            });
                         }}
-                        placeholder={'所属银行'}
-                        value={this.state.register_bank}
+                        value={this.state.register_ID}
+                        iconName={'phone'}/>
+
+
+                    <MyIconTextWithTextInput title={'银行卡号:'}
+                                         keyboardType="numeric"
+                                         onChangeText={(text) => {
+                                             this.setState({
+                                                 register_card: text
+                                             });
+                                             if (text.length >= 16) {
+                                                 //https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo=6221506020009066385&cardBinCheck=true
+                                                 var bankUrl = `https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo=${text}&cardBinCheck=true`;
+                                                 fetch(bankUrl)
+                                                     .then((response) => response.json())
+                                                     .then((responseData) => {
+                                                         console.log(responseData);  //网络请求成功返回的数据
+                                                         if (responseData.cardType === 'DC') {
+
+                                                             this.setState({
+                                                                 // register_bank:responseData.bank,
+                                                                 register_bank: `${bankMap[responseData.bank]}储蓄卡`,
+                                                             });
+                                                         } else if (responseData.cardType === 'CC') {
+
+                                                             this.setState({
+                                                                 // register_bank:responseData.bank,
+                                                                 register_bank: `${bankMap[responseData.bank]}信用卡`,
+                                                             });
+                                                         } else if (responseData.cardType === 'SCC') {
+
+                                                             this.setState({
+                                                                 // register_bank:responseData.bank,
+                                                                 register_bank: `${bankMap[responseData.bank]}准贷记卡`,
+                                                             });
+                                                         } else if (responseData.cardType === 'PC') {
+                                                             this.setState({
+                                                                 // register_bank:responseData.bank,
+                                                                 register_bank: `${bankMap[responseData.bank]}预付费卡`,
+                                                             });
+                                                         }
+                                                     })
+                                                     .catch((err) => {
+                                                         console.log(err);
+                                                     });
+                                             } else {
+                                                 this.msetState({
+                                                     // register_bank:responseData.bank,
+                                                     register_bank: '',
+                                                 })
+                                             }
+                                         }}
+                                         iconName={'phone'}/>
+
+
+                    <View style={{
+                        marginTop: zdp(10),
+                        width: SizeUtil.width - zdp(20),
+                        height: zdp(50),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: 'transparent',
+                        marginBottom: 1,
+                        flexDirection: 'row',
+                        borderColor: 'white',
+                        borderWidth: 1,
+                        borderRadius: zdp(5),
+                    }}>
+
+
+                        <MyIconTextWithTextInput
+                            style={{marginTop:0}}
+                            editable={false}
+                            onChangeText={(text) => {
+                                this.setState({
+                                    register_ID: text
+                                });
+                            }}
+                            title={'所属银行:'}
+                            ref={(bank) => this.bank = bank}
+                            value={this.state.register_bank}
+                            iconName={'phone'}/>
+
+                        <Icon size={zdp(20)} name={'sort-desc'}
+                              style={{
+                                  width: zdp(40),
+                                  height: zdp(40),
+                                  padding: zdp(10),
+                                  color: 'white',
+                                  backgroundColor: 'transparent',
+                                  position: 'absolute',
+                                  right: zdp(10)
+
+                              }}
+                              onPress={() => {
+                                  console.log('dianjii');
+                                  this.setState({
+                                      showListView: true
+                                  })
+                              }}/>
+                    </View>
+
+
+                    <MyIconTextWithTextInput title={'预留手机号:'}
+                                         maxLength={11}
+                                         keyboardType="numeric"
+                                         onChangeText={(text) => {
+                                             this.setState({
+                                                 register_phone: text
+                                             });
+                                         }}
+                                         value={this.state.register_phone}
+                                         iconName={'phone'}/>
+
+
+                    <MyButtonView title={'实名认证'}
+                                  style={{marginTop:zdp(20)}}
+                                  onPress={() => {
+
+
+                                      // this._saveRealm();
+
+                                      if (!(this.state.register_name.length >= 2)) {
+                                          ToastUtil.showShort('请输入正确的姓名')
+                                          return
+                                      }
+                                      if (!validateIdCard(this.state.register_ID)) {
+                                          ToastUtil.showShort('省份证信息错误');
+                                          return
+
+                                      }
+
+                                      if (!(this.state.register_card.length >= 16 && this.state.register_card.length <= 19)) {
+                                          ToastUtil.showShort('银行卡位数错误')
+                                          return
+
+                                      }
+
+                                      if (this._judgeConditions(this.state.register_bank, '请输入所属银行')) {
+                                          ToastUtil.showShort('请手动选择银行卡所属银行');
+                                          return
+                                      }
+
+                                      if (this.state.register_bank.indexOf('储蓄卡') === -1) {
+                                          ToastUtil.showShort('请使用储蓄卡作为结算卡');
+                                          return
+                                      }
+
+
+                                      if (!isMobileNumber(this.state.register_phone)) {
+                                          ToastUtil.showShort('请输入正确手机号');
+                                          return;
+                                      }
+
+                                      /* if (this._judgeConditions(this.state.register_ID, '请输入身份证号')) {
+                                           return
+                                       }
+                                       if (this._judgeConditions(this.state.register_card, '请输入银行卡号')) {
+                                           return
+                                       }
+                                       if (this._judgeConditions(this.state.register_bank, '请输入所属银行')) {
+                                           return
+                                       }
+                                       if (this._judgeConditions(this.state.register_phone, '请输入预留手机号')) {
+                                           return
+                                       }*/
+
+                                      // this.props.navigation.goBack();
+                                      // Alert.alert('name:' + this.state.register_name + 'ID:' + this.state.register_ID + 'card:' + this.state.register_card + 'phone:' + this.state.register_phone);
+
+                                      let formData = new FormData();
+                                      formData.append('register_name', this.state.register_name);
+                                      formData.append('register_ID', this.state.register_ID);
+                                      formData.append('register_card', this.state.register_card);
+                                      formData.append('register_bank', this.state.register_bank);
+                                      formData.append('register_phone', this.state.register_phone);
+                                      let token = this.props.globalInfo.token;
+                                      console.log(token);
+                                      fetchRequestToken('Complete', 'POST', token, formData).then(res => {
+                                          console.log(res);
+                                          if (res.respCode === 200) {
+
+                                              this._saveRealm();
+
+                                              console.log(this.props.globalInfo);
+                                              let globalInfo = this.props.globalInfo;
+
+                                              this.props.initGlobalInfo({
+                                                  token: globalInfo.token,
+                                                  phone: globalInfo.phone,
+                                                  IDCard: this.state.register_ID,
+                                                  username: this.state.register_name
+                                              });
+
+                                              console.log(this.props.globalInfo);
+
+                                              // this.props.navigation.navigate('InvestBuy')
+                                              this.props.navigation.goBack();
+
+                                          }
+                                          // NavigationUtil.reset(this.props.navigation, 'InvestBuy');
+
+                                      }).then(err => {
+                                          console.log(err);
+                                      });
+
+                                  }}
                     />
 
-                    <Icon size={20} name={'sort-desc'}
-                          style={{
-                              width: 40, height: 40, padding: 10,
-                              color: 'grey', backgroundColor: 'transparent', position: 'absolute',
-                              right: 10
+                    {this.viewModal()}
 
-                          }}
-                          onPress={() => {
-                              console.log('dianjii');
-                              this.setState({
-                                  showListView: true
-                              })
-                          }}/>
+                    {this.state.showListView ? <BackgroundPage
+                        backgroundColor={this.state.showListView ? '#e4e1e177' : 'transparent'}
+                        onPress={() => {
+                            this.setState({
+                                showListView: false
+                            });
+                        }}/> : null}
+
+
+                    {this.state.showListView ? <ListView
+                        style={{
+                            backgroundColor: 'white',
+                            alignSelf: 'center',
+                            width: width - zdp(20),
+                            top: zdp(270),
+                            height: zdp(300),
+                            position: 'absolute',
+                            borderRadius: zdp(3)
+                        }}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
+                        enableEmptySections={true}
+                        dataSource={this.state.dataSource}
+                        renderRow={this.renderRow}
+                        keyboardDismissMode='on-drag'
+                        keyboardShouldPersistTaps='always'/> : null}
+
+                </View>}/>
+        );
+    }
+    /**
+     * Modal弹出对话框的的视图
+     */
+    viewModal() {
+        // let cardList = this.props.cardList;
+        return <Modal
+            animationType='fade'
+            transparent={true}
+            visible={this.state.showModal}
+            onRequestClose={() => this.setState({showModal: false})}
+        >
+            <View
+                style={{
+                    width: width,
+                    height: height,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0,0,0,0.5)'
+                }}>
+                <View style={{
+                    width: width / 1.3,
+                    backgroundColor: 'white',
+                    borderRadius: zdp(5),
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}>
+
+                    <View style={{
+                        width: width / 1.3,
+                        height: zdp(140),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: zdp(20),
+                    }}>
+                        <Text style={{
+                            fontSize: zsp(17),
+                            textAlign: 'center',
+                            color: 'black'
+                        }}>您尚未完善用户信息认证,请完成认证后再进行收款</Text>
+                    </View>
+
+                    <View style={{
+                        width: width / 1.3,
+                        height: zdp(50),
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <TouchableOpacity style={{
+                            flex: 1,
+                            height: zdp(50),
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderColor: 'lightgrey',
+                            borderTopWidth: 1,
+                            borderRightWidth: 1
+                        }}
+                                          onPress={() => {
+                                              this.setState({
+                                                  showModal: false
+                                              })
+                                          }}>
+                            <Text style={{fontSize: zsp(18), color: 'grey'}}>关闭</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={{
+                            flex: 1,
+                            height: zdp(50),
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderColor: 'lightgrey',
+                            borderTopWidth: 1
+                        }}
+                                          onPress={() => {
+                                              this.setState({
+                                                  showModal: false,
+                                              })
+                                              this.props.navigation.navigate('ShiMing')
+                                          }}>
+                            <Text style={{fontSize: zsp(18), color: 'grey'}}>完善信息</Text>
+                        </TouchableOpacity>
+
+
+                    </View>
+
                 </View>
 
-                <MyTextInput
-                    keyboardType="numeric"
-                    placeholder={'银行卡预留手机号'}
-                    onChangeText={(text) => {
-                        this.setState({
-                            register_phone: text
-                        });
-                    }}
-                />
-
-                <ButtonView title={'实名认证'}
-                            onPress={() => {
-
-
-                                // this._saveRealm();
-
-                                if (!(this.state.register_name.length >= 2)) {
-                                    ToastUtil.showShort('请输入正确的姓名')
-                                    return
-                                }
-                                if (!validateIdCard(this.state.register_ID)) {
-                                    ToastUtil.showShort('省份证信息错误');
-                                    return
-
-                                }
-
-                                if (!(this.state.register_card.length >= 16 && this.state.register_card.length <= 19)) {
-                                    ToastUtil.showShort('银行卡位数错误')
-                                    return
-
-                                }
-
-                                if (this._judgeConditions(this.state.register_bank, '请输入所属银行')) {
-                                    ToastUtil.showShort('请手动选择银行卡所属银行');
-                                    return
-                                }
-
-                                if (this.state.register_bank.indexOf('储蓄卡') === -1) {
-                                    ToastUtil.showShort('请使用储蓄卡作为结算卡');
-                                    return
-                                }
-
-
-                                if (!isMobileNumber(this.state.register_phone)) {
-                                    ToastUtil.showShort('请输入正确手机号');
-                                    return;
-                                }
-
-                                /* if (this._judgeConditions(this.state.register_ID, '请输入身份证号')) {
-                                     return
-                                 }
-                                 if (this._judgeConditions(this.state.register_card, '请输入银行卡号')) {
-                                     return
-                                 }
-                                 if (this._judgeConditions(this.state.register_bank, '请输入所属银行')) {
-                                     return
-                                 }
-                                 if (this._judgeConditions(this.state.register_phone, '请输入预留手机号')) {
-                                     return
-                                 }*/
-
-                                // this.props.navigation.goBack();
-                                // Alert.alert('name:' + this.state.register_name + 'ID:' + this.state.register_ID + 'card:' + this.state.register_card + 'phone:' + this.state.register_phone);
-
-                                let formData = new FormData();
-                                formData.append('register_name', this.state.register_name);
-                                formData.append('register_ID', this.state.register_ID);
-                                formData.append('register_card', this.state.register_card);
-                                formData.append('register_bank', this.state.register_bank);
-                                formData.append('register_phone', this.state.register_phone);
-                                let token = this.props.globalInfo.token;
-                                fetchRequestToken('Register', 'POST', token, formData).then(res => {
-                                    console.log(res);
-                                    if (res.respCode === 200) {
-
-                                        this._saveRealm();
-
-                                        console.log(this.props.globalInfo);
-                                        let globalInfo = this.props.globalInfo;
-
-                                        this.props.initGlobalInfo({
-                                            token: globalInfo.token,
-                                            phone: globalInfo.phone,
-                                            IDCard: this.state.register_ID,
-                                            username: this.state.register_name
-                                        });
-
-                                        console.log(this.props.globalInfo);
-
-                                        this.props.navigation.navigate('InvestBuy')
-
-                                    }
-                                    // NavigationUtil.reset(this.props.navigation, 'InvestBuy');
-
-                                }).then(err => {
-                                    console.log(err);
-                                });
-
-                            }}
-                />
-
-                {this.state.showListView ? <BackgroundPage
-                    backgroundColor={this.state.showListView ? '#e4e1e177' : 'transparent'}
-                    onPress={() => {
-                        this.setState({
-                            showListView: false
-                        });
-                    }}/> : null}
-
-
-                {this.state.showListView ? <ListView
-                    style={{
-                        backgroundColor: 'white',
-                        alignSelf: 'center',
-                        width: width - 20,
-                        top: 270,
-                        height: 300,
-                        position: 'absolute',
-                        borderRadius: 3
-                    }}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
-                    enableEmptySections={true}
-                    dataSource={this.state.dataSource}
-                    renderRow={this.renderRow}
-                    keyboardDismissMode='on-drag'
-                    keyboardShouldPersistTaps='always'/> : null}
-
             </View>
-        );
+        </Modal>;
     }
 
     query = () => {
@@ -389,29 +500,25 @@ class ShiMing extends BaseComponent {
         let phone = this.props.globalInfo.phone;
         console.log(phone);
 
-        var cardList = [];
-
-        cardList.push({
-            loginPhone: phone,   //预留手机号
-            bankPhone: this.state.register_phone,   //预留手机号
-            bankCard: this.state.register_card,//银行卡号
-            bank: this.state.register_bank,//银行卡号
-            cardType: 1,//1  储蓄卡     0 支付卡
-            cardDefault: 1
-
-        });
-
         realm.write(() => {
             realm.create('User', {
                 username: this.state.register_name,
                 CardLen: 1,
                 IDCard: this.state.register_ID,
                 phone: this.state.register_phone,
-                card: cardList
+            });
+
+            realm.create('Card', {
+                loginPhone: phone,   //预留手机号
+                bankPhone: this.state.register_phone,   //预留手机号
+                bankCard: this.state.register_card,//银行卡号
+                bank: this.state.register_bank,//所属银行
+                cardType: 1,//1  储蓄卡     0 支付卡
+                cardDefault: 1
             })
         });
 
-        this.props.initCardList(getCardList(phone));
+        // this.props.initCardList(getCardList(phone));
         // this.props.initCardList([{
         //     _loginPhone: '13262975235',
         // _bankPhone: '1126317631',

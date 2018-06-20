@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import ColorUtil from './ColorUtil'
 import PushUtil from './../native/PushUtil'
+import {zdp, zsp} from "../../zero/utils/ScreenUtil";
 export default class UserCenter extends Component {
 
     constructor(props) {
@@ -75,12 +76,12 @@ export default class UserCenter extends Component {
             <View style={styles.u_c}>
                 <Text>{this.state.result}</Text>
                 <TextInput
-                    style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                    style={{height: zdp(40), borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({tag:text})}
                     value={this.state.tag}
                 />
                 <TextInput
-                    style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                    style={{height: zdp(40), borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({type:text})}
                     value={this.state.type}
                 />
@@ -145,9 +146,9 @@ const styles = StyleSheet.create({
         backgroundColor: ColorUtil.background,
     },
     u_c_item: {
-        margin: 10,
+        margin: zdp(10),
         backgroundColor: ColorUtil.default_primary_color,
-        elevation: 10,
+        elevation: zdp(10),
         borderColor: ColorUtil.default_primary_color,
 
         borderWidth: 1.5,
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
 
     },
     u_c_text: {
-        fontSize:13,
+        fontSize:zsp(13),
 
         color: ColorUtil.text_primary_color
     },

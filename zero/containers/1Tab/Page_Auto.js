@@ -40,6 +40,7 @@ import Carousel, {Pagination} from 'react-native-snap-carousel'
 import {ENTRIES1, ENTRIES2} from './carousel/entries';
 import SliderEntry from './carousel/SliderEntry';
 import BaseComponent from '../global/BaseComponent';
+import {zdp} from "../../utils/ScreenUtil";
 
 const SLIDER_1_FIRST_ITEM = 1;
 
@@ -111,14 +112,10 @@ class Page_Auto extends BaseComponent {
     };
 
 
-    componentWillMount() {
-
-    }
-
     mainExample() {
         // const { slider1ActiveSlide } = this.state;
         return (
-            <View style={{paddingVertical: 10, paddingBottom: 0}}>
+            <View style={{paddingVertical: zdp(10), paddingBottom: 0}}>
                 {/*<Text style={styles.title}>{`Example ${number}`}</Text>*/}
                 {/*<Text style={styles.subtitle}>{title}</Text>*/}
                 <Carousel
@@ -131,9 +128,9 @@ class Page_Auto extends BaseComponent {
                     firstItem={this.state.slider1ActiveSlide}//定义开始加载时滑块的位置
                     inactiveSlideScale={0.94}
                     inactiveSlideOpacity={0.7}
-                    // inactiveSlideShift={20}
+                    // inactiveSlideShift={zdp(20)}
                     containerCustomStyle={{
-                        marginTop: 15,
+                        marginTop: zdp(15),
                         overflow: 'visible'
                     }}// for custom animations
                     contentContainerCustomStyle={{paddingVertical: 10}}
@@ -163,7 +160,7 @@ class Page_Auto extends BaseComponent {
         );
     }
 
-    get gradient() {
+    gradient() {
         return (
             <LinearGradient
                 colors={[colors.background1, colors.background2]}
@@ -179,7 +176,7 @@ class Page_Auto extends BaseComponent {
         let {RS_AutoPay} = this.props;
         const example1 = this.mainExample();
         return (
-            <SafeAreaView style={{
+            <View style={{
                 flex: 1,
                 backgroundColor: colors.black
             }}>
@@ -220,7 +217,7 @@ class Page_Auto extends BaseComponent {
                         </View>
                     </ScrollView>
                 </View>
-            </SafeAreaView>
+            </View>
 
 
         );

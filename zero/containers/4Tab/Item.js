@@ -13,7 +13,10 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/FontAwesome'
-const {width, height}= Dimensions.get('window');
+import {zdp, zsp} from "../../utils/ScreenUtil";
+import {cusColors} from "../../value/cusColor/cusColors";
+
+const {width, height} = Dimensions.get('window');
 export default class Navigator extends Component {
     constructor(props) {
         super(props);
@@ -23,8 +26,8 @@ export default class Navigator extends Component {
     render() {
         return (
             <View style={{
-                justifyContent:'center',
-                alignItems:'center',
+                justifyContent: 'center',
+                alignItems: 'center',
 
             }}>
 
@@ -34,19 +37,45 @@ export default class Navigator extends Component {
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        height:40
+                        height: zsp(40)
                     }}
                     onPress={() => {
                         this.props.onPress();
                     }}>
-                    <Image style={{width: 25, height: 25, marginLeft: 20, alignSelf:'center'}}
-                           source={this.props.image}/>
-                    <Text style={{flex: 1, fontSize: 13, color: '#3d3f3f', marginLeft: 20}}>{this.props.title}</Text>
-                    <Icon size={20} name={'angle-right'} style={{height:20,width:20,color: '#a9adad',marginRight:10}}/>
+                    {/*<Image style={{width: zdp(25), height: zdp(25),alignSelf:'center'}}*/}
+                    {/*source={this.props.image}/>*/}
+
+                    <View style={{
+                        width: zdp(40),
+                        height: zdp(40),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        padding: zdp(8)
+                    }}>
+
+                        <Icon size={zdp(20)} resizeMode={'cover'} name={this.props.image}
+                              color={cusColors.linear_default}/>
+                    </View>
+
+                    <Text style={{
+                        flex: 1,
+                        fontSize: zsp(15),
+                        color: '#3d3f3f',
+                        marginLeft: zdp(10)
+                    }}>{this.props.title}</Text>
+                    <Icon size={zdp(25)} name={'angle-right'}
+                          style={{color: '#a9adad', marginRight: zdp(10)}}/>
+
 
                 </TouchableOpacity>
 
-                <View style={{width:width-80,height:this.props.line?1:0,backgroundColor:'#edf0f0', alignSelf:'flex-end',justifyContent:'flex-end'}}/>
+                <View style={{
+                    width: width - zdp(80),
+                    height: this.props.line ? 1 : 0,
+                    backgroundColor: '#edf0f0',
+                    alignSelf: 'flex-end',
+                    justifyContent: 'flex-end'
+                }}/>
             </View>
         );
     }

@@ -181,7 +181,7 @@ export default class RealmTest extends Component {
         console.log('realm path:', realm.path)
         return (
             <View style={{flex:1}}>
-                <Text style={{fontSize:20, color:'white'}}>
+                <Text style={{fontSize: zsp(20), color:'white'}}>
                     Count of Dogs in Realm: {realm.objects('User').length}
                 </Text>
             </View>

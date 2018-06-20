@@ -15,6 +15,7 @@ import ColorUtil from './ColorUtil'
 import { StackNavigator } from 'react-navigation';
 import APP from './UAnalytics_app'
 import Game from './UAnalytics_game'
+import {zdp} from "../../zero/utils/ScreenUtil";
 class AnalyticsMain extends Component {
 
 
@@ -93,11 +94,11 @@ const styles = StyleSheet.create({
         backgroundColor: ColorUtil.background,
     },
     u_c_item: {
-        margin: 10,
+        margin: zdp(10),
         backgroundColor: ColorUtil.default_primary_color,
-        elevation: 10,
+        elevation: zdp(10),
         borderColor: ColorUtil.default_primary_color,
-        borderRadius: 15,
+        borderRadius: zdp(15),
         borderWidth: 1.5,
         shadowOffset: {width: 0, height: 0},
         shadowColor: ColorUtil.default_primary_color,
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
 
     },
     u_c_text: {
-        fontSize:26,
+        fontSize: zsp(26),
 
         color: ColorUtil.text_primary_color
     },
