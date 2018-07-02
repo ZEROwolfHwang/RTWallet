@@ -10,7 +10,7 @@ import {
     Dimensions,
     ListView,
     AppState,
-    BackHandler
+    BackHandler,SafeAreaView
 } from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -23,7 +23,7 @@ import RegisterMerchantNext from "./RegisterMerchantNext";
 import ToastUtil from "../../utils/ToastUtil";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import MyLinearGradient from "../../views/MyLinearGradient";
-import {zdp} from "../../utils/ScreenUtil";
+import {isIphoneX, zAppBarHeight, zdp, zHeight, zStatusBarHeight} from "../../utils/ScreenUtil";
 
 const {width, height} = Dimensions.get('window');
 
@@ -36,6 +36,7 @@ class RegisterMerchant extends BaseComponent {
             username: '',
             password: '',
             passwordSure: '',
+            recommend: ''
         }
     }
 
@@ -56,29 +57,52 @@ class RegisterMerchant extends BaseComponent {
 
     render() {
         return (
-            <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
-                <Image source={require('../../../resource/image/loginbg.png')}
-                       style={{width, height, position: 'absolute'}}/>
-
-                <MyTabView title={'注册用户'} isTransparent={true} barStyle={'light-content'} backgroundColor={'transparent'}
-                           globalTitleColor={'white'} navigation={this.props.navigation}/>
+            <SafeAreaView style={{flex: 1,
+                backgroundColor: 'white', justifyContent: 'flex-start', alignItems: 'center'}}>
 
                 <KeyboardAwareScrollView
-                    style={{flex: 1, backgroundColor: 'transparent'}}
+                    style={{flex: 1, backgroundColor: 'white',
+                        marginTop: Platform.OS === 'ios' ? -zStatusBarHeight : 0}}
                     resetScrollToCoords={{x: 0, y: 0}}
                     contentContainerStyle={{
-                        justifyContent: 'center',
+                        justifyContent: 'flex-start',
                         alignItems: 'center'
                     }}
                     showsVerticalScrollIndicator={false}
                     scrollEnabled={false}
                     keyboardShouldPersistTaps={'always'}>
 
+                    <Image source={{uri: isIphoneX()?'login_bg_x':'login_bg'}}
+                           resizeMode={'cover'}
+                           style={{
+                               width,
+                               height: height,
+                               position: 'absolute',
+                           }}/>
+
+
+                    <Image source={require('../../../resource/image/appname.png')}
+                           style={{
+                               width: zdp(140),
+                               height: zdp(66),
+                               marginTop: zAppBarHeight + zdp(40)
+                           }}
+                           resizeMode={'contain'}/>
+
 
                     <MyTextInputWithIcon
-                        style={{marginTop:zdp(100)}}
+                        style={{marginTop:zdp(140)}}
+                        placeholder={'邀请码,可不填'}
+                        iconName={'login_invite'}
+                        onChangeText={(text) => {
+                            this.setState({
+                                recommend: text
+                            })
+                        }}
+                    />
+                    <MyTextInputWithIcon
                         placeholder={'用户名'}
-                        iconName={'phone'}
+                        iconName={'login_user'}
                         onChangeText={(text) => {
                             this.setState({
                                 username: text
@@ -88,7 +112,7 @@ class RegisterMerchant extends BaseComponent {
                     <MyTextInputWithIcon
                         secureTextEntry={true}
                         placeholder={'密码'}
-                        iconName={'lock'}
+                        iconName={'login_psw'}
                         onChangeText={(text) => {
                             this.setState({
                                 password: text
@@ -99,7 +123,7 @@ class RegisterMerchant extends BaseComponent {
                     <MyTextInputWithIcon
                         secureTextEntry={true}
                         placeholder={'确认密码'}
-                        iconName={'lock'}
+                        iconName={'login_psw'}
                         onChangeText={(text) => {
                             this.setState({
                                 passwordSure: text
@@ -111,8 +135,15 @@ class RegisterMerchant extends BaseComponent {
                     <MyButtonView modal={1} style={{width: width / 1.3, marginTop:zdp(30)}} title={'下一步'}
                                   onPress={this.pressNext}/>
                     </View>
+                    <MyTabView linear_style={{position: 'absolute'}} title={'注册用户'}
+                               isTransparent={true} barStyle={'light-content'}
+                               backgroundColor={'transparent'}
+                               globalTitleColor={'white'} navigation={this.props.navigation}/>
+
+
                 </KeyboardAwareScrollView>
-            </View>
+
+            </SafeAreaView>
 
         );
 
@@ -126,6 +157,7 @@ class RegisterMerchant extends BaseComponent {
 
                 this.props.navigation.navigate('RegisterMerchantNext', {
                     registerInfo: {
+                        recommend: this.state.recommend,
                         username: this.state.username,
                         password: this.state.password
                     }

@@ -1,0 +1,46 @@
+[
+  {
+    "value": "icbc",
+    "bank": "中国工商银行"
+  },
+  {
+    "value": "boc",
+    "bank": "中国银行"
+  },
+  {
+    "value": "ccb",
+    "bank": "中国建设银行"
+  },
+  {
+    "value": "abc",
+    "bank": "中国农业银行"
+  },
+  {
+    "value": "comm",
+    "bank": "交通银行"
+  },
+  {
+    "value": "cmb",
+    "bank": "招商银行"
+  },
+  {
+    "value": "spdb",
+    "bank": "上海浦东发展银行"
+  },
+  {
+    "value": "cib",
+    "bank": "兴业银行"
+  },
+  {
+    "value": "hxbank",
+    "bank": "华夏银行"
+  },
+  {
+    "value": "cmbc",
+    "bank": "中国民生银行"
+  },
+  {
+    "value": "shbank",
+    "bank": "上海银行"
+  }
+]

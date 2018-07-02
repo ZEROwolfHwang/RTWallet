@@ -3,7 +3,7 @@ import {
     Text,
     View,
     Dimensions,
-    StatusBar, PixelRatio,
+    StatusBar, PixelRatio, Keyboard,SafeAreaView,
     Alert, Image, TouchableOpacity, Animated, Platform
 } from 'react-native';
 
@@ -32,38 +32,37 @@ import {
 import {save2Realm} from "./SaveRealmUtil";
 import {getGestureData, isGestureLogin} from "../../storage/schema_gesture";
 import {actions_register} from "./reduces/register";
-import {zdp, zsp} from "../../utils/ScreenUtil";
+import {isIphoneX, zAppBarHeight, zdp, zsp, zStatusBarHeight} from "../../utils/ScreenUtil";
 import ZText from "../../views/ZText";
 
 import *as wechat from 'react-native-wechat'
 import {updateApp} from "../global/AllModuleUtils";
-import {G, Path, Svg} from "react-native-svg";
 import {updateAppByLogin} from "../../utils/updateAppUtil";
 import NavigationUtil from "../../utils/NavigationUtil";
-
-
-let AnimatedPath = Animated.createAnimatedComponent(Path);
+import {cusColors} from "../../value/cusColor/cusColors";
 
 
 class RegisterApp extends BaseComponent {
 
-
     constructor(props) {
         super(props);
+
         this.state = {
             phone: '',
+            phone: '13262975235',
             // phone: '13262972222',
-            // phone: '13262975235',
             // phone: '13262970000',
             // phone: '13262975265',
             // phone: '15361505102',
             // phone: '13255556666',
-            // password: '123456',m
-            // password: 'qqqqqq',
+            // password: '123456',
             password: '',
+            password: 'qqqqqq',
+            apkCodeName: '1.0'
             // process: 0,
             // lineFillAnimation: new Animated.Value(0),
         }
+
         // this.lineAnimation = this.state.lineFillAnimation.interpolate({
         //     inputRange: [
         //         0,
@@ -100,22 +99,22 @@ class RegisterApp extends BaseComponent {
     componentWillMount() {
         // wechat.registerApp('wx8385a09b99f48b45')
         wechat.registerApp('wx6da45a3d441b507c');
-        /* wechat.addListener(
-             'SendMessageToWX.Resp',
-             (response) => {
-                 if (parseInt(response.errCode) === 0) {
-                     ToastUtil.showShort('分享成功');
-                 } else {
-                     ToastUtil.showShort('分享失败');
-                 }
-             }
-         );*/
+        Platform.OS === 'android' ?
+            updateApp.getApkName()
+                .then(res => {
+                    this.setState({
+                        apkCodeName: res
+                    })
+                }).catch(err => {
+                console.log(err);
+
+            }) : null;
 
     }
 
     componentDidMount() {
-        // this.pressLogin();
-
+        this.pressLogin();
+        // alert(zStatusBarHeight);
     }
 
 
@@ -124,104 +123,147 @@ class RegisterApp extends BaseComponent {
      * @returns {*}
      */
     render() {
-        return (
-            <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
-                <Image source={require('../../../resource/image/loginbg.png')}
-                       style={{width, height, position: 'absolute'}}/>
 
-                <View
-                    style={{flex: 1, alignItems: 'center'}}>
+        return <SafeAreaView style={{flex: 1, justifyContent: 'flex-start', backgroundColor:'white',alignItems: 'center'}}>
 
-                    <Image source={require('../../../resource/image/appname.png')}
-                           style={{width: zdp(140), height: zdp(66), marginTop: zdp(100)}}
-                           resizeMode={'contain'}/>
-
-                    <StatusBar
-                        hidden={false}
-                        translucent={true}
-                        barStyle={'light-content'}//'default', 'light-content', 'dark-content'
-                        backgroundColor={'#fff6fd00'}
-                        networkActivityIndicatorVisible={false}
-                    />
-
-                    <MyTextInputWithIcon
-                        style={{marginTop: zdp(40)}}
-                        maxLength={11}
-                        placeholder={'请输入手机号'}
-                        keyboardType={'numeric'}
-                        iconName={'phone'}
-                        onChangeText={(text) => {
-                            this.setState({
-                                phone: text
-                            })
-                        }}
-                    />
-                    <MyTextInputWithIcon
-                        secureTextEntry={true}
-                        placeholder={'密码登录'}
-                        // keyboardType={'email-address'}
-                        iconName={'lock'}
-                        onChangeText={(text) => {
-                            this.setState({
-                                password: text
-                            })
-                        }}
-                    />
-
-                    <View style={{
-                        width,
-                        height: zdp(40),
-                        backgroundColor: 'transparent',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center'
-                    }}>
-                        <Text
-                            style={{
-                                fontSize: zsp(16),
-                                color: 'white',
-                                padding: zdp(10),
-                                textAlign: 'center',
-                                marginLeft: zdp(40),
-                                alignSelf: 'flex-end'
-                            }}
-                            onPress={this.pressLoginByVerify}>{`验证码登录`}</Text>
+             <View style={{flex: 1,marginTop:Platform.OS==='ios'?-zStatusBarHeight:0,justifyContent:'flex-start',alignItems:'center'}}>
 
 
-                        <Text
-                            style={{
-                                fontSize: zsp(16),
-                                color: 'white',
-                                padding: zdp(10),
-                                textAlign: 'center',
-                                marginRight: zdp(40),
-                                alignSelf: 'flex-end'
-                            }}
-                            onPress={this.pressForgetPsw}>{`忘记密码?`}</Text>
+            <Image source={{uri: isIphoneX()?'login_bg_x':'login_bg'}}
+                   resizeMode={'cover'}
+                   style={{
+                       width,
+                       height: height,
+                       position: 'absolute'
+                   }}/>
 
-                    </View>
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+
+            </View>
+
+            <View
+                style={{flex: 1, alignItems: 'center'}}>
+
+                <StatusBar
+                    hidden={false}
+                    translucent={true}
+                    barStyle={'light-content'}//'default', 'light-content', 'dark-content'
+                    backgroundColor={'#fff6fd00'}
+                    networkActivityIndicatorVisible={false}
+                />
+
+                <Image source={require('../../../resource/image/appname.png')}
+                       style={{width: zdp(140), height: zdp(66), marginTop: zAppBarHeight + zdp(20)}}
+                       resizeMode={'contain'}/>
 
 
-                    <MyButtonView style={{width: width / 1.3, marginTop: zdp(5)}} modal={1}
-                                  title={'登 录'}
-                                  onPress={this.pressLogin}/>
+                <MyTextInputWithIcon
+                    style={{marginTop: zdp(160)}}
+                    maxLength={11}
+                    placeholder={'请输入手机号'}
+                    keyboardType={'numeric'}
+                    iconName={'login_phone'}
+                    onChangeText={text => {
+                        this.setState({
+                            phone: text
+                        })
+                    }}
+                />
+
+                <MyTextInputWithIcon
+                    secureTextEntry={true}
+                    placeholder={'密码登录'}
+                    // keyboardType={'email-address'}
+                    iconName={'login_psw'}
+                    onChangeText={text => {
+                        this.setState({
+                            password: text
+                        })
+                    }}
+                />
 
 
-                    <Text
-                        style={{
-                            fontSize: zsp(16),
-                            color: 'lightgrey',
-                            padding: zdp(10),
-                            paddingRight: zdp(40),
-                            textAlign: 'center',
-                            alignSelf: 'center'
-                        }}
-                    >{`没有账号? `}<Text style={{color: 'white'}}
-                                     onPress={this.pressRegister}>点击注册</Text></Text>
+                <MyButtonView style={{width: width / 1.3, marginTop: zdp(40)}} modal={1}
+                              title={'登 录'}
+                              onPress={this.pressLogin}/>
+
+
+                <View style={{
+                    width,
+                    marginTop: zdp(10),
+                    height: zdp(40),
+                    backgroundColor: 'transparent',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                }}>
+
+
+                    <TouchableOpacity activeOpacity={0.9}
+                                      style={{
+                                          justifyContent: 'center', alignItems: 'center',
+                                          padding: zdp(5)
+                                      }}
+                                      onPress={
+                                          this.pressLoginByVerify
+                                      }>
+
+                        <ZText parentStyle={{marginLeft: zdp(40)}} content={'验证码登录'}
+                               fontSize={zsp(16)} color={cusColors.text_secondary}
+                               textAlign={'center'}/>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity activeOpacity={0.9}
+                                      style={{
+                                          justifyContent: 'center', alignItems: 'center',
+                                          padding: zdp(5)
+                                      }}
+                                      onPress={
+                                          this.pressForgetPsw
+                                      }>
+
+                        <ZText parentStyle={{marginRight: zdp(40)}} content={'忘记密码?'}
+                               fontSize={zsp(16)} color={cusColors.text_secondary}
+                               textAlign={'center'}/>
+                    </TouchableOpacity>
+
 
                 </View>
+
+                <View style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    padding: zdp(5),
+                    marginTop: zdp(40)
+                }}>
+                    <ZText content={'没有账号?'} fontSize={zsp(16)} color={cusColors.text_secondary}/>
+                    <MyButtonView style={{width: zdp(80), height: zdp(30), marginTop: 0}} modal={1}
+                                  title={'注册账号'}
+                                  fontSize={zsp(16)}
+                                  onPress={this.pressRegister}/>
+
+
+                </View>
+
+
             </View>
-        )
+
+            {Platform.OS === 'android' ? <View style={{
+                backgroundColor: cusColors.tab_light,
+                padding: zdp(5),
+                paddingLeft: zdp(10),
+                paddingRight: zdp(10),
+                borderRadius: zdp(10),
+                position: 'absolute',
+                bottom: zdp(20),
+                right: zdp(30)
+            }}>
+                <ZText content={`当前版本:V${this.state.apkCodeName}`} fontSize={zsp(15)}
+                       color={'white'}/>
+            </View> : null}
+             </View>
+        </SafeAreaView>
             ;
 
     }
@@ -230,6 +272,8 @@ class RegisterApp extends BaseComponent {
      * 点击登录
      */
     pressLogin = () => {
+
+        Keyboard.dismiss();
 
         if (!checkMobile(this.state.phone)) {
             return;
@@ -281,7 +325,7 @@ class RegisterApp extends BaseComponent {
 
                         if (isGestureLogin()) {
                             // this.props.navigation.navigate('Tab');
-                            NavigationUtil.reset(this.props.navigation,'Tab');
+                            NavigationUtil.reset(this.props.navigation, 'Tab');
                         } else {
                             this.props.navigation.navigate('PageSetGesturePsw', {type: 0});
                         }
@@ -306,7 +350,7 @@ class RegisterApp extends BaseComponent {
      * 存储全局信息
      * @param resData
      */
-    save2Global = (resData) => {
+    save2Global = resData => {
         this.props.initGlobalInfo({
             token: resData.token,
             phone: resData.phone,
@@ -317,6 +361,7 @@ class RegisterApp extends BaseComponent {
             recommend: resData.recommend
         });
     }
+
 
     /**
      * 验证码登录
@@ -343,18 +388,19 @@ class RegisterApp extends BaseComponent {
 
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
     return {
         nav: state.nav
     }
 
 };
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
     return bindActionCreators({
         initGlobalInfo: actions.getGlobalInfo,
         initRegisterNav: actions_register.putNavigation,
     }, dispatch);
 };
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(RegisterApp);
 

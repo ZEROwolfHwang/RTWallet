@@ -17,6 +17,7 @@ import {
 const {width, height} = Dimensions.get("window");
 
 import ModalDropdown from "react-native-modal-dropdown";
+import {zdp, zsp} from "../utils/ScreenUtil";
 // import bankList from "../../resource/bankList1"
 
 var bankStrList ;
@@ -46,15 +47,15 @@ export  default class DropDown extends Component {
                         alignItems: "center",
                         justifyContent: "center",
                         alignSelf: "center",
-                        height: 60,
-                        width: 60,
+                        height: zdp(60),
+                        width: zdp(60),
                         backgroundColor: "transparent",
 
                     }}
                     defaultIndex={0}
                     defaultvalue={"🔽️"}
                     textStyle={{
-                        fontSize: 18,
+                        fontSize: zsp(18),
                         color: "black",
                         textAlign: "center",
                         textAlignVertical: "center"
@@ -62,13 +63,13 @@ export  default class DropDown extends Component {
 
                     dropdownStyle={{
                         alignSelf:"center",
-                        width: width-40,
+                        width: width-zdp(40),
                         height: 300,
-                        left:20,
+                        left:zdp(20),
                         shadowColor: "#d7d9d9",
                         shadowOffset: {height: 5},
                         shadowOpacity: 0.6,
-                        elevation:5,
+                        elevation: zdp(5),
                     }}
                     onSelect={(idx, value)=>{
                         props.onSelect(idx,value)
@@ -98,8 +99,8 @@ export  default class DropDown extends Component {
         return (
             <TouchableHighlight underlayColor="cornflowerblue">
                 <View style={{
-                    height: 60,
-                    width:60,
+                    height: zdp(60),
+                    width:zdp(60),
                     marginBottom:20,
                     alignItems: "center",
                     justifyContent: "center",
@@ -108,7 +109,7 @@ export  default class DropDown extends Component {
 
 
                     <Text style={{
-                        fontSize: 20,
+                        fontSize: zsp(20),
                         textAlign: "center",
                         color: "black"
                     }}>

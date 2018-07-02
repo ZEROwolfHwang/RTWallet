@@ -386,6 +386,7 @@ const mapStateToProps = (state) => {
     return {
         nav: state.nav,
         globalInfo: state.globalInfo.data,
+        isEye: state.bankNav.isEye,
     }
 
 };

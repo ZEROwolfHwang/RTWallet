@@ -12,7 +12,7 @@ import BaseComponent from "../../global/BaseComponent";
 import MyTabView from "../../../views/MyTabView";
 import MyProgressBar from "../../../views/MyProgressBar";
 import {actions_card} from "../../reduce/CardReduce";
-import {getDebitCardList, getPayCardByCard, getPayCardList} from "../../../storage/schema_card";
+import {getDebitCardList} from "../../../storage/schema_card";
 import realm from "../../../storage/realm";
 import {zdp, zsp} from "../../../utils/ScreenUtil";
 
@@ -140,11 +140,6 @@ class CardDefault extends BaseComponent {
                 </FlatList>
 
             </View> : <MyProgressBar/>)
-    }
-
-    componentDidMount() {
-        // this.props.initCardList('13262975235');
-
     }
 
 }

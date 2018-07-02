@@ -27,6 +27,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import s from '../styles/AllStyles';
+import {zdp, zsp} from "./ScreenUtil";
 const Options = (navigation, nameLeft, nameRight, title, onPressLeft, onPressRight) => ({
 
     //设置滑动返回的距离
@@ -55,18 +56,18 @@ const Options = (navigation, nameLeft, nameRight, title, onPressLeft, onPressRig
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row'}}>
 
                 <Icon.Button
-                    size={25}
-                    left={5}
+                    size={zdp(20)}
+                    left={zdp(5)}
                     name={nameLeft}
-                    backgroundColor={null}
+                    backgroundColor={'transparent'}
                     color={'white'}
                     onPress={onPressLeft}>
                 </Icon.Button>
 
-                <Text style={{fontSize: 18, color: 'white'}}>
+                <Text style={{fontSize: zsp(18), color: 'white'}}>
                     {title}
                 </Text>
-            </View> : <Text style={{fontSize: 18, color: 'white', left: 20}}>
+            </View> : <Text style={{fontSize: zsp(18), color: 'white', left: zdp(20)}}>
             {title}
         </Text>),
 
@@ -74,8 +75,8 @@ const Options = (navigation, nameLeft, nameRight, title, onPressLeft, onPressRig
     headerRight: (
         nameRight?<View>
             <Icon.Button
-                size={25}
-                left={5}
+                size={zdp(20)}
+                left={zdp(5)}
                 name={nameRight}
                 backgroundColor={null}
                 color={'white'}

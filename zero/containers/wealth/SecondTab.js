@@ -23,16 +23,15 @@ import {actions_wealth} from './reduce/index';
 import Wealth from './Wealth';
 import {fetchRequest} from '../../utils/FetchUtil';
 
-import Storage from '../../storage/Storage';
 import BaseComponent from '../global/BaseComponent';
 import ToastUtil from "../../utils/ToastUtil";
+import {Api} from "../../utils/Api";
 
 class SecondTab extends BaseComponent {
 
 
     componentWillMount() {
-        fetch('http://sjpay.githubshop.com/app/enchashment', "GET")
-            .then(responseData => responseData.json())
+        fetchRequest(Api.enchashment, "GET")
             .then(res => {
                 console.log(res);
                 if (res.respCode === 200) {
@@ -42,7 +41,7 @@ class SecondTab extends BaseComponent {
                 }
             }).catch(err => {
             console.log(err);
-        })
+        });
     }
 
 

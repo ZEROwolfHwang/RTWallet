@@ -135,6 +135,7 @@ const TabNavigation = TabNavigator({
             height: zdp(30),
         },
         labelStyle: {
+            fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
             fontSize: zsp(13),
             marginTop: 0,
             padding: 0,
@@ -146,6 +147,8 @@ const TabNavigation = TabNavigator({
 
         }
     }
+
+
 });
 
 
@@ -164,7 +167,6 @@ import WebView1 from '../containers/3Tab/WebView1';
 import IssueHelp from '../containers/wealth/redPlan/IssueHelp'
 import AboutApp from '../containers/wealth/redPlan/helpPage/AboutApp'
 import WXShare from '../containers/4Tab/WXShare'
-import ScrollViewTest from "../containers/wealth/redPlan/ScrollViewTest";
 import addPayCard from "../containers/wealth/redPlan/buy/addPayCard";
 import InvestBuy from "../containers/wealth/redPlan/buy/InvestBuy";
 import RealmTest from "../../zwtest/RealmTest";
@@ -173,7 +175,6 @@ import Web from "../containers/wealth/redPlan/buy/Web";
 import BankManageTabOne from "../containers/4Tab/BankManage/tabItem/BankManageTabOne";
 
 import BankManageTabTwo from "../containers/4Tab/BankManage/tabItem/BankManageTabTwo";
-import CardManage from "../containers/4Tab/BankManage/CardManage";
 import DetailRecord from "../containers/4Tab/bills/DetailRecord";
 import TransactionRecord from "../containers/4Tab/bills/TransactionRecord";
 import CardDefault from "../containers/4Tab/defaltCard/CardDefault";
@@ -184,7 +185,6 @@ import RegisterApp from "../containers/regist/RegisterApp";
 import LoginByVerify from "../containers/regist/LoginByVerify";
 import RegisterSuccess from "../containers/regist/RegisterSuccess";
 import DefaultCardManage from "../containers/4Tab/defaltCard/DefaultCardManage";
-import SwipeDeleteCard from "../containers/4Tab/BankManage/SwipeDeleteCard";
 import PageSetting from "../containers/4Tab/set/PageSetting";
 import PageChangePsw from "../containers/4Tab/set/PageChangePsw";
 import MerchantInfo from "../containers/4Tab/userInfo/MerchantInfo";
@@ -193,20 +193,18 @@ import PageChangePhoneNext from "../containers/4Tab/set/PageChangePhoneNext";
 import BankCardManage from "../containers/4Tab/BankManage/BankCardManage";
 import BankManageTabAll from "../containers/4Tab/BankManage/tabItem/BankManageTabAll";
 import BankManageTabs from "../containers/4Tab/BankManage/BankManageTabs";
-import DeleteCard from "../containers/4Tab/BankManage/tabItem/DeleteCard";
 import LaunchPage from "../containers/regist/LaunchPage";
 import LoginByGesture from "../containers/regist/LoginByGesture";
 import PageGesture from "../containers/4Tab/set/gesture/PageGesture";
 import PageSetGesturePsw from "../containers/4Tab/set/gesture/PageSetGesturePsw";
 import PageChangeGesturePsw from "../containers/4Tab/set/gesture/PageChangeGesturePsw";
-import PageReplay from "../containers/3Tab/PageReplay";
 import PageReplayDetail from "../containers/3Tab/PageReplayDetail";
-import addCreditCard from "../containers/wealth/redPlan/buy/addCreditCard";
 import VerifyByGesture from "../containers/regist/VerifyByGesture";
 import {cusColors} from "../value/cusColor/cusColors";
 import {zdp, zsp} from "../utils/ScreenUtil";
 import Test1 from "../containers/1Tab/test/Test1";
 import Test2 from "../containers/1Tab/test/Test2";
+import Splash from "../containers/regist/Splash";
 
 
 const setting = {
@@ -216,18 +214,23 @@ const main = {
     Test1: {screen: Test1},
     Test2: {screen: Test2},
 }
+const register = {
+    RegisterSuccess: {screen: RegisterSuccess},
+    RegisterMerchantNext: {screen: RegisterMerchantNext},
+    RegisterMerchant: {screen: RegisterMerchant},
+    LoginByVerify: {screen: LoginByVerify},
+    ForgetPsw: {screen: ForgetPsw},
+}
 
 const SNavigator = StackNavigator({
 
         // Sign: {screen: SignPage},
-        // Splash: {screen: Splash},
-
         RegisterApp: {screen: RegisterApp},
+        ...register,
+        Splash: {screen: Splash},
         Web: {screen: Web},
         ...setting,
         ...main,
-        RegisterSuccess: {screen: RegisterSuccess},
-        addCreditCard: {screen: addCreditCard},
         VerifyByGesture: {screen: VerifyByGesture},
         PageReplayDetail: {screen: PageReplayDetail},
         // PageReplay: {screen: PageReplay},
@@ -237,7 +240,6 @@ const SNavigator = StackNavigator({
         PageSetGesturePsw: {screen: PageSetGesturePsw},
         LoginByGesture: {screen: LoginByGesture},
         BankCardManage: {screen: BankCardManage},
-        DeleteCard: {screen: DeleteCard},
         BankManageTabs: {screen: BankManageTabs},
         BankManageTabAll: {screen: BankManageTabs, path: 'BankManageTabAll'},
         BankManageTabOne: {screen: BankManageTabs, path: 'BankManageTabOne'},
@@ -249,24 +251,16 @@ const SNavigator = StackNavigator({
 
         PageSetting: {screen: PageSetting},
         PageChangePsw: {screen: PageChangePsw},
-        SwipeDeleteCard: {screen: SwipeDeleteCard},
         DefaultCardManage: {screen: DefaultCardManage},
-        RegisterMerchant: {screen: RegisterMerchant},
-        RegisterMerchantNext: {screen: RegisterMerchantNext},
-        LoginByVerify: {screen: LoginByVerify},
-        ForgetPsw: {screen: ForgetPsw},
         CardDefault: {screen: CardDefault},
         TransactionRecord: {screen: TransactionRecord},
         DetailRecord: {screen: DetailRecord},
-        CardManage: {screen: CardManage},
-        // BankManageTabs: {screen: BankManageTabs},
 
 
         addPayCard: {screen: addPayCard},
         InvestBuy: {screen: InvestBuy},
         Tab: {screen: TabNavigation},
         RealmTest: {screen: RealmTest},
-        ScrollViewTest: {screen: ScrollViewTest},
         WXShare: {screen: WXShare},
         IssueHelp: {screen: IssueHelp},
         AboutApp: {screen: AboutApp},

@@ -6,7 +6,7 @@
  */
 import React, {Component} from 'react';
 import {
-    Platform, StyleSheet, Text, Alert, View, TouchableOpacity, Image, Dimensions, ListView
+    Platform, Dimensions,
 } from 'react-native';
 import {StackNavigator, TabBarTop, TabNavigator} from 'react-navigation';
 

@@ -10,43 +10,14 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
-    Platform,
-    StyleSheet,
-    TextInput,
-    Text,
-    Alert,
-    View,
-    TouchableOpacity,
-    Image,
     Dimensions,
-    ListView, ScrollView, Modal, BackHandler, RefreshControl
+    BackHandler
 } from 'react-native';
-import realm from '../../../../storage/realm'
 import {
-    getAllCard, getCardList,
-    getDebitCardDefault,
-    getDebitCardList, getPayCardDefault,
-    getPayCardList
+    getAllCard,
 } from "../../../../storage/schema_card";
-import ItemCard from "./ItemCard";
-import {bankColor, cusColors} from "../../../../value/cusColor/cusColors";
 
-// let cardList;
-import selectBankList from '../../../../../resource/selectBanks';
-import {
-    getBankABC,
-    getBankDetach,
-    getBankDetachClose,
-    getBankName,
-    getBankType
-} from "../../../../utils/BankUtil";
-import NavigationUtil from "../../../../utils/NavigationUtil";
-import {fetchRequestToken} from "../../../../utils/FetchUtilToken";
-import ToastUtil from "../../../../utils/ToastUtil";
-import {deleteCard} from "./DeleteCardUtil";
 import {actions_bank, Types} from "../reduce/bankReduce";
-import {zdp, zModalHeight, zModalMarginTop, zsp} from "../../../../utils/ScreenUtil";
-import ZText from "../../../../views/ZText";
 import BankCardItem from "./BankCardItem";
 
 let cardList;

@@ -6,8 +6,6 @@ import {
     Platform, StyleSheet, Text, Alert, View, TouchableOpacity, Image, Dimensions,ListView,AsyncStorage
 } from 'react-native';
 import realm from "../zero/storage/realm";
-import {deleteUser, getUserList, UserSchema} from "../zero/storage/schema_user";
-import {getPayCardList} from "../zero/storage/schema_card";
 const {width, height} = Dimensions.get('window');
 export default class RealmTest extends Component {
 

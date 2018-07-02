@@ -18,7 +18,7 @@ export const nearcinemas = 'http://m.maoyan.com/cinemas.json';
 // const usshow = 'http://192.168.×.9:8080/weixin/usshow.json';
 // const nearcinemas = 'http://192.168.×.9:8080/weixin/nearcinemas.json';
 
-// import { initHotshow, fetchLoading } from '../actions/hotshow-action';
+// import { initHotshow, fetchLoading } from '../actions_wealth/hotshow-action';
 //
 // export function hotshowFetch(action) {
 //     return (dispatch) => {

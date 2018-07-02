@@ -4,6 +4,9 @@
  */
 
 import {StyleSheet} from 'react-native';
+import {zdp, zsp} from "../utils/ScreenUtil";
+
+
 
 export default StyleSheet.create({
     tab: {
@@ -19,19 +22,22 @@ export default StyleSheet.create({
         justifyContent: 'center',
     },
 
+
+
+
     textStyle: {
-        fontSize: 20,
+        fontSize: zsp(20),
         color: '#64aeff',
     },
 
     headerStyle: {
         backgroundColor: '#64aeff',
-        height: 50
+        height: zdp(50)
     },
     headerTitleStyle: {
         color: 'white',
         //设置标题的大小
-        fontSize: 18,
+        fontSize: zsp(18),
         //居中显示
         alignSelf: 'center',
     },

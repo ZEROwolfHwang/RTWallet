@@ -36,6 +36,33 @@ const showLong = (content, isAlert) => {
   }
 };
 
+
+const toastShort = (content, isAlert) => {
+  if (!content) {
+    return;
+  }
+  if (isAlert || Platform.OS === 'ios') {
+    Alert.alert('提示', content.toString());
+  } else {
+    ToastAndroid.show(content.toString(), ToastAndroid.SHORT);
+  }
+};
+
+const toastLong = (content, isAlert) => {
+  if (isAlert || Platform.OS === 'ios') {
+    Alert.alert('提示', content.toString());
+  } else {
+    ToastAndroid.show(content.toString(), ToastAndroid.LONG);
+  }
+};
+
+
+
+export {
+  toastShort,
+  toastLong,
+}
+
 export default {
   showShort,
   showLong

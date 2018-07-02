@@ -1,6 +1,5 @@
 import {types} from "../containers/wealth/reduce";
 import * as Types from "../containers/1Tab/reduce/Types";
-import {getCardList} from "../storage/schema_card";
 
 /**
  * Created by zerowolf Date: 2018/5/3 Time: 下午8:57

@@ -65,9 +65,11 @@ class MerchantInfo extends BaseComponent {
             district: '宝安区',
 
         }
+        console.log(this.props.navigation.state);
     }
 
     componentDidMount() {
+        console.log(this.props.navigation.state);
         BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
     }
 
@@ -87,6 +89,8 @@ class MerchantInfo extends BaseComponent {
     componentWillMount() {
 
         this.params = this.props.navigation.state;
+        console.log(this.props.navigation);
+        console.log(this.props);
 
         console.log(this.params);
 
@@ -135,21 +139,6 @@ class MerchantInfo extends BaseComponent {
         this._showAreaPicker();
     }
 
-    cancled() {
-        this.setState({
-            visible: false
-        });
-        console.log(this.state.visible);
-    }
-
-    setChoosed(p, c, a) {
-        this.setState({
-            province: p,
-            city: c,
-            district: a,
-            visible: false
-        });
-    }
 
     render() {
         let registerName = this.state.register_name;
@@ -404,7 +393,7 @@ class MerchantInfo extends BaseComponent {
 
                 console.log(this.params);
                 console.log(this.params.enterType);
-                /* if (this.params.enterType && this.params.enterType === 100) {
+                 if (this.params.enterType && this.params.enterType === 100) {
 
                      if (!getDebitCardDefault(globalInfo.merCode)) {
                          //结算卡没有
@@ -447,7 +436,7 @@ class MerchantInfo extends BaseComponent {
                              this.props.navigation.navigate('InvestBuy')
                          }
                      }
-                 }*/
+                 }
 
                 console.log(this.props.globalInfo);
             } else {

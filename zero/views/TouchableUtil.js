@@ -11,6 +11,7 @@ import {
     Dimensions,
     TouchableOpacity
 } from 'react-native';
+import {zdp, zsp} from "../utils/ScreenUtil";
 const {width, height} = Dimensions.get('window');
 export default class Navigator extends Component {
     constructor(props) {
@@ -23,10 +24,10 @@ export default class Navigator extends Component {
             <TouchableOpacity activeOpacity={this.props.activeOpacity?this.props.activeOpacity:0.5}
 
                               style={{
-                                  marginTop: this.props.marginTop ? this.props.marginTop : 30,
+                                  marginTop: this.props.marginTop ? this.props.marginTop : zdp(30),
                                   marginBottom: this.props.marginBottom ? this.props.marginBottom :0,
-                                  width: this.props.width ? this.props.width : width - 20,
-                                  height: this.props.height ? this.props.height : 45,
+                                  width: this.props.width ? this.props.width : width - zdp(20),
+                                  height: this.props.height ? this.props.height : zdp(45),
                                   justifyContent: this.props.justifyContent ? this.props.justifyContent : 'center',
                                   alignSelf: this.props.alignSelf ? this.props.alignSelf : 'center',
                                   alignItems: this.props.alignItems ? this.props.alignItems : 'center',
@@ -38,7 +39,7 @@ export default class Navigator extends Component {
                               }
                               }
             >
-                <Text style={{fontSize: 16, color: 'white'}}>{this.props.text}</Text>
+                <Text style={{fontSize: zsp(16), color: 'white'}}>{this.props.text}</Text>
             </TouchableOpacity>
         )
     }

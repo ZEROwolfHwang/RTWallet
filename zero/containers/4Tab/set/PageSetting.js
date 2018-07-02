@@ -29,11 +29,11 @@ import {onAppStateChanged} from "../../../utils/GoBackUtil";
 import {cusColors} from "../../../value/cusColor/cusColors";
 import {fetchRequest} from "../../../utils/FetchUtil";
 import {updateApp} from "../../global/AllModuleUtils";
-import * as Api from "../../../utils/Api";
 import * as wechat from "react-native-wechat";
 import ToastUtil from "../../../utils/ToastUtil";
 import ZText from "../../../views/ZText";
 import {AnimatedCircularProgress} from "react-native-circular-progress";
+import {Api} from "../../../utils/Api";
 let navigation;
 let lastBackPressed;
 let globalInfo;
@@ -106,10 +106,10 @@ class PageSetting extends BaseComponent {
                 <ItemIconTextIconView title={'修改登录密码'} iconName={'lock'}
                                       onPress={this.pressChangePsw}/>
 
-                {Platform.OS === 'android' ?
+            {/*    {Platform.OS === 'android' ?
                     <ItemIconTextIconView title={'微信分享'} iconName={'wechat'}
                                           onPress={this.pressShare2WX}/> : null
-                }
+                }*/}
 
                 {Platform.OS === 'android' ?
                     <ItemIconTextIconView title={'版本升级'} iconName={'arrow-circle-up'}
@@ -168,7 +168,7 @@ class PageSetting extends BaseComponent {
     /**
      * 微信分享
      */
-    pressShare2WX = () => {
+  /*  pressShare2WX = () => {
         console.log(globalInfo);
         console.log(`http://sjpay.githubshop.com/app/reg/${globalInfo.recommend}`);
 
@@ -197,7 +197,7 @@ class PageSetting extends BaseComponent {
             console.log(err);
         })
 
-    }
+    }*/
 
     pressUpdateApp = () => {
         fetchRequest(Api.updateApp, 'GET')
@@ -215,7 +215,7 @@ class PageSetting extends BaseComponent {
                                 Alert.alert(
                                     `版本升级:${netVersion}`,
                                     `${updateInfo.content}`,
-                                    [a
+                                    [
                                         updateInfo.isupdate === 0 ? {
                                             text: '取消',
                                             onPress: () => console.log('Ask me later pressed')
@@ -261,7 +261,7 @@ class PageSetting extends BaseComponent {
      * 完善用户信息
      */
     pressCompleteInfo = () => {
-        this.props.navigation.navigate('MerchantInfo',{id: '99'});
+        this.props.navigation.navigate('MerchantInfo');
     }
     /**
      * 修改登录手机

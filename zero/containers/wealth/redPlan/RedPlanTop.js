@@ -46,6 +46,9 @@ class RedPlanTop extends Component {
     // 1,'9.00%',15,'10万起投','剩余5万元可投'
 
     render() {
+
+
+
         let redData = this.props.redData;
         let split = redData.feerat.split('.');
         let channelfee = redData.channelfee

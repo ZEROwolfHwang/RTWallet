@@ -4,10 +4,8 @@
 import React, {Component} from 'react';
 import {
     Platform,
-    StyleSheet,
     Text,
     View,
-    ScrollView,
     Alert,
     Dimensions,
     ListView,
@@ -15,7 +13,6 @@ import {
     Image,
     BackHandler,
     AppState,
-    ProgressBarAndroid,
     RefreshControl
 } from 'react-native';
 import PropTypes from 'prop-types';
@@ -24,23 +21,16 @@ const {width, height} = Dimensions.get('window');
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 
-import PlanItem from './item/PlanItem';
 
-import SizeUtil from '../../utils/SizeUtil';
 
 import BaseComponent from '../global/BaseComponent';
 import {actions_wealth} from "./reduce";
-import {actions_card} from "../reduce/CardReduce";
 import {zdp, zsp, zWidth} from "../../utils/ScreenUtil";
 import ZText from "../../views/ZText";
 import ToastUtil from "../../utils/ToastUtil";
 import {cusColors} from "../../value/cusColor/cusColors";
-import NavigationUtil from "../../utils/NavigationUtil";
-import realm from "../../storage/realm";
-import {TYPES} from "../../root/GlobalAction";
 import {onAppStateChanged, onBackPress} from "../../utils/GoBackUtil";
 import {fetchRequest} from "../../utils/FetchUtil";
-import MarqueeText from "../../views/MarqueeText";
 import {updateAppByLogin} from "../../utils/updateAppUtil";
 
 let lastBackPressed;
@@ -118,11 +108,14 @@ class Wealth extends BaseComponent {
             let pay_limit = billItem.pay_limit;
             let pay_uper = billItem.pay_uper;
 
+
             row.push(<TouchableOpacity key={index}
                                        activeOpacity={0.9}
                                        style={{
                                            marginTop: zdp(20),
-                                           backgroundColor: 'white',
+                                           paddingTop: zdp(10),
+                                           paddingBottom: zdp(10),
+                                           backgroundColor:  status === 1 ?'white':'#d7d7d7',
                                            justifyContent: 'flex-start',
                                            alignItems: 'center',
                                            flexDirection: 'column',
@@ -138,46 +131,76 @@ class Wealth extends BaseComponent {
                                        onPress={() => {
                                            this.pressEnterRedPlan(id, status)
                                        }}>
-
-
                 <View style={{
                     width: width - zdp(20),
                     height: zdp(45),
-                    backgroundColor: status === 1 ? cusColors.linear_default : 'lightgrey',
+                    // backgroundColor: status === 1 ? 'white' : 'lightgrey',
                     flexDirection: 'row',
                     alignItems: 'center'
                 }}>
+                    <View style={{
+                        width: zdp(45),
+                        height: zdp(40),
+                        marginLeft: zdp(10),
+                        marginRight: zdp(5),
+                        borderRadius: zdp(5),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: status === 1 ?'#D6EBFC':'#999999'
+                    }}>
+
 
                     <Image source={{uri: status === 1 ? 'unionpay' : 'unionpay_dark'}}
                            resizeMode={'contain'}
                            style={{
                                width: zdp(40),
                                height: zdp(20),
-                               marginLeft: zdp(10),
-                               marginRight: zdp(5),
-                               backgroundColor: 'transparent'
+                               backgroundColor: 'transparent',
+
                            }}/>
-                    <ZText content={`${name}`} color={'white'} fontSize={zsp(18)}
-                           parentStyle={{marginRight: zdp(10)}}/>
+                    </View>
+                    <ZText content={`${name}`} color={cusColors.text_main} fontSize={zsp(20)}
+                           fontWeight={'500'}
+                           parentStyle={{marginRight: zdp(10), }}/>
                     <View style={{flex: 1}}/>
-                    <ZText content={`${status === 1 ? `费率${feerat}` : '维护中'}`} color={'white'}
+
+                    {status === 1 ?
+                      <View style={{justifyContent:'center',alignItems:'center',flexDirection: 'row'}}>
+                          <ZText content={'积分'} color={cusColors.main_orange}
+                                 fontSize={zsp(16)} parentStyle={{marginRight: zdp(10),
+                              paddingLeft:zdp(5), paddingRight:zdp(5),borderRadius: 2,
+                              borderColor:cusColors.main_orange,
+                              borderWidth:1,}}/>
+
+                          <ZText content={'立即到账'} color={cusColors.main_orange}
+                                 fontSize={zsp(16)} parentStyle={{marginRight: zdp(10),paddingLeft:zdp(5), paddingRight:zdp(5),borderRadius: 2,
+                              borderColor:cusColors.main_orange,
+                              borderWidth:1,}}/>
+
+                      </View>
+                        :
+                    <ZText content={'维护中'} color={cusColors.text_secondary}
                            fontSize={zsp(16)} parentStyle={{marginRight: zdp(10)}}/>
+                    }
+
+
                 </View>
 
                 <View style={{
                     flex: 1,
                     width: width - zdp(20),
-                    justifyContent: 'space-between',
+                    justifyContent: 'space-around',
                     alignItems: 'center',
                     flexDirection: 'row',
                     paddingLeft: zdp(5),
                     paddingRight: zdp(5)
                 }}>
-                    <Item color={cusColors.main_light} title={'下发费'} content={channelfee}/>
-                    <Item title={'单笔额度'} content={`${pay_limit}~${pay_uper}`}/>
-                    <Item title={'带积分'} content={`是`}/>
-                    <Item title={'到账时间'} content={`立即`}/>
-                    <Item title={'交易时间'} content={pay_time}/>
+                    <Item title={'单笔额度'} leftContent={'¥'} leftFontSize={zsp(16)} rightContent={`${pay_limit}~${pay_uper}`} rightFontSize={zsp(24)} color={cusColors.main_orange}/>
+                    <Item title={'费率'} leftContent={`${feerat.substring(0,feerat.length-1)}`} leftFontSize={zsp(24)} rightContent={`${feerat.substring(feerat.length-1,feerat.length)}`} rightFontSize={zsp(16)}/>
+                    <Item  title={'下发费'} leftContent={'¥'} leftFontSize={zsp(16)} rightContent={channelfee} rightFontSize={zsp(24)}/>
+                    {/*<Item title={'带积分'} content={`是`}/>*/}
+                    {/*<Item title={'到账时间'} content={`立即`}/>*/}
+                    {/*<Item title={'交易时间'} content={pay_time}/>*/}
 
 
                 </View>
@@ -239,19 +262,26 @@ class Wealth extends BaseComponent {
     render() {
         // console.log(this.props.bills);
         return (
-
-            <View style={{backgroundColor: 'white'}}>
-                <TouchableOpacity style={{
+            <View style={{}}>
+                <View style={{
                     width,
                     height: zdp(30),
                     backgroundColor: 'lightyellow',
-                    justifyContent: 'space-around',
+                    justifyContent: 'center',
                     alignItems: 'center',
                     flexDirection: 'row'
                 }}>
+                    <Image source={{uri: 'zhifu_safe'}}
+                           resizeMode={'contain'}
+                           style={{
+                               marginRight: zdp(5),
+                               width: zdp(18),
+                               height:zdp(18),
+                               backgroundColor: 'transparent'
+                           }}/>
                     <Text style={{fontSize: zsp(14), color: 'orange'}}>立即到账、短信验证、资金安全</Text>
 
-                </TouchableOpacity>
+                </View>
                 <ListView
                     style={{
                         width: zWidth,
@@ -312,13 +342,12 @@ const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         initEntranceId: actions_wealth.getEntranceId,
         initGetWebData: actions_wealth.fetchData,
-        // initCardList: actions_card.getCardList,
     }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wealth);
 
-
+/*
 class Item extends Component {
 
     constructor(props) {
@@ -346,4 +375,48 @@ Item.propTypes = {
     color: PropTypes.string,
     title: PropTypes.string,
     content: PropTypes.string
+}*/
+
+class Item extends Component {
+
+    constructor(props) {
+        super(props);
+
+    }
+
+    static defaultProps = {
+        color: cusColors.text_main,
+        leftFontSize: zsp(24),
+        leftContent: '',
+        rightFontSize: zsp(24),
+        rightContent: '',
+
+    };
+
+    render() {
+        var params = this.props;
+        return (
+            <View style={{height: zdp(65), justifyContent: 'space-around', alignItems: 'center'}}>
+                <View
+                    style={{justifyContent: 'center', alignItems: 'flex-end', flexDirection: 'row'}}>
+
+                    <ZText content={params.leftContent} fontSize={params.leftFontSize} color={params.color}
+                           textAlign={'center'}/>
+                    <ZText content={params.rightContent} fontSize={params.rightFontSize} color={params.color}
+                           textAlign={'center'}/>
+
+                </View>
+                <ZText content={params.title} fontSize={zsp(18)} color={'grey'}
+                       textAlign={'center'}/>
+            </View>);
+    }
+}
+
+Item.propTypes = {
+    title: PropTypes.string,
+    color:  PropTypes.string,
+    leftFontSize: PropTypes.number,
+    leftContent:  PropTypes.string,
+    rightFontSize:  PropTypes.number,
+    rightContent:  PropTypes.string,
 }

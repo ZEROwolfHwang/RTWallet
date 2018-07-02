@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+<paths>
+    &lt;!&ndash;升级&ndash;&gt;
+    <external-cache-path
+        name="update_external_cache"
+        path="." />
+
+    <cache-path
+        name="update_cache"
+        path="." />
+</paths>
+-->
+<resources>
+    <paths>
+        <external-path path="" name="download"/>
+    </paths>
+</resources>

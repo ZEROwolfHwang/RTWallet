@@ -35,7 +35,6 @@ import {fetchRequestToken} from "../../../../utils/FetchUtilToken";
 import ToastUtil from "../../../../utils/ToastUtil";
 import {actions_card} from "../../../reduce/CardReduce";
 import {actions} from "../../../../root/GlobalAction";
-import SwipeDeleteCard from "../../../4Tab/BankManage/SwipeDeleteCard";
 import {checkIsNull} from "../../../../utils/CheckUitls";
 import {cusColors} from "../../../../value/cusColor/cusColors";
 import MyButtonView from "../../../../views/MyButtonView";
@@ -60,7 +59,6 @@ class InvestBuy extends BaseComponent {
         super(props);
         navigation = this.props.navigation;
 
-        // cardList = this.props.cardList;
 
         globalInfo = this.props.globalInfo;
 
@@ -84,8 +82,6 @@ class InvestBuy extends BaseComponent {
         console.log(creditCardDefault);
 
         this.state = {
-            // debitCard: [cardList._debitDefault.bank, cardList._debitDefault.bankCard],
-            // bankCard: [cardList._payDefault.bank, cardList._payDefault.bankCard],
             debitCard: debitCardDefault,
             bankCard: creditCardDefault,
             buyMoney: '',
@@ -246,10 +242,15 @@ class InvestBuy extends BaseComponent {
                         <ZText content={`当日限额${limitAmount.upper}元`} fontSize={zsp(15)}
                                color={cusColors.text_secondary}/>
                     </View> :
-
-                    <ZText content={`暂无${bankCard.bankName}信用卡的限额额度`} fontSize={zsp(15)}
+                    <View style={{
+                        flexDirection: 'row',
+                        justifyContent: 'flex-start',
+                        paddingTop: zdp(10),
+                        paddingBottom: zdp(10)
+                    }}>
+                    <ZText content={`暂无${bankCard.bank}信用卡的限额额度`} fontSize={zsp(15)}
                            color={cusColors.text_secondary}/>
-
+                    </View>
             }
         </View>;
     }
@@ -318,85 +319,6 @@ class InvestBuy extends BaseComponent {
                     })
                 })}
 
-
-                {/*   {this.viewBankCard('支付银行卡', zdp(1), this.state.bankCard, () => {
-                        this.setState({
-                            showModal: true,
-                            modalType: 0,
-                            // dataSource: this.state.dataSource.cloneWithRows(this._renderList(cardList._payList))
-                            dataSource: creditCardList
-                        })
-                    })}*/}
-
-                {/*
-                    <View style={{
-                        width,
-                        height: zdp(60),
-                        backgroundColor: 'white',
-                        justifyContent: 'center',
-                        alignItems: 'center', marginBottom: zdp(10)
-                    }}>
-                        <View style={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            flexDirection: 'row',
-                        }}>
-
-                            <Text style={[{
-                                paddingLeft: zdp(15),
-                                fontSize: zsp(15),
-                                width: zdp(120),
-                                textAlign: 'left'
-                            }]}>{'收款金额(元)'}</Text>
-                            <TextInput underlineColorAndroid={'transparent'}
-                                       keyboardType={'numeric'}
-                                       style={{
-                                           flex: 1,
-                                           backgroundColor: 'transparent',
-                                           fontSize: zsp(15)
-                                       }}
-                                       onChangeText={(text) => {
-                                           this.setState({
-                                               buyMoney: text
-                                           })
-                                       }}
-                            />
-                        </View>
-
-                    </View>*/}
-
-                {/*    {this.viewBankCard('结算银行卡', 0, this.state.debitCard, () => {
-                        console.log('ajsd');
-                        this.setState({
-                            showModal: true,
-                            modalType: 1,
-                            dataSource: debitCardList
-                        })
-                    })}*/}
-
-                {/*  <View style={{
-                        width,
-                        height: zdp(60),
-                        backgroundColor: 'white',
-                        marginTop: zdp(5),
-                        paddingLeft: zdp(20),
-                        paddingRight: zdp(20),
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexDirection: 'row'
-                    }}>
-                        <Text style={{fontSize: 16, color: 'grey'}}>优惠券</Text>
-                        <Text style={{fontSize: 16, color: 'grey'}}>无优惠券可用</Text>
-                    </View>
-*/}
-
-                {/*  <Text style={{
-                    color: 'grey',
-                    fontSize: zsp(14),
-                    marginTop: zdp(40),
-                    textAlign: 'center'
-                }}>当前余额¥10000.00</Text>
-*/}
                 <MyButtonView style={{width: width / 1.1, marginTop: zdp(30)}} title={'确认支付'}
                               onPress={this.pressInvestSure}/>
 
@@ -545,7 +467,6 @@ class InvestBuy extends BaseComponent {
      * Modal弹出对话框的的视图
      */
     viewModal() {
-        // let cardList = this.props.cardList;
         return <Modal
             animationType='none'
             transparent={true}
@@ -588,7 +509,7 @@ class InvestBuy extends BaseComponent {
                                 fontSize: zsp(18),
                                 color: 'white',
                                 textAlign: 'left'
-                            }}>{`${this.state.modalType === 'CC' ? '选择银行卡支付' : '选择结算银行卡'}`}</Text>
+                            }}>{`${this.state.modalType === 'CC' ? '选择支付银行卡' : '选择结算银行卡'}`}</Text>
                         </View>
 
                         <TouchableOpacity activeOpacity={0.5}
@@ -752,3 +673,82 @@ const mapDispatchToProps = (dispatch) => {
     }, dispatch);
 };
 export default connect(mapStateToProps, mapDispatchToProps)(InvestBuy);
+
+{/*   {this.viewBankCard('支付银行卡', zdp(1), this.state.bankCard, () => {
+                        this.setState({
+                            showModal: true,
+                            modalType: 0,
+                            // dataSource: this.state.dataSource.cloneWithRows(this._renderList(cardList._payList))
+                            dataSource: creditCardList
+                        })
+                    })}*/}
+
+{/*
+                    <View style={{
+                        width,
+                        height: zdp(60),
+                        backgroundColor: 'white',
+                        justifyContent: 'center',
+                        alignItems: 'center', marginBottom: zdp(10)
+                    }}>
+                        <View style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection: 'row',
+                        }}>
+
+                            <Text style={[{
+                                paddingLeft: zdp(15),
+                                fontSize: zsp(15),
+                                width: zdp(120),
+                                textAlign: 'left'
+                            }]}>{'收款金额(元)'}</Text>
+                            <TextInput underlineColorAndroid={'transparent'}
+                                       keyboardType={'numeric'}
+                                       style={{
+                                           flex: 1,
+                                           backgroundColor: 'transparent',
+                                           fontSize: zsp(15)
+                                       }}
+                                       onChangeText={(text) => {
+                                           this.setState({
+                                               buyMoney: text
+                                           })
+                                       }}
+                            />
+                        </View>
+
+                    </View>*/}
+
+{/*    {this.viewBankCard('结算银行卡', 0, this.state.debitCard, () => {
+                        console.log('ajsd');
+                        this.setState({
+                            showModal: true,
+                            modalType: 1,
+                            dataSource: debitCardList
+                        })
+                    })}*/}
+
+{/*  <View style={{
+                        width,
+                        height: zdp(60),
+                        backgroundColor: 'white',
+                        marginTop: zdp(5),
+                        paddingLeft: zdp(20),
+                        paddingRight: zdp(20),
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexDirection: 'row'
+                    }}>
+                        <Text style={{fontSize: 16, color: 'grey'}}>优惠券</Text>
+                        <Text style={{fontSize: 16, color: 'grey'}}>无优惠券可用</Text>
+                    </View>
+*/}
+
+{/*  <Text style={{
+                    color: 'grey',
+                    fontSize: zsp(14),
+                    marginTop: zdp(40),
+                    textAlign: 'center'
+                }}>当前余额¥10000.00</Text>
+*/}

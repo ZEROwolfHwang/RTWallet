@@ -1,13 +1,27 @@
 {
   "images" : [
     {
+      "size" : "20x20",
       "idiom" : "iphone",
-      "size" : "29x29",
+      "filename" : "AppIcon40.png",
       "scale" : "2x"
     },
     {
+      "size" : "20x20",
       "idiom" : "iphone",
+      "filename" : "AppIcon.png",
+      "scale" : "3x"
+    },
+    {
       "size" : "29x29",
+      "idiom" : "iphone",
+      "filename" : "APPIcon58.png",
+      "scale" : "2x"
+    },
+    {
+      "size" : "29x29",
+      "idiom" : "iphone",
+      "filename" : "APPIcon87.png",
       "scale" : "3x"
     },
     {
@@ -29,6 +43,11 @@
       "idiom" : "iphone",
       "size" : "60x60",
       "scale" : "3x"
+    },
+    {
+      "idiom" : "ios-marketing",
+      "size" : "1024x1024",
+      "scale" : "1x"
     }
   ],
   "info" : {

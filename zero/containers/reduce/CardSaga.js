@@ -4,7 +4,6 @@
 
 import {fork, take, put, call} from "redux-saga/effects";
 import {TYPES, actions_card} from "./CardReduce";
-import {getCardList} from "../../storage/schema_card";
 import ToastUtil from "../../utils/ToastUtil";
 
 

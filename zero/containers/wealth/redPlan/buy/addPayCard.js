@@ -114,6 +114,7 @@ class addPayCard extends BaseComponent {
 
     componentWillMount() {
         this.params = this.props.navigation.state.params;
+        console.log(this.params);
         this.cardType = this.params.cardType;
         this.setState({
             cardType: this.cardType
@@ -216,7 +217,7 @@ class addPayCard extends BaseComponent {
     viewCreditCardElse() {
         return <View>
             <Item title={'信用卡有效期'}
-                  placeholder={'例如:2101'}
+                  placeholder={'示例:05/23,输入0523'}
                   hasLine={true}
                   maxLength={4}
                   keyboardType={'numeric'}
@@ -227,7 +228,7 @@ class addPayCard extends BaseComponent {
                   }}/>
             <Item title={'信用卡cvn2'}
                   maxLength={3}
-                  placeholder={'例如:123'}
+                  placeholder={'示例:123'}
                   keyboardType={'numeric'}
                   hasLine={true}
                   onChangeText={(text) => {
@@ -238,7 +239,7 @@ class addPayCard extends BaseComponent {
             <Item title={'信用卡还款日'}
                   hasLine={true}
                   maxLength={2}
-                  placeholder={'例如:01'}
+                  placeholder={'示例:01'}
                   keyboardType={'numeric'}
                   onChangeText={(text) => {
                       this.setState({
@@ -247,7 +248,7 @@ class addPayCard extends BaseComponent {
                   }}/>
             <Item title={'信用卡账单日'}
                   maxLength={2}
-                  placeholder={'例如:02'}
+                  placeholder={'示例:02'}
                   keyboardType={'numeric'}
                   onChangeText={(text) => {
                       this.setState({
@@ -294,10 +295,10 @@ class addPayCard extends BaseComponent {
             if (this.state.creditValidDay.length !== 0) {
 
                 if (this.state.creditValidDay.length !== 4 || !regular.test(this.state.creditValidDay)) {
-                    toastShort('信用卡有效期格式错误(可不填)');
+                    toastShort('信用卡有效期格式错误(前两位月份,后两位年限,可不填)');
                     return;
                 } else {
-                    let month = this.state.creditValidDay.substring(2, 4);
+                    let month = this.state.creditValidDay.substring(0, 2);
                     if (parseInt(month) <= 0 || parseInt(month) > 12) {
                         toastShort('信用卡有效期格式错误(可不填)');
                         return;

@@ -1,6 +1,16 @@
 import React, {Component} from 'react';
 import {
-    Platform, StyleSheet, Text, Keyboard, Alert, View, TouchableOpacity, Image, Dimensions, ListView,BackHandler
+    Platform,
+    StyleSheet,
+    Text,
+    Keyboard,
+    Alert,
+    View,
+    TouchableOpacity,
+    Image,
+    Dimensions,
+    ListView,
+    BackHandler,SafeAreaView
 } from 'react-native';
 import MyTabView from "../../views/MyTabView";
 import MyTextInput from "../../views/MyTextInput";
@@ -19,7 +29,8 @@ import CountdownUtil from "../../utils/CountdownUtil";
 import {checkMobile} from "../../utils/CheckUitls";
 import MyLinearGradient from "../../views/MyLinearGradient";
 import {cusColors} from "../../value/cusColor/cusColors";
-import {zdp, zsp} from "../../utils/ScreenUtil";
+import {isIphoneX, zAppBarHeight, zdp, zsp} from "../../utils/ScreenUtil";
+import ZText from "../../views/ZText";
 
 const {width, height} = Dimensions.get('window');
 
@@ -58,98 +69,118 @@ class RegisterMerchantNext extends BaseComponent {
     };
 
 
-
     render() {
         return (
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
-                <Image source={require('../../../resource/image/loginbg.png')}
-                       style={{width, height, position: 'absolute'}}/>
+                <Image source={{uri: isIphoneX() ? 'login_bg_x' : 'login_bg'}}
+                       resizeMode={'cover'}
+                       style={{
+                           width,
+                           height: height,
+                           position: 'absolute'
+                       }}/>
 
-                <MyTabView title={'注册商户'} isTransparent={true} barStyle={'light-content'} globalTitleColor={'white'} backgroundColor={'transparent'} navigation={this.props.navigation}/>
+                <MyTabView title={'注册商户'} isTransparent={true} barStyle={'light-content'}
+                           globalTitleColor={'white'} backgroundColor={'transparent'}
+                           navigation={this.props.navigation}/>
 
+
+                <Image source={require('../../../resource/image/appname.png')}
+                       style={{
+                           width: zdp(140),
+                           height: zdp(66),
+                           marginTop: zdp(30)
+                       }}
+                       resizeMode={'contain'}/>
+
+
+                <MyTextInputWithIcon
+                    style={{
+                        marginTop: zdp(140)
+                    }}
+                    keyboardType={'numeric'}
+                    placeholder={'绑定手机号'}
+                    iconName={'login_phone'}
+                    onChangeText={(text) => {
+                        this.setState({
+                            phone: text
+                        })
+                    }}
+                />
+
+
+                <View style={{
+                    width: width / 1.3,
+                    height: zdp(50),
+                    marginTop: zdp(20),
+                    borderWidth: 1,
+                    borderRadius: zdp(5),
+                    borderColor: 'white',
+                    backgroundColor: cusColors.inputBackgroundColor,
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                }}>
                     <MyTextInputWithIcon
-                        style={{marginTop:zdp(150)}}
+                        style={{flex: 1, height: zdp(50), borderWidth: 0, marginTop: 0}}
+                        placeholder={'请输入验证码'}
                         keyboardType={'numeric'}
-                        placeholder={'绑定手机号'}
-                        iconName={'phone'}
+                        maxLength={6}
                         onChangeText={(text) => {
                             this.setState({
-                                phone: text
+                                verifyCode: text
                             })
-                        }}
-                    />
+                        }} iconName={'login_verify'}/>
 
 
-                    <View style={{
-                        width: width / 1.3, height: zdp(50), marginTop: zdp(20),
-                        borderWidth: 1, borderRadius: zdp(5), borderColor: 'white',
-                        backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center'
-                    }}>
-                        <MyTextInputWithIcon
-                            style={{flex: 1, height: zdp(50), borderWidth: 0, marginTop: 0}}
-                            placeholder={'请输入验证码'}
-                            keyboardType={'numeric'}
-                            maxLength={6}
-                            onChangeText={(text) => {
-                                this.setState({
-                                    verifyCode: text
-                                })
-                            }} iconName={'lock'}/>
-
-
-                        <TouchableOpacity activeOpacity={this.state.isSentVerify ? 0.5 : 1}
-                                          onPress={()=>{
-                                              pressVerify(this.state.phone, this.state.isSentVerify,
-                                                  () => {
-                                                      console.log('回调1');
-                                                      this.setState({
-                                                          isSentVerify: false,
-                                                      });
-                                                  }
-                                                  , (time) => {
-                                                      console.log(time.sec);
-                                                      this.setState({
-                                                          timerTitle: time.sec > 0 ? `重新获取(${time.sec}s)` : '重新获取'
-                                                      }, () => {
-                                                          if (this.state.timerTitle === '重新获取') {
-                                                              console.log('回调2');
-                                                              this.setState({
-                                                                  isSentVerify: true
-                                                              })
-                                                          }
-                                                      })
+                    <TouchableOpacity activeOpacity={this.state.isSentVerify ? 0.5 : 1}
+                                      onPress={() => {
+                                          pressVerify(this.state.phone, this.state.isSentVerify,
+                                              () => {
+                                                  console.log('回调1');
+                                                  this.setState({
+                                                      isSentVerify: false,
+                                                  });
+                                              }
+                                              , (time) => {
+                                                  console.log(time.sec);
+                                                  this.setState({
+                                                      timerTitle: time.sec > 0 ? `重新获取(${time.sec}s)` : '重新获取'
                                                   }, () => {
-                                                      console.log('回调3');
-                                                      this.setState({
-                                                          isSentVerify: true,
-                                                          timerTitle: '重新获取'
-                                                      });
+                                                      if (this.state.timerTitle === '重新获取') {
+                                                          console.log('回调2');
+                                                          this.setState({
+                                                              isSentVerify: true
+                                                          })
+                                                      }
                                                   })
-                                          }}>
-                            <View style={{
-                                height: zdp(50),
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                paddingRight: zdp(20),
-                            }}>
-                                <Text
-                                    style={{
-                                        fontSize: zsp(14),
-                                        color: this.state.isSentVerify ? cusColors.verify_light : this.state.timerTitle.indexOf('s')>-1 ? cusColors.verify_dark : cusColors.verify_light
-                                    }}>{this.state.timerTitle}</Text>
+                                              }, () => {
+                                                  console.log('回调3');
+                                                  this.setState({
+                                                      isSentVerify: true,
+                                                      timerTitle: '重新获取'
+                                                  });
+                                              })
+                                      }}>
+                        <View style={{
+                            height: zdp(50),
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            paddingRight: zdp(20),
+                        }}>
+                            <ZText content={this.state.timerTitle}
+                                   color={this.state.isSentVerify ? cusColors.verify_light : this.state.timerTitle.indexOf('s') > -1 ? cusColors.verify_dark : cusColors.verify_light}
+                                   fontSize={zsp(16)}/>
 
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+                        </View>
+                    </TouchableOpacity>
+                </View>
 
-                    <MyButtonView modal={1} style={{width: width / 1.3, marginTop:zdp(30)}} title={'注册'}
-                                  onPress={this.pressRegister}/>
+                <MyButtonView modal={1} style={{width: width / 1.3, marginTop: zdp(30)}}
+                              title={'注册'}
+                              onPress={this.pressRegister}/>
             </View>
         )
     }
-
-
-
 
 
     pressRegister = () => {
@@ -165,6 +196,7 @@ class RegisterMerchantNext extends BaseComponent {
         formData.append('code', this.state.verifyCode);
         formData.append('username', this.registerInfo.username);
         formData.append('password', this.registerInfo.password);
+        formData.append('recommend', this.registerInfo.recommend);
 
         fetchRequest('Register', 'POST', formData)
             .then(res => {

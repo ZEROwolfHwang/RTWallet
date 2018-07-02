@@ -32,6 +32,7 @@ import ToastUtil from "../../../utils/ToastUtil";
 import {fetchRequestToken} from "../../../utils/FetchUtilToken";
 import {zdp, zsp} from "../../../utils/ScreenUtil";
 import {cusColors} from "../../../value/cusColor/cusColors";
+import ZText from "../../../views/ZText";
 
 var globalInfo = null;
 
@@ -146,7 +147,13 @@ class PageChangePhone extends BaseComponent {
                                                       });
                                                   })
                                           }}>
-                            <Text
+
+                            <ZText
+                                parentStyle={{marginLeft:zdp(20)}}
+                                content={this.state.timerTitle}
+                                   color={this.state.isSentVerify ? cusColors.verify_light : this.state.timerTitle.indexOf('s') > -1 ? cusColors.verify_dark : cusColors.verify_light}
+                                   fontSize={zsp(16)}/>
+                         {/*   <Text
                                 style={{
                                     marginLeft: zdp(20),
                                     alignSelf: 'center',
@@ -154,7 +161,7 @@ class PageChangePhone extends BaseComponent {
                                     textAlign: 'center',
                                     color: this.state.isSentVerify ? 'lightblue' : this.state.timerTitle.endsWith('s') ? 'lightgrey' : '#999999'
                                 }}>{this.state.timerTitle}</Text>
-
+*/}
                         </TouchableOpacity>
                     </View>
 

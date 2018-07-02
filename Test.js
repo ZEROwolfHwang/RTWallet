@@ -5,9 +5,7 @@ import React, {Component} from 'react';
 import {
     Platform, StyleSheet, Text, Alert, View, TouchableOpacity, Image, Dimensions, ListView
 } from 'react-native';
-// import {getCardList} from "./zero/storage/schema_card";
 import realm from "./zero/storage/realm";
-import {getCardList} from "./zero/storage/schema_card";
 import MyTabView from "./zero/views/MyTabView";
 import {zdp, zsp} from "./zero/utils/ScreenUtil";
 import {cusColors} from "./zero/value/cusColor/cusColors";

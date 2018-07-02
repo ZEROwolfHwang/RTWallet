@@ -12,7 +12,7 @@ import {
     Image,
     Dimensions,
     ListView,
-    KeyboardAvoidingView, BackHandler
+    KeyboardAvoidingView, BackHandler, StatusBar
 } from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -29,8 +29,17 @@ import ToastUtil from "../../utils/ToastUtil";
 import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 import {checkMobile} from "../../utils/CheckUitls";
 import MyLinearGradient from "../../views/MyLinearGradient";
-import {zdp, zsp} from "../../utils/ScreenUtil";
+import {
+    isIphoneX,
+    zAppBarHeight,
+    zdp,
+    zHeight,
+    zModalHeight,
+    zsp,
+    zStatusBarHeight
+} from "../../utils/ScreenUtil";
 import {cusColors} from "../../value/cusColor/cusColors";
+import ZText from "../../views/ZText";
 
 const {width, height} = Dimensions.get('window');
 
@@ -49,45 +58,56 @@ class ForgetPsw extends BaseComponent {
         }
     }
 
-   componentDidMount() {
-       BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
-   }
+    componentDidMount() {
+        BackHandler.addEventListener("hardwareBackPress", this.onBackPress);
+    }
 
-   componentWillUnmount() {
-       CountdownUtil.stop();
-       BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
-   }
+    componentWillUnmount() {
+        CountdownUtil.stop();
+        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
+    }
 
-   onBackPress = () => {
-       this.props.navigation.goBack();
-       return true;
-   };
-
+    onBackPress = () => {
+        this.props.navigation.goBack();
+        return true;
+    };
 
 
     render() {
         return (
-            <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
-                <Image source={require('../../../resource/image/loginbg.png')}
-                       style={{width, height, position: 'absolute'}}/>
+            <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center',backgroundColor:'white'}}>
 
-                <View>
-                    <MyTabView isTransparent={true} title={'忘记密码'} barStyle={'light-content'}
-                               backgroundColor={'transparent'}
-                               globalTitleColor={'white'} navigation={this.props.navigation}/>
                     <KeyboardAwareScrollView
                         style={{flex: 1, backgroundColor: 'transparent'}}
                         resetScrollToCoords={{x: 0, y: 0}}
                         contentContainerStyle={{
-                            justifyContent: 'center',
+                            justifyContent: 'flex-start',
                             alignItems: 'center'
                         }}
                         showsVerticalScrollIndicator={false}
                         scrollEnabled={false}
                         keyboardShouldPersistTaps={'always'}
                     >
+
+                        <Image source={{uri: isIphoneX()?'login_bg_x':'login_bg'}}
+                               resizeMode={'cover'}
+                               style={{
+                                   width,
+                                   height: height,
+                                   position: 'absolute',
+                               }}/>
+
+
+                        <Image source={require('../../../resource/image/appname.png')}
+                               style={{
+                                   width: zdp(140),
+                                   height: zdp(66),
+                                   marginTop: zAppBarHeight + zdp(40)
+                               }}
+                               resizeMode={'contain'}/>
+
                         <MyTextInputWithIcon
-                            style={{marginTop: zdp(60)}}
+                            style={{marginTop: zdp(140)}}
 
                             placeholder={'请输入手机号'}
                             keyboardType={'numeric'}
@@ -95,7 +115,7 @@ class ForgetPsw extends BaseComponent {
                                 this.setState({
                                     phone: text
                                 })
-                            }} iconName={'phone'}/>
+                            }} iconName={'login_phone'}/>
 
 
                         <View style={{
@@ -105,7 +125,7 @@ class ForgetPsw extends BaseComponent {
                             borderWidth: 1,
                             borderRadius: zdp(5),
                             borderColor: 'white',
-                            backgroundColor: 'transparent',
+                            backgroundColor: cusColors.inputBackgroundColor,
                             flexDirection: 'row',
                             alignItems: 'center'
                         }}>
@@ -118,7 +138,7 @@ class ForgetPsw extends BaseComponent {
                                     this.setState({
                                         verifyCode: text
                                     })
-                                }} iconName={'lock'}/>
+                                }} iconName={'login_verify'}/>
 
                             <TouchableOpacity activeOpacity={this.state.isSentVerify ? 0.5 : 1}
                                               onPress={() => {
@@ -155,11 +175,9 @@ class ForgetPsw extends BaseComponent {
                                     alignItems: 'center',
                                     paddingRight: zdp(20),
                                 }}>
-                                    <Text
-                                        style={{
-                                            fontSize: zsp(14),
-                                            color: this.state.isSentVerify ? cusColors.verify_light : this.state.timerTitle.indexOf('s')>-1 ? cusColors.verify_dark : cusColors.verify_light
-                                        }}>{this.state.timerTitle}</Text>
+                                    <ZText content={this.state.timerTitle}
+                                           color={this.state.isSentVerify ? cusColors.verify_light : this.state.timerTitle.indexOf('s') > -1 ? cusColors.verify_dark : cusColors.verify_light}
+                                           fontSize={zsp(16)}/>
 
                                 </View>
                             </TouchableOpacity>
@@ -173,7 +191,7 @@ class ForgetPsw extends BaseComponent {
                                 this.setState({
                                     passwordNew: text
                                 })
-                            }} iconName={'phone'}/>
+                            }} iconName={'login_psw'}/>
 
                         <MyTextInputWithIcon
                             placeholder={'确认密码'}
@@ -182,7 +200,7 @@ class ForgetPsw extends BaseComponent {
                                 this.setState({
                                     passwordSure: text
                                 })
-                            }} iconName={'phone'}/>
+                            }} iconName={'login_psw'}/>
 
 
                         <View style={{
@@ -198,9 +216,14 @@ class ForgetPsw extends BaseComponent {
                                 title={'确认修改'}
                                 onPress={this.pressSureChange}/>
                         </View>
+
+                        <MyTabView linear_style={{position: 'absolute'}}
+                                   isTransparent={true} title={'忘记密码'} barStyle={'light-content'}
+                                   backgroundColor={'transparent'}
+                                   globalTitleColor={'white'} navigation={this.props.navigation}/>
+
                     </KeyboardAwareScrollView>
                 </View>
-            </View>
         );
     }
 

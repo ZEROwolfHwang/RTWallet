@@ -1,14 +1,15 @@
 package com.ltwallet.wxapi;
 
+import android.app.Activity;
+import android.os.Bundle;
 
-import com.umeng.socialize.weixin.view.WXCallbackActivity;
+import com.theweflex.react.WeChatModule;
 
-/**
- * Created by wangfei on 17/8/28.
- */
-
-public class WXEntryActivity extends WXCallbackActivity {
-
-
-
+public class WXEntryActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        WeChatModule.handleIntent(getIntent());
+        finish();
+    }
 }

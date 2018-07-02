@@ -17,15 +17,20 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+
 const {width, height} = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MyTabView from '../../views/MyTabView';
 import BaseComponent from '../global/BaseComponent';
-import  TopView from './Mine_TopView';
-import  Item from './Item';
-import {zdp, zModalHeight, zModalMarginTop, zsp} from "../../utils/ScreenUtil";
+import TopView from './Mine_TopView';
+import Item from './Item';
+import {zdp, zModalHeight, zModalMarginTop, zsp, zWidth} from "../../utils/ScreenUtil";
 import {onAppStateChanged, onBackPress} from "../../utils/GoBackUtil";
 import * as wechat from "react-native-wechat";
+import ZText from "../../views/ZText";
+import {cusColors} from "../../value/cusColor/cusColors";
+import {toastShort} from "../../utils/ToastUtil";
+import {common_url} from "../../utils/FetchUtil";
 
 // import Realm from 'realm';
 // import * as hh from "../../storage/schema_gesture";
@@ -33,14 +38,16 @@ import * as wechat from "react-native-wechat";
 let lastBackPressed;
 let navigation;
 let globalInfo;
+
 class FourthTab extends BaseComponent {
 
     constructor(props) {
         super(props);
         navigation = this.props.navigation;
         globalInfo = this.props.globalInfo;
-        this.state={
-            showModal: false
+        this.state = {
+            showModal: false,
+            showModalWX: false
         }
     }
 
@@ -50,6 +57,9 @@ class FourthTab extends BaseComponent {
     }
 
     componentWillUnmount() {
+        //移除微信所有的监听事件
+        wechat.removeAllListeners();
+
         BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
         AppState.removeEventListener('change', this._onAppStateChanged);
     }
@@ -61,14 +71,25 @@ class FourthTab extends BaseComponent {
         });
     }
 
+    componentWillMount() {
+        wechat.addListener(
+            'SendMessageToWX.Resp',
+            (response) => {
+                if (parseInt(response.errCode) === 0) {
+                    toastShort('分享成功');
+                } else {
+                    toastShort('分享失败');
+                }
+            }
+        );
+    }
 
     onBackPress = () => {
 
-        return onBackPress(lastBackPressed,this.props.navigation,()=>{
+        return onBackPress(lastBackPressed, this.props.navigation, () => {
             lastBackPressed = Date.now();
         })
     };
-
 
 
     render() {
@@ -83,26 +104,12 @@ class FourthTab extends BaseComponent {
                     style={{backgroundColor: '#e7e9e9'}}>
 
                     <View style={{
-                        marginTop: zdp(70), width: width - zdp(20), borderRadius: zdp(5), top: -zdp(70)
+                        marginTop: zdp(70),
+                        width: width - zdp(20),
+                        borderRadius: zdp(5),
+                        top: -zdp(70)
                     }}>
 
-                        {/*   <View style={styles.topView}>
-                            <TopView image={require('../../../XImages/qianbao.png')} title={'认证信息'}
-                                     onPress={() => {
-                                         // Alert.alert('444')
-                                         this.props.navigation.dispatch({
-                                             type: 'UserInfo'
-                                         });
-                                     }}/>
-                            <TopView image={require('../../../XImages/renzheng.png')} title={'订单明细'}
-                                     onPress={() => {
-                                         this.props.navigation.navigate('TransactionRecord');
-                                     }}/>
-                            <TopView image={require('../../../XImages/ziliao.png')} title={'卡号管理'}
-                                     onPress={() => {
-                                         this.props.navigation.navigate('CardManage')
-                                     }}/>
-                        </View>*/}
 
                         <View style={styles.centerView}>
                             <Item onPress={() => {
@@ -131,10 +138,13 @@ class FourthTab extends BaseComponent {
                         </View>
 
 
-
                         {Platform.OS === 'android' ?
                             <View style={styles.centerView}>
-                                <Item onPress={this.pressShare2WX}
+                                <Item onPress={() => {
+                                    this.setState({
+                                        showModalWX: true
+                                    })
+                                }}
                                       title={'微信分享'}
                                       image={'wechat'}/>
 
@@ -156,104 +166,19 @@ class FourthTab extends BaseComponent {
                             <Item onPress={() => {
                                 // NavigationUtil.reset(this.props.navigation, 'RegisterApp')
                                 // deleteGestureLogin();
-                                this.props.navigation.navigate('RegisterApp',{type:0});
+                                this.props.navigation.navigate('RegisterApp', {type: 0});
                             }}
                                   title={'退出登录'}
                                   image={'backward'}/>
 
                         </View>
-                        {/*   <View style={styles.centerView}>
-                            <Item onPress={() => {
-                                // Alert.alert('点击条目')
-                                this.props.navigation.navigate('Pay_Plan')
-                            }}
-                                  title={'邀请好友'}
-                                  image={require('../../../XImages/setting/Slice7x1.png')}
-                            />
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'参加活动'}
-                                  image={require('../../../XImages/setting/Slicex1.png')}/>
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'优惠券'}
-                                  image={require('../../../XImages/setting/Slice2x1.png')}/>
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'贝米商城'}
-                                  image={require('../../../XImages/setting/Slice3x1.png')}/>
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'贝米实验室'}
-                                  image={require('../../../XImages/setting/Slice4x1.png')}/>
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'贝米黑卡'}
-                                  image={require('../../../XImages/setting/Slice5x1.png')}/>
-
-                        </View>*/}
-                        {/*    <View style={styles.centerView}>
-                            <Item onPress={() => {
-                                // Alert.alert('点击条目')
-
-                                NavigationUtil.reset(this.props.navigation, 'Set_account');
-                                // this.props.navigation.dispatch({
-                                //     type: 'Set_account'
-                                // });
-                            }}
-                                  title={'账户设置'}
-                                  image={require('../../../XImages/setting/Slice6x1.png')}
-                            />
-
-
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'交易记录'}
-                                  image={require('../../../XImages/setting/Slicex2.png')}/>
-                            <Item onPress={() => {
-                                // Alert.alert('点击条目')
-                                this.props.navigation.navigate('DefaultCardManage');
-                            }}
-                                  title={'银行卡管理'}
-                                  image={require('../../../XImages/setting/Slice2x2.png')}/>
-
-                        </View>*/}
-                        {/*
-                        <View style={styles.centerView}>
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'在线客服'}
-                                  image={require('../../../XImages/setting/Slice3x2.png')}
-                            />
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'帮助与反馈'}
-                                  image={require('../../../XImages/setting/Slice4x2.png')}/>
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'公告'}
-                                  image={require('../../../XImages/setting/Slice5x2.png')}/>
-                            <Item onPress={() => {
-                                Alert.alert('点击条目')
-                            }}
-                                  title={'关于贝米'}
-                                  image={require('../../../XImages/setting/Slice6x2.png')}/>
-
-                        </View>*/}
 
                     </View>
 
                 </ScrollView>
                 {this.viewModal()}
+                {this.viewModalWXShare()}
+
             </View>
         );
 
@@ -264,8 +189,6 @@ class FourthTab extends BaseComponent {
      */
     pressShare2WX = () => {
         console.log(globalInfo);
-        console.log(`http://sjpay.githubshop.com/app/reg/${globalInfo.recommend}`);
-
 
         wechat.isWXAppInstalled()
             .then((isInstalled) => {
@@ -274,7 +197,7 @@ class FourthTab extends BaseComponent {
                     wechat.shareToSession({
                         type: 'news',
                         title: '锐通钱包 快捷收款 完美还款',
-                        webpageUrl: `http://sjpay.githubshop.com/app/reg/${globalInfo.recommend}`
+                        webpageUrl: `${common_url}reg/${globalInfo.recommend}`
                     }).then(res => {
                         console.log(res);
                     })
@@ -287,105 +210,221 @@ class FourthTab extends BaseComponent {
                         {text: '确定'}
                     ])
                 }
-            }).catch(err=>{
+            }).catch(err => {
             console.log(err);
         })
 
     }
 
-/**
- * Modal弹出对话框的的视图
- */
-viewModal() {
-    // let cardList = this.props.cardList;
-    return <Modal
-        animationType='fade'
-        transparent={true}
-        visible={this.state.showModal}
-        onRequestClose={() => this.setState({showModal: false})}
-    >
-        <View
-            style={{
-                width: width,
-                height: zModalHeight,
-                marginTop: zModalMarginTop,
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'rgba(0,0,0,0.5)'
-            }}>
-            <View style={{
-                width: width / 1.3,
-                backgroundColor: 'white',
-                borderRadius: zdp(5),
-                justifyContent: 'center',
-                alignItems: 'center'
-            }}>
+    /**
+     * 微信朋友圈分享
+     */
+    pressShare2WXFriend = () => {
 
-                <View style={{
-                    width: width / 1.3,
-                    height: zdp(140),
-                    justifyContent: 'center',
+        wechat.isWXAppInstalled()
+            .then((isInstalled) => {
+                if (isInstalled) {
+                    wechat.shareToTimeline({
+                        type: 'news',
+                        title: '锐通钱包 快捷收款 完美还款',
+                        description: '分享自:锐通信息技术有限公司',
+                        // thumbImage: 'http://mta.zttit.com:8080/images/ZTT_1404756641470_image.jpg',
+                        webpageUrl: `${common_url}reg/${globalInfo.recommend}`
+                    })
+                        .catch((error) => {
+                            toastShort(error.message);
+                        });
+                } else {
+                    toastShort('没有安装微信软件，请您安装微信之后再试');
+                }
+            });
+    }
+
+    /**
+     * 微信分享
+     */
+    viewModalWXShare() {
+        return <Modal
+            animationType='fade'
+            transparent={true}
+            visible={this.state.showModalWX}
+            onRequestClose={() => this.setState({showModalWX: false})}
+        >
+            <View
+                style={{
+                    width: width,
+                    height: zModalHeight,
+                    marginTop: zModalMarginTop,
+                    justifyContent: 'flex-end',
                     alignItems: 'center',
-                    padding: zdp(20),
+                    backgroundColor: 'rgba(0,0,0,0.2)',
+                    paddingBottom: zdp(80),
                 }}>
-                    <Text style={{
-                        fontSize: zsp(16),
-                        textAlign: 'center',
-                        color: 'black'
-                    }}>您尚未完善用户信息认证,请完成认证后再进行收款</Text>
+                <View style={{
+                    width: zWidth / 1.3,
+                    backgroundColor: 'white',
+                    borderRadius: zdp(10),
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    padding: zdp(30),
+                }}>
+
+                    <TouchableOpacity activeOpacity={0.9}
+                                      style={{justifyContent: 'center', alignItems: 'center'}}
+                                      onPress={() => {
+                                          this.setState({
+                                              showModalWX: false
+                                          })
+                                          this.pressShare2WX()
+                                      }}>
+
+                        <Image source={{uri: 'wechat'}}
+                               resizeMode={'contain'}
+                               style={{
+                                   width: zdp(80),
+                                   height: zdp(80),
+                                   backgroundColor: 'transparent'
+                               }}/>
+                        <ZText parentStyle={{padding: zdp(10)}} content={'微信好友'} fontSize={zsp(22)}
+                               color={cusColors.text_secondary}/>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity activeOpacity={0.9}
+                                      style={{justifyContent: 'center', alignItems: 'center'}}
+                                      onPress={() => {
+                                          this.setState({
+                                              showModalWX: false
+                                          })
+                                          this.pressShare2WXFriend()
+                                      }}>
+
+                        <Image source={{uri: 'wechat_friend'}}
+                               resizeMode={'contain'}
+                               style={{
+                                   width: zdp(80),
+                                   height: zdp(80),
+                                   backgroundColor: 'transparent'
+                               }}/>
+                        <ZText parentStyle={{padding: zdp(10)}} content={'微信朋友圈'} fontSize={zsp(22)}
+                               color={cusColors.text_secondary}/>
+                    </TouchableOpacity>
+
+
                 </View>
 
+                <TouchableOpacity activeOpacity={0.9} style={{
+                    marginTop: zdp(15),
+                    width: zWidth / 1.3,
+                    padding: zdp(10),
+                    borderRadius: zdp(10),
+                    backgroundColor: 'white'
+                }}
+                                  onPress={() => {
+                                      console.log('asds');
+                                      this.setState({
+                                          showModalWX: false
+                                      })
+                                  }}>
+                    <ZText content={'取 消'} fontSize={zsp(24)} color={cusColors.linear_light}/>
+                </TouchableOpacity>
+
+            </View>
+        </Modal>;
+    }
+
+    /**
+     * Modal弹出对话框的的视图
+     */
+    viewModal() {
+        // let cardList = this.props.cardList;
+        return <Modal
+            animationType='fade'
+            transparent={true}
+            visible={this.state.showModal}
+            onRequestClose={() => this.setState({showModal: false})}
+        >
+            <View
+                style={{
+                    width: width,
+                    height: zModalHeight,
+                    marginTop: zModalMarginTop,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(0,0,0,0.5)'
+                }}>
                 <View style={{
                     width: width / 1.3,
-                    height: zdp(50),
-                    flexDirection: 'row',
+                    backgroundColor: 'white',
+                    borderRadius: zdp(5),
                     justifyContent: 'center',
                     alignItems: 'center'
                 }}>
-                    <TouchableOpacity style={{
-                        flex: 1,
-                        height: zdp(50),
+
+                    <View style={{
+                        width: width / 1.3,
+                        height: zdp(140),
                         justifyContent: 'center',
                         alignItems: 'center',
-                        borderColor: 'lightgrey',
-                        borderTopWidth: 1,
-                        borderRightWidth: 1
-                    }}
-                                      onPress={() => {
-                                          this.setState({
-                                              showModal: false
-                                          })
-                                      }}>
-                        <Text style={{fontSize: zsp(18), color: 'grey'}}>关闭</Text>
-                    </TouchableOpacity>
+                        padding: zdp(20),
+                    }}>
+                        <Text style={{
+                            fontSize: zsp(16),
+                            textAlign: 'center',
+                            color: 'black'
+                        }}>您尚未完善用户信息认证,请完成认证后再进行收款</Text>
+                    </View>
 
-                    <TouchableOpacity style={{
-                        flex: 1,
+                    <View style={{
+                        width: width / 1.3,
                         height: zdp(50),
+                        flexDirection: 'row',
                         justifyContent: 'center',
-                        alignItems: 'center',
-                        borderColor: 'lightgrey',
-                        borderTopWidth: 1
-                    }}
-                                      onPress={() => {
-                                          this.setState({
-                                              showModal: false,
-                                          })
-                                          this.props.navigation.navigate('MerchantInfo')
-                                      }}>
-                        <Text style={{fontSize: zsp(18), color: 'grey'}}>完善信息</Text>
-                    </TouchableOpacity>
+                        alignItems: 'center'
+                    }}>
+                        <TouchableOpacity style={{
+                            flex: 1,
+                            height: zdp(50),
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderColor: 'lightgrey',
+                            borderTopWidth: 1,
+                            borderRightWidth: 1
+                        }}
+                                          onPress={() => {
+                                              this.setState({
+                                                  showModal: false
+                                              })
+                                          }}>
+                            <Text style={{fontSize: zsp(18), color: 'grey'}}>关闭</Text>
+                        </TouchableOpacity>
 
+                        <TouchableOpacity style={{
+                            flex: 1,
+                            height: zdp(50),
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderColor: 'lightgrey',
+                            borderTopWidth: 1
+                        }}
+                                          onPress={() => {
+                                              this.setState({
+                                                  showModal: false,
+                                              })
+                                              this.props.navigation.navigate('MerchantInfo')
+                                          }}>
+                            <Text style={{fontSize: zsp(18), color: 'grey'}}>完善信息</Text>
+                        </TouchableOpacity>
+
+
+                    </View>
 
                 </View>
 
             </View>
-
-        </View>
-    </Modal>;
+        </Modal>;
+    }
 }
-}
-
 
 
 const styles = {
@@ -428,13 +467,12 @@ const styles = {
 const mapStateToProps = (state) => {
     return {
         nav: state.nav,
-        globalInfo:state.globalInfo.data
+        globalInfo: state.globalInfo.data
     }
 
 };
 const mapDispatchToProps = (dispatch) => {
-    return bindActionCreators({
-    }, dispatch);
+    return bindActionCreators({}, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(FourthTab);

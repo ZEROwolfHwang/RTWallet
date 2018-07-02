@@ -6,7 +6,6 @@ import {fetchRequestToken} from "../../../../utils/FetchUtilToken";
 import ToastUtil from "../../../../utils/ToastUtil";
 import realm from "../../../../storage/realm";
 import {getCreditCardList, getDebitCardList} from "../../../../storage/schema_card";
-import {fetchRequest} from "../../../../utils/FetchUtil";
 
 /**
  * 删除卡片
@@ -16,7 +15,6 @@ const deleteCard = (currentCard, merCode, token, callBack1, callBack2) => {
 
     try {
         fetchRequestToken(`cardDel?bankCard=${currentCard.bankCard}`, 'GET', token)
-        // fetchRequest(`cardDel?bankCard=${currentCard.bankCard}`, 'GET', token)
             .then(res => {
                 console.log(res);
                 if (res.respCode === 200) {

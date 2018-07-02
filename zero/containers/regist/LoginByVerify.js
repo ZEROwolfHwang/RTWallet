@@ -22,7 +22,6 @@ import realm from "../../storage/realm";
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {actions} from "../../root/GlobalAction";
-import {getUserList} from "../../storage/schema_user";
 import MyButtonView from "../../views/MyButtonView";
 import MyLinearGradient from "../../views/MyLinearGradient";
 import MyTextInputWithIcon from "../../views/MyTextInputWithIcon";
@@ -32,7 +31,8 @@ import {checkMobile} from "../../utils/CheckUitls";
 import {getCardLength} from "../../storage/schema_card";
 import {save2Realm} from "./SaveRealmUtil";
 import {cusColors} from "../../value/cusColor/cusColors";
-import {zdp, zsp} from "../../utils/ScreenUtil";
+import {isIphoneX, zAppBarHeight, zdp, zsp} from "../../utils/ScreenUtil";
+import ZText from "../../views/ZText";
 // import storage from '../../storage/Storage'
 class LoginByVerify extends BaseComponent {
     constructor(props) {
@@ -85,90 +85,114 @@ class LoginByVerify extends BaseComponent {
 
         return (
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
-                <Image source={require('../../../resource/image/loginbg.png')}
-                       style={{width, height, position: 'absolute'}}/>
+                <Image source={{uri:  isIphoneX() ? 'login_bg_x' : 'login_bg'}}
+                       resizeMode={'cover'}
+                       style={{
+                           width,
+                           height,
+                           position: 'absolute'
+                       }}/>
+
 
                 <MyTabView title={'验证码登录'} isTransparent={true} backgroundColor={'transparent'}
                            globalTitleColor={'white'} barStyle={'light-content'}
                            navigation={this.props.navigation}/>
 
-                <MyTextInputWithIcon
-                    style={{marginTop: zdp(160)}}
-                    placeholder={'请输入手机号'}
-                    keyboardType={'numeric'}
-                    onChangeText={(text) => {
-                        this.setState({
-                            phone: text
-                        })
-                    }} iconName={'phone'}/>
 
+                <View
+                    style={{flex: 1, alignItems: 'center'}}>
 
-                <View style={{
-                    width: width / 1.3, height: zdp(50), marginTop: zdp(20),
-                    borderWidth: 1, borderRadius: zdp(5), borderColor: 'white',
-                    backgroundColor: 'transparent', flexDirection: 'row', alignItems: 'center'
-                }}>
+                    <Image source={require('../../../resource/image/appname.png')}
+                           style={{
+                               width: zdp(140),
+                               height: zdp(66),
+                               marginTop: zdp(100) - zAppBarHeight
+                           }}
+                           resizeMode={'contain'}/>
+
                     <MyTextInputWithIcon
-                        style={{flex: 1, height: zdp(50), borderWidth: 0, marginTop: 0}}
-                        placeholder={'请输入验证码'}
+                        style={{marginTop: zdp(140)}}
+                        placeholder={'请输入手机号'}
+                        iconName={'login_phone'}
                         keyboardType={'numeric'}
-                        maxLength={6}
                         onChangeText={(text) => {
                             this.setState({
-                                verifyCode: text
+                                phone: text
                             })
-                        }} iconName={'lock'}/>
+                        }}/>
 
-                    <TouchableOpacity activeOpacity={this.state.isSentVerify ? 0.5 : 1}
-                                      onPress={() => {
-                                          pressVerify(this.state.phone, this.state.isSentVerify,
-                                              () => {
-                                                  console.log('回调1');
-                                                  this.setState({
-                                                      isSentVerify: false,
-                                                  });
-                                              }
-                                              , (time) => {
-                                                  console.log(time.sec);
-                                                  this.setState({
-                                                      timerTitle: time.sec > 0 ? `重新获取(${time.sec}s)` : '重新获取'
+
+                    <View style={{
+                        width: width / 1.3,
+                        height: zdp(50),
+                        marginTop: zdp(20),
+                        borderWidth: 1,
+                        borderRadius: zdp(5),
+                        borderColor: 'white',
+                        backgroundColor: cusColors.inputBackgroundColor,
+                        flexDirection: 'row',
+                        alignItems: 'center'
+                    }}>
+                        <MyTextInputWithIcon
+                            style={{flex: 1, height: zdp(50), borderWidth: 0, marginTop: 0}}
+                            placeholder={'请输入验证码'}
+                            keyboardType={'numeric'}
+                            maxLength={6}
+                            onChangeText={(text) => {
+                                this.setState({
+                                    verifyCode: text
+                                })
+                            }} iconName={'login_verify'}/>
+
+
+                        <TouchableOpacity activeOpacity={this.state.isSentVerify ? 0.5 : 1}
+                                          onPress={() => {
+                                              pressVerify(this.state.phone, this.state.isSentVerify,
+                                                  () => {
+                                                      console.log('回调1');
+                                                      this.setState({
+                                                          isSentVerify: false,
+                                                      });
+                                                  }
+                                                  , (time) => {
+                                                      console.log(time.sec);
+                                                      this.setState({
+                                                          timerTitle: time.sec > 0 ? `重新获取(${time.sec}s)` : '重新获取'
+                                                      }, () => {
+                                                          if (this.state.timerTitle === '重新获取') {
+                                                              console.log('回调2');
+                                                              this.setState({
+                                                                  isSentVerify: true
+                                                              })
+                                                          }
+                                                      })
                                                   }, () => {
-                                                      if (this.state.timerTitle === '重新获取') {
-                                                          console.log('回调2');
-                                                          this.setState({
-                                                              isSentVerify: true
-                                                          })
-                                                      }
+                                                      console.log('回调3');
+                                                      this.setState({
+                                                          isSentVerify: true,
+                                                          timerTitle: '重新获取'
+                                                      });
                                                   })
-                                              }, () => {
-                                                  console.log('回调3');
-                                                  this.setState({
-                                                      isSentVerify: true,
-                                                      timerTitle: '重新获取'
-                                                  });
-                                              })
-                                      }}>
-                        <View style={{
-                            height: zdp(50),
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            paddingRight: zdp(20),
-                        }}>
-                            <Text
-                                style={{
-                                    fontSize: zsp(14),
-                                    color: this.state.isSentVerify ? cusColors.verify_light : this.state.timerTitle.indexOf('s') > -1 ? cusColors.verify_dark : cusColors.verify_light
-                                }}>{this.state.timerTitle}</Text>
+                                          }}>
+                            <View style={{
+                                height: zdp(50),
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                paddingRight: zdp(20),
+                            }}>
+                                <ZText content={this.state.timerTitle}
+                                       color={this.state.isSentVerify ? cusColors.verify_light : this.state.timerTitle.indexOf('s') > -1 ? cusColors.verify_dark : cusColors.verify_light}
+                                       fontSize={zsp(16)}/>
 
-                        </View>
-                    </TouchableOpacity>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    <MyButtonView
+                        modal={1}
+                        style={{width: width / 1.3, marginTop: zdp(30)}}
+                        title={'登录'}
+                        onPress={this.pressLogin}/>
                 </View>
-                <MyButtonView
-                    modal={1}
-                    style={{width: width / 1.3, marginTop: zdp(30)}}
-                    title={'登录'}
-                    onPress={this.pressLogin}/>
-
             </View>
         )
             ;
@@ -263,12 +287,6 @@ class LoginByVerify extends BaseComponent {
         });
 
     }
-
-    pressTest = () => {
-        // this.props.initCardList('13262975235');
-        // this.props.navigation.navigate('Tab');
-        // console.log(this.props.globalInfo.requestSuccess);
-    };
 }
 
 LoginByVerify.propTypes = {

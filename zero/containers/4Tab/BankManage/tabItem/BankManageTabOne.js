@@ -6,43 +6,16 @@ import BaseComponent from "../../../global/BaseComponent";
 
 const {width, height} = Dimensions.get('window');
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
-    Platform,
-    StyleSheet,
-    TextInput,
-    Text,
-    Alert,
-    View,
-    TouchableOpacity,
-    Image,
     Dimensions,
-    ListView, ScrollView, Modal, BackHandler, RefreshControl
+    BackHandler
 } from 'react-native';
-import realm from '../../../../storage/realm'
 import {
-    getAllCard,
-    getDebitCardDefault,
-    getDebitCardList, getPayCardDefault,
-    getPayCardList
+    getDebitCardList,
 } from "../../../../storage/schema_card";
-import ItemCard from "./ItemCard";
-import {bankColor, cusColors} from "../../../../value/cusColor/cusColors";
 
-// let cardList;
-import selectBankList from '../../../../../resource/selectBanks';
-import {
-    getBankABC,
-    getBankDetach,
-    getBankDetachClose,
-    getBankName,
-    getBankType
-} from "../../../../utils/BankUtil";
-import {deleteCard} from "./DeleteCardUtil";
-import {zdp, zModalHeight, zModalMarginTop, zsp} from "../../../../utils/ScreenUtil";
-import {Types} from "../reduce/bankReduce";
 import BankCardItem from "./BankCardItem";
 
 let cardList;

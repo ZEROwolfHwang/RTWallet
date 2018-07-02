@@ -15,7 +15,7 @@ import {
     Image,
     Dimensions,
     ListView,
-    StatusBar,BackHandler
+    StatusBar, BackHandler
 } from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -25,11 +25,13 @@ import ToastUtil from "../../utils/ToastUtil";
 import {actions} from "../../root/GlobalAction";
 import {getCardLength} from "../../storage/schema_card";
 import {NavigationActions} from "react-navigation";
-import {zdp, zsp} from "../../utils/ScreenUtil";
+import {isIphoneX, zdp, zsp} from "../../utils/ScreenUtil";
 import NavigationUtil from "../../utils/NavigationUtil";
 import {save2Realm} from "./SaveRealmUtil";
 import {isGestureLogin} from "../../storage/schema_gesture";
 import {updateAppByLogin} from "../../utils/updateAppUtil";
+import {cusColors} from "../../value/cusColor/cusColors";
+import ZText from "../../views/ZText";
 
 class RegisterSuccess extends BaseComponent {
 
@@ -41,8 +43,8 @@ class RegisterSuccess extends BaseComponent {
     componentWillMount() {
         //type:0 //忘记密码  1 // 注册成功
         this.params = this.props.navigation.state.params;
+        // this.params = {type: 1};
         console.log(this.params.type);
-
     }
 
     componentDidMount() {
@@ -58,44 +60,45 @@ class RegisterSuccess extends BaseComponent {
     };
 
 
-
-
     render() {
         return (
 
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
-    <Image source={require('../../../resource/image/successbg.png')}
-        style={{width, height, position: 'absolute'}}/>
 
-        <StatusBar
-            hidden={false}
-            translucent={true}
-            barStyle={'light-content'}//'default', 'light-content', 'dark-content'
-            backgroundColor={'#fff6fd00'}
-            networkActivityIndicatorVisible={false}
-        />
+                <Image source={{uri: isIphoneX() ? 'bg_success' : 'bg_success'}}
+                       resizeMode={'cover'}
+                       style={{
+                           width,
+                           height: height,
+                           position: 'absolute'
+                       }}/>
+
+                <StatusBar
+                    hidden={false}
+                    translucent={true}
+                    barStyle={'light-content'}//'default', 'light-content', 'dark-content'
+                    backgroundColor={'#fff6fd00'}
+                    networkActivityIndicatorVisible={false}
+                />
 
 
-        <View style={{
-            width: width,
-                marginTop:zdp(100),
-                backgroundColor: 'transparent',
-                justifyContent: 'center',
-                alignItems: 'center'
-        }}>
-    <Text style={{
-            fontSize: zsp(30),
-                color: 'white',
-                textAlign: 'center',
-                marginBottom: zdp(40)
-        }}>{`${this.params.type === 0 ? '密码修改成功' : '注册成功'}`}</Text>
-    </View>
+                <ZText content={`${this.params.type === 0 ? '密码修改成功' : '注册成功'}`}
+                       parentStyle={{
+                           width: width,
+                           marginTop: zdp(100),
+                           backgroundColor: 'transparent',
+                           justifyContent: 'center',
+                           alignItems: 'center'
+                       }}
+                       fontSize={zsp(30)}
+                       color={cusColors.text_secondary}/>
 
-        <View style={{flex:1}}/>
+                <View style={{flex: 1}}/>
 
-        <MyButtonView modal={1} style={{marginBottom:zdp(70)}} title={'完成'} onPress={this.pressSuccess}/>
+                <MyButtonView modal={1} style={{marginBottom: zdp(70)}} title={'完 成'}
+                              onPress={this.pressSuccess}/>
 
-    </View>
+            </View>
 
 
         )

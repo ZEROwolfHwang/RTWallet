@@ -10,6 +10,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import SizeUtil from '../utils/SizeUtil';
+import {zdp, zsp} from "../utils/ScreenUtil";
 export default class ButtonView extends Component {
     constructor(props) {
         super(props);
@@ -22,11 +23,11 @@ export default class ButtonView extends Component {
             <TouchableOpacity activeOpacity={0.5}
                               style={[
                                   {
-                                      marginTop:10,
-                                      width: SizeUtil.width - 20,
-                                      height: 50,
+                                      marginTop: zdp(10),
+                                      width: SizeUtil.width - zdp(20),
+                                      height: zdp(50),
                                       backgroundColor: '#4e73ff',
-                                      borderRadius: 25,
+                                      borderRadius: zdp(25),
                                       // borderColor: 'yellow',
                                       // borderWidth:2,
                                       justifyContent:'center',
@@ -35,7 +36,7 @@ export default class ButtonView extends Component {
                               onPress={()=>{
                                   params.onPress();
                               }}>
-                <Text style={{fontSize:18,color:'white'}}>
+                <Text style={{fontSize: zsp(18),color:'white'}}>
                     {this.props.title}
                 </Text>
             </TouchableOpacity>

@@ -10,16 +10,11 @@ import {connect} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {bindActionCreators} from 'redux';
 import {
-    Platform,
-    StyleSheet,
-    TextInput,
     Text,
-    Alert,
     View,
     TouchableOpacity,
     Image,
     Dimensions,
-    ListView,
     Modal,
     BackHandler
 } from 'react-native';
@@ -27,7 +22,6 @@ import BaseComponent from "../../global/BaseComponent";
 import BankManageTabs from "./BankManageTabs";
 import {actions_bank, Types} from "./reduce/bankReduce";
 import {zdp, zModalHeight, zModalMarginTop, zsp} from "../../../utils/ScreenUtil";
-import Feather from "react-native-vector-icons/Feather";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import EvilIcons from "react-native-vector-icons/EvilIcons";
 

@@ -3,25 +3,16 @@
  */
 import React, {Component} from 'react';
 import {
-    Platform,
-    StyleSheet,
     Text,
     Alert,
     View,
     TouchableOpacity,
-    Image,
-    StatusBar,
-    Dimensions,
-    ListView,
-    ScrollView,
-    ViewPagerAndroid, ProgressBarAndroid, Modal, BackHandler, AppState
+    Dimensions, Modal, BackHandler, AppState
 } from 'react-native';
 
 const {width, height} = Dimensions.get('window');
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import Swiper from 'react-native-swiper';
-import LinearGradient from 'react-native-linear-gradient';
 import MyTabView from '../../../views/MyTabView'
 import BaseComponent from '../../global/BaseComponent'
 import RedPlanTop from "./RedPlanTop";
@@ -30,17 +21,14 @@ import {fetchRequest} from "../../../utils/FetchUtil";
 
 import {actions_wealth} from '../reduce/index';
 import MyProgressBar from "../../../views/MyProgressBar";
-import {fetchRequestHeader} from "../../../utils/FetchUtilHeader";
 import {fetchRequestToken} from "../../../utils/FetchUtilToken";
 import MyButtonView from "../../../views/MyButtonView";
 import {zdp, zModalHeight, zModalMarginTop, zsp} from "../../../utils/ScreenUtil";
 import {onAppStateChanged, onBackPress} from "../../../utils/GoBackUtil";
 import {types} from "../reduce/index";
-import {cusColors} from "../../../value/cusColor/cusColors";
 import {
     getCreditCardDefault,
     getDebitCardDefault,
-    payCardIsNull
 } from "../../../storage/schema_card";
 
 let navigation;
@@ -94,6 +82,10 @@ class RedPlan extends BaseComponent {
 
 
     componentWillMount() {
+
+        console.log(this.props.navigation.state);
+        console.log(this.props.navigation);
+
         let entranceId = this.props.entranceId;
 
         console.log(this.props.redData);

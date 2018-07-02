@@ -1,9 +1,10 @@
 /**
  * Created by zerowolf Date: 2018/4/28 Time: 下午3:37
  */
-import {View} from 'react-native'
+import {View, Text} from 'react-native'
 import Carousel, { ParallaxImage } from 'react-native-snap-carousel';
 import React from "react";
+import {zdp} from "../utils/ScreenUtil";
 
 export default class MyCarousel extends Component {
 
@@ -12,8 +13,8 @@ export default class MyCarousel extends Component {
             <View style={styles.item}>
                 <ParallaxImage
                     source={{ uri: item.thumbnail }}
-                    containerStyle={{width:200,height:200}}
-                    style={{width:160,height:160}}
+                    containerStyle={{width:zdp(200),height:zdp(200)}}
+                    style={{width:zdp(160),height:zdp(160)}}
                     parallaxFactor={0.4}
                     {...parallaxProps}
                 />
