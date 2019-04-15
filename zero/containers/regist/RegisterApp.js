@@ -3,7 +3,7 @@ import {
     Text,
     View,
     Dimensions,
-    StatusBar, PixelRatio, Keyboard,SafeAreaView,
+    StatusBar, PixelRatio, Keyboard, SafeAreaView,
     Alert, Image, TouchableOpacity, Animated, Platform
 } from 'react-native';
 
@@ -29,10 +29,10 @@ import {
     getDebitCardList,
     getCreditCardList, deleteAllCard
 } from "../../storage/schema_card";
-import {save2Realm} from "./SaveRealmUtil";
+import {save2Realm, save2Global} from "./SaveRealmUtil";
 import {getGestureData, isGestureLogin} from "../../storage/schema_gesture";
 import {actions_register} from "./reduces/register";
-import {isIphoneX, zAppBarHeight, zdp, zsp, zStatusBarHeight} from "../../utils/ScreenUtil";
+import {isIphoneX, zAppBarHeight, zdp, zsp, zStatusBarHeight, zWidth} from "../../utils/ScreenUtil";
 import ZText from "../../views/ZText";
 
 import *as wechat from 'react-native-wechat'
@@ -40,28 +40,29 @@ import {updateApp} from "../global/AllModuleUtils";
 import {updateAppByLogin} from "../../utils/updateAppUtil";
 import NavigationUtil from "../../utils/NavigationUtil";
 import {cusColors} from "../../value/cusColor/cusColors";
-
+import {SPReadLoginInfo, SPSaveLoginInfo} from "../../storage/Storage";
+import {fetchRequestToken} from "../../utils/FetchUtilToken";
+import {Api} from "../../utils/Api";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
+import {getDateTimeDiff} from "../../utils/DateUtil";
+import {InitConfig} from "../../root/InitConfig";
+import {actions_replay} from "../3Tab/reduces/reduceReplay";
 
 class RegisterApp extends BaseComponent {
 
     constructor(props) {
         super(props);
 
+
+        //todo DEV
         this.state = {
-            phone: '',
-            phone: '13262975235',
-            // phone: '13262972222',
-            // phone: '13262970000',
-            // phone: '13262975265',
-            // phone: '15361505102',
-            // phone: '13255556666',
-            // password: '123456',
-            password: '',
-            password: 'qqqqqq',
+            phone: InitConfig.loginPhone,
+            password: InitConfig.password,
             apkCodeName: '1.0'
+
             // process: 0,
             // lineFillAnimation: new Animated.Value(0),
-        }
+        };
 
         // this.lineAnimation = this.state.lineFillAnimation.interpolate({
         //     inputRange: [
@@ -94,6 +95,7 @@ class RegisterApp extends BaseComponent {
         //     console.log(payCardList[i]);
         // }
 
+
     }
 
     componentWillMount() {
@@ -112,9 +114,31 @@ class RegisterApp extends BaseComponent {
 
     }
 
+
     componentDidMount() {
-        this.pressLogin();
+        // this.pressLogin();
         // alert(zStatusBarHeight);
+        SPReadLoginInfo()
+            .then(res => {
+                console.log(res);
+                this.setState({
+                    phone: res.phone,
+                    // password: res.password
+                })
+
+                //todo DEV
+                /*  if (InitConfig.isLoginDirect) {
+                      setTimeout(()=>{
+                      this.pressLogin()
+                      },1000)
+                  }*/
+            }).catch(err => {
+
+        })
+
+        /*  if (InitConfig.isLoginDirect) {
+                  this.pressLogin();
+          }*/
     }
 
 
@@ -124,146 +148,167 @@ class RegisterApp extends BaseComponent {
      */
     render() {
 
-        return <SafeAreaView style={{flex: 1, justifyContent: 'flex-start', backgroundColor:'white',alignItems: 'center'}}>
+        return <KeyboardAwareScrollView
+            style={{flex: 1, width: zWidth, backgroundColor: 'white'}}
+            behavior="padding"
+            resetScrollToCoords={{x: 0, y: 0}}
+            contentContainerStyle={{justifyContent: 'flex-start', alignItems: 'center'}}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps={'always'}>
 
-             <View style={{flex: 1,marginTop:Platform.OS==='ios'?-zStatusBarHeight:0,justifyContent:'flex-start',alignItems:'center'}}>
-
-
-            <Image source={{uri: isIphoneX()?'login_bg_x':'login_bg'}}
-                   resizeMode={'cover'}
-                   style={{
-                       width,
-                       height: height,
-                       position: 'absolute'
-                   }}/>
-
-            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-
-            </View>
-
-            <View
-                style={{flex: 1, alignItems: 'center'}}>
-
-                <StatusBar
-                    hidden={false}
-                    translucent={true}
-                    barStyle={'light-content'}//'default', 'light-content', 'dark-content'
-                    backgroundColor={'#fff6fd00'}
-                    networkActivityIndicatorVisible={false}
-                />
-
-                <Image source={require('../../../resource/image/appname.png')}
-                       style={{width: zdp(140), height: zdp(66), marginTop: zAppBarHeight + zdp(20)}}
-                       resizeMode={'contain'}/>
-
-
-                <MyTextInputWithIcon
-                    style={{marginTop: zdp(160)}}
-                    maxLength={11}
-                    placeholder={'请输入手机号'}
-                    keyboardType={'numeric'}
-                    iconName={'login_phone'}
-                    onChangeText={text => {
-                        this.setState({
-                            phone: text
-                        })
-                    }}
-                />
-
-                <MyTextInputWithIcon
-                    secureTextEntry={true}
-                    placeholder={'密码登录'}
-                    // keyboardType={'email-address'}
-                    iconName={'login_psw'}
-                    onChangeText={text => {
-                        this.setState({
-                            password: text
-                        })
-                    }}
-                />
-
-
-                <MyButtonView style={{width: width / 1.3, marginTop: zdp(40)}} modal={1}
-                              title={'登 录'}
-                              onPress={this.pressLogin}/>
-
-
-                <View style={{
-                    width,
-                    marginTop: zdp(10),
-                    height: zdp(40),
-                    backgroundColor: 'transparent',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }}>
-
-
-                    <TouchableOpacity activeOpacity={0.9}
-                                      style={{
-                                          justifyContent: 'center', alignItems: 'center',
-                                          padding: zdp(5)
-                                      }}
-                                      onPress={
-                                          this.pressLoginByVerify
-                                      }>
-
-                        <ZText parentStyle={{marginLeft: zdp(40)}} content={'验证码登录'}
-                               fontSize={zsp(16)} color={cusColors.text_secondary}
-                               textAlign={'center'}/>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity activeOpacity={0.9}
-                                      style={{
-                                          justifyContent: 'center', alignItems: 'center',
-                                          padding: zdp(5)
-                                      }}
-                                      onPress={
-                                          this.pressForgetPsw
-                                      }>
-
-                        <ZText parentStyle={{marginRight: zdp(40)}} content={'忘记密码?'}
-                               fontSize={zsp(16)} color={cusColors.text_secondary}
-                               textAlign={'center'}/>
-                    </TouchableOpacity>
-
-
-                </View>
-
-                <View style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    padding: zdp(5),
-                    marginTop: zdp(40)
-                }}>
-                    <ZText content={'没有账号?'} fontSize={zsp(16)} color={cusColors.text_secondary}/>
-                    <MyButtonView style={{width: zdp(80), height: zdp(30), marginTop: 0}} modal={1}
-                                  title={'注册账号'}
-                                  fontSize={zsp(16)}
-                                  onPress={this.pressRegister}/>
-
-
-                </View>
-
-
-            </View>
-
-            {Platform.OS === 'android' ? <View style={{
-                backgroundColor: cusColors.tab_light,
-                padding: zdp(5),
-                paddingLeft: zdp(10),
-                paddingRight: zdp(10),
-                borderRadius: zdp(10),
-                position: 'absolute',
-                bottom: zdp(20),
-                right: zdp(30)
+            <View style={{
+                flex: 1,
+                marginTop: Platform.OS === 'ios' ? -zStatusBarHeight : 0,
+                justifyContent: 'flex-start',
+                alignItems: 'center'
             }}>
-                <ZText content={`当前版本:V${this.state.apkCodeName}`} fontSize={zsp(15)}
-                       color={'white'}/>
-            </View> : null}
-             </View>
-        </SafeAreaView>
+
+
+                <Image source={{uri: isIphoneX() ? 'login_bg_x' : 'login_bg'}}
+                       resizeMode={'cover'}
+                       style={{
+                           width,
+                           height: height,
+                           position: 'absolute'
+                       }}/>
+
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+
+                </View>
+
+                <View
+                    style={{flex: 1, alignItems: 'center'}}>
+
+                    <StatusBar
+                        hidden={false}
+                        translucent={true}
+                        barStyle={'light-content'}//'default', 'light-content', 'dark-content'
+                        backgroundColor={'#fff6fd00'}
+                        networkActivityIndicatorVisible={false}
+                    />
+
+                    <Image source={require('../../../resource/image/appname.png')}
+                           style={{
+                               width: zdp(140),
+                               height: zdp(66),
+                               marginTop: zAppBarHeight + zdp(20)
+                           }}
+                           resizeMode={'contain'}/>
+
+
+                    <MyTextInputWithIcon
+                        style={{marginTop: zdp(200)}}
+                        maxLength={11}
+                        placeholder={'请输入手机号'}
+                        keyboardType={'numeric'}
+                        iconName={'login_phone'}
+                        defaultValue={this.state.phone}
+                        onChangeText={text => {
+                            this.setState({
+                                phone: text
+                            })
+                        }}
+                    />
+
+
+                    <MyTextInputWithIcon
+                        secureTextEntry={true}
+                        placeholder={'密码登录'}
+                        defaultValue={this.state.password}
+                        // keyboardType={'email-address'}
+                        iconName={'login_psw'}
+                        onChangeText={text => {
+                            this.setState({
+                                password: text
+                            })
+                        }}
+                    />
+
+
+                    <MyButtonView style={{width: width / 1.3, marginTop: zdp(40)}} modal={1}
+                                  title={'登 录'}
+                                  onPress={this.pressLogin}/>
+
+
+                    <View style={{
+                        width,
+                        marginTop: zdp(10),
+                        height: zdp(40),
+                        backgroundColor: 'transparent',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}>
+
+
+                        <TouchableOpacity activeOpacity={0.9}
+                                          style={{
+                                              justifyContent: 'center', alignItems: 'center',
+                                              padding: zdp(5)
+                                          }}
+                                          onPress={
+                                              this.pressLoginByVerify
+                                          }>
+
+                            <ZText parentStyle={{marginLeft: zdp(40)}} content={'验证码登录'}
+                                   fontSize={zsp(16)} color={cusColors.text_secondary}
+                                   textAlign={'center'}/>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity activeOpacity={0.9}
+                                          style={{
+                                              justifyContent: 'center', alignItems: 'center',
+                                              padding: zdp(5)
+                                          }}
+                                          onPress={
+                                              this.pressForgetPsw
+                                          }>
+
+                            <ZText parentStyle={{marginRight: zdp(40)}} content={'忘记密码?'}
+                                   fontSize={zsp(16)} color={cusColors.text_secondary}
+                                   textAlign={'center'}/>
+                        </TouchableOpacity>
+
+
+                    </View>
+
+                    <View style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        padding: zdp(5),
+                        marginTop: zdp(40)
+                    }}>
+                        <ZText content={'没有账号?'} fontSize={zsp(16)}
+                               color={cusColors.text_secondary}/>
+                        <MyButtonView style={{width: zdp(80), height: zdp(30), marginTop: 0}}
+                                      modal={1}
+                                      title={'注册账号'}
+                                      fontSize={zsp(16)}
+                                      onPress={this.pressRegister}/>
+
+
+                    </View>
+
+
+                </View>
+
+                {__DEV__ ? Platform.OS === 'android' ? <View style={{
+                    backgroundColor: cusColors.tab_light,
+                    padding: zdp(5),
+                    paddingLeft: zdp(10),
+                    paddingRight: zdp(10),
+                    borderRadius: zdp(10),
+                    position: 'absolute',
+                    top: zdp(20),
+                    right: zdp(30)
+                }}>
+                    <ZText content={`当前版本:V${this.state.apkCodeName}`} fontSize={zsp(15)}
+                           color={'white'}/>
+                </View> : null : null}
+            </View>
+        </KeyboardAwareScrollView>
             ;
 
     }
@@ -288,79 +333,66 @@ class RegisterApp extends BaseComponent {
                     console.log(res);
                     console.log(res.data);
 
-                    if (res.respCode === 200) {
-                        let allCard = getAllCard(res.data.merCode);
-                        console.log(...allCard);
-                        let cardLength = getCardLength(res.data.merCode);
-                        console.log(cardLength);
-                        console.log(res.data.CardLen);
-                        if (cardLength !== res.data.CardLen) {
-                            //长度不同则刷新本地数据库
-                            save2Realm(res.data);
-                        }
-                        this.save2Global(res.data)
 
-                        console.log(this.props.globalInfo);
-                        /*
-                                                if (this.params.type === 0) {
-                                                    this.props.navigation.navigate('PageSetGesturePsw', {
-                                                        type: 0,
-                                                        onGoBack: () => {
+                    /* if (res.respCode === 200) {
+                         let allCard = getAllCard(res.data.merCode);
+                         console.log(...allCard);
+                         let cardLength = getCardLength(res.data.merCode);
+                         console.log(cardLength);
+                         console.log(res.data.CardLen);
+                         if (cardLength !== res.data.CardLen) {
+                             //长度不同则刷新本地数据库
+                             save2Realm(res.data);
+                         }
+                         save2Global(this.props.navigation,res.data)
 
-                                                        }
-                                                    });
-                                                } else {
+                         console.log(this.props.globalInfo);
+                         /!*
+                                                 if (this.params.type === 0) {
+                                                     this.props.navigation.navigate('PageSetGesturePsw', {
+                                                         type: 0,
+                                                         onGoBack: () => {
 
-                                                    this.props.navigation.navigate('Tab');
-                                                }*/
-                        // this.props.navigation.navigate('BankCardManage');
-                        // this.props.navigation.navigate('PageSetting');
+                                                         }
+                                                     });
+                                                 } else {
 
-                        //登录检查版本升级
+                                                     this.props.navigation.navigate('Tab');
+                                                 }*!/
+                         // this.props.navigation.navigate('BankCardManage');
+                         // this.props.navigation.navigate('PageSetting');
+
+                         //登录检查版本升级
 
 
-                        // this.props.navigation.navigate('addPayCard',{cardType: 'DC',onGoBack:()=>{
-                        //     alert('back')
-                        //     }});
+                         // this.props.navigation.navigate('addPayCard',{cardType: 'DC',onGoBack:()=>{
+                         //     alert('back')
+                         //     }});
 
-                        if (isGestureLogin()) {
-                            // this.props.navigation.navigate('Tab');
-                            NavigationUtil.reset(this.props.navigation, 'Tab');
-                        } else {
-                            this.props.navigation.navigate('PageSetGesturePsw', {type: 0});
-                        }
-                        // this.props.navigation.navigate('BankManageTabAll');
-                        // this.props.navigation.navigate('BankCardManage');
-                        // this.props.navigation.navigate('PageSetting');
-                        // this.props.navigation.navigate('PageChangePhoneNext');
-                        // this.props.navigation.navigate('MerchantInfo');
-                        // this.props.navigation.navigate('CardDefault');
+                         SPSaveLoginInfo(this.state.phone, this.state.password);
 
-                    } else {
-                        ToastUtil.showShort(res.respMsg);
-                    }
+
+                         if (isGestureLogin()) {
+                             // this.props.navigation.navigate('Tab');
+                             NavigationUtil.reset(this.props.navigation, 'Tab');
+                         } else {
+                             this.props.navigation.navigate('PageSetGesturePsw', {type: 0});
+                         }
+
+
+                     }
+                    else {
+                         ToastUtil.showShort(res.respMsg);
+                     }*/
+                    // this.props.navigation.navigate('PageSetGesturePsw', {type: 0});
+
+                    NavigationUtil.reset(this.props.navigation, 'Tab');
                 }
             ).catch(err => {
             console.log(err);
             ToastUtil.showShort(err)
         });
     };
-
-    /**
-     * 存储全局信息
-     * @param resData
-     */
-    save2Global = resData => {
-        this.props.initGlobalInfo({
-            token: resData.token,
-            phone: resData.phone,
-            IDCard: resData.identity,
-            username: resData.name,
-            merCode: resData.merCode,
-            appUser: resData.appUser,
-            recommend: resData.recommend
-        });
-    }
 
 
     /**

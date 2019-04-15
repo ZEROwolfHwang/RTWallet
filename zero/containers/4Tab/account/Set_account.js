@@ -8,8 +8,6 @@ import {
 const {width, height} = Dimensions.get('window');
 import s from '../../AllStyles';
 import MyTabView from '../../../view/MyTabView';
-import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 
 export default class Set_account extends Component {
     static navigationOptions = ({navigation, screenProps}) => ({

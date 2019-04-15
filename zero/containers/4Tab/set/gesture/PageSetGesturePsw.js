@@ -6,12 +6,12 @@ import {
     AppRegistry,
     StyleSheet,
     Text,
-    View, Alert,Platform,
+    View, Alert, Platform,
     Dimensions, BackHandler, TouchableOpacity
 } from 'react-native';
 
 const {width, height} = Dimensions.get('window')
-import PasswordGesture from 'react-native-gesture-password';
+// import PasswordGesture from 'react-native-gesture-password';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import BaseComponent from "../../../global/BaseComponent";
@@ -23,6 +23,9 @@ import {
     writeGesturePsw
 } from "../../../../storage/schema_gesture";
 import {zdp, zsp} from "../../../../utils/ScreenUtil";
+import LinearGradient from "react-native-linear-gradient";
+import GesturePassword from "../../../../utils/getstureUtil";
+import ZText from "../../../../views/ZText";
 
 var Password1 = '';
 
@@ -62,46 +65,58 @@ class PageSetGesturePsw extends BaseComponent {
 
     render() {
         return (
-            <View style={{flex: 1}}>
-                <PasswordGesture
-                    ref={refs => this.gesture = refs}
-                    status={this.state.status}
-                    message={this.state.message}
-                    onStart={() => this.onStart()}
-                    onEnd={(password) => this.onEnd(password)}
-                    innerCircle={true}
-                    outerCircle={true}
-                    interval={this.state.timeOut}
-                    style={{flex: 1, backgroundColor: 'white'}}
-                    textStyle={{fontSize: zsp(17),
-                        marginTop: Platform.OS === 'android' ? zdp(60) : zdp(40), paddingTop: 0}}
-                />
-
+            <GesturePassword
+                ref={refs => this.gesture = refs}
+                status={this.state.status}
+                message={this.state.message}
+                onStart={() => this.onStart()}
+                onEnd={(password) => this.onEnd(password)}
+                innerCircle={true}
+                outerCircle={true}
+                normalColor={'white'}
+                rightColor={'white'}
+                wrongColor={'#ff737b'}
+                interval={this.state.timeOut}
+            >
                 {this.params.type === 0 ?
                     <TouchableOpacity activeOpacity={0.8}
                                       style={{
-                                          width: zdp(60),
-                                          height: zdp(30),
-                                          backgroundColor: 'lightgrey',
-                                          elevation: zdp(5),
-                                          shadowOffset: {width: zdp(5), height: 5},
-                                          shadowColor: 'lightgrey',
-                                          shadowOpacity: 0.6,
-                                          shadowRadius: 2,
-                                          borderRadius: zdp(15),
-                                          justifyContent: 'center',
-                                          alignItems: 'center',
                                           position: 'absolute',
                                           top: zdp(40),
                                           right: zdp(40)
-                                      }} onPress={() => {
-                        deleteGestureLogin();
-                        this.props.navigation.navigate('Tab');
-                    }}>
-                        <Text style={{fontSize: zsp(14), color: 'white'}}>跳过</Text>
-                    </TouchableOpacity> : null
+                                      }}
+                                      onPress={() => {
+                                          deleteGestureLogin();
+                                          this.props.navigation.navigate('Tab');
+                                      }}>
+
+                        <ZText parentStyle={{
+                            backgroundColor: 'transparent',
+                            borderWidth: zdp(1.5),
+                            borderColor: 'white',
+                            opacity: 0.8,
+                            elevation: zdp(2),
+                            shadowOffset: {height: zdp(2)},
+                            shadowColor: 'lightgrey',
+                            shadowOpacity: 0.6,
+                            shadowRadius: zdp(2),
+                            borderRadius: zdp(20),
+                            padding: zdp(20),
+                            paddingTop: zdp(5),
+                            paddingBottom: zdp(5),
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                               content={'跳过'}
+                               fontSize={zsp(14)}
+                               color={'white'}/>
+
+                    </TouchableOpacity>
+
+                    : null
                 }
-            </View>
+
+            </GesturePassword>
         );
     }
 

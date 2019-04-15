@@ -10,6 +10,8 @@ const {width, height} = Dimensions.get('window');
 import BaseComponent from '../../../global/BaseComponent';
 import MyProgressBar from "../../../../views/MyProgressBar";
 import {zdp, zsp} from "../../../../utils/ScreenUtil";
+import {cusColors} from "../../../../value/cusColor/cusColors";
+import ZText from "../../../../views/ZText";
 
 class TabTwo1 extends BaseComponent {
 
@@ -50,15 +52,21 @@ class TabTwo1 extends BaseComponent {
                         width: width,
                         height: zdp(45)
                     }}>
-                        <Text style={{fontSize: zsp(14), color: 'black', textAlign: 'center', flex: 1}}>{`***${dataJson[i].UserID.toString().substring(3,dataJson[i].UserID.length)}`}</Text>
-                        <Text style={{
-                            fontSize: zsp(14),
-                            color: 'black',
-                            textAlign: 'center',
-                            flex: 1
-                        }}>{`${dataJson[i].txnAmt}`}</Text>
-                        <Text
-                            style={{fontSize: zsp(14), color: 'black', textAlign: 'center', flex: 1}}>{`${dataJson[i].txnTime}`}</Text>
+                        <ZText parentStyle={{flex:1}}
+                                content={`***${dataJson[i].UserID.toString().substring(3,dataJson[i].UserID.length)}`}
+                                fontSize={zsp(15)}
+                                color={cusColors.text_main}/>
+
+                        <ZText parentStyle={{flex:1}}
+                                content={`${dataJson[i].txnAmt}`}
+                                fontSize={zsp(15)}
+                                color={cusColors.text_main}/>
+
+                           <ZText parentStyle={{flex:1}}
+                                content={`${dataJson[i].txnTime}`}
+                                fontSize={zsp(15)}
+                                color={cusColors.text_main}/>
+
                     </View>
                     <View style={{backgroundColor:'#cbc8c8',width:width,height:0.5}}/>
 
@@ -85,25 +93,22 @@ class TabTwo1 extends BaseComponent {
                         width: width,
                         height: zdp(45)
                     }}>
-                        <Text style={{
-                            fontSize: zsp(14),
-                            color: 'grey',
-                            textAlign: 'center',
-                            flex: 1
-                        }}>用户</Text>
-                        <Text style={{
-                            fontSize: zsp(14),
-                            color: 'grey',
-                            textAlign: 'center',
-                            flex: 1
-                        }}>加入金额(元)</Text>
-                        <Text
-                            style={{
-                                fontSize: zsp(14),
-                                color: 'grey',
-                                textAlign: 'center',
-                                flex: 1
-                            }}>加入时间</Text>
+                         <ZText parentStyle={{flex:1}}
+                                 content={'用户'}
+                                 fontSize={zsp(15)}
+                                 color={cusColors.text_secondary}/>
+
+                         <ZText parentStyle={{flex:1}}
+                                 content={'加入金额(元)'}
+                                 fontSize={zsp(15)}
+                                 color={cusColors.text_secondary}/>
+
+                         <ZText parentStyle={{flex:1}}
+                                 content={'加入时间'}
+                                 fontSize={zsp(15)}
+                                 color={cusColors.text_secondary}/>
+
+
                     </View>
                     <View style={{backgroundColor: '#bcb9b9', width: width, height: 0.5}}/>
                 </View>

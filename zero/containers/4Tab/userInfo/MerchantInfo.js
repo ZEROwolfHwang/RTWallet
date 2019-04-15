@@ -17,14 +17,14 @@ import {
     View,
     TouchableOpacity,
     Image,
-    Dimensions,
+    Dimensions,ImageBackground,
     Keyboard,
     ListView,
     TextInput, FlatList, ScrollView, BackHandler
 } from 'react-native';
 import MyTabView from "../../../views/MyTabView";
 import MyButtonView from "../../../views/MyButtonView";
-import ToastUtil from "../../../utils/ToastUtil";
+import ToastUtil, {toastAlert} from "../../../utils/ToastUtil";
 import {fetchRequestToken} from "../../../utils/FetchUtilToken";
 import Region from "./region";
 import BaseComponent from "../../global/BaseComponent";
@@ -33,12 +33,16 @@ import {checkFixPhone, checkIsNull, checkMobile} from "../../../utils/CheckUitls
 let globalInfo;
 import {isMobileNumber, validateIdCard} from "../../../utils/Verification";
 import {actions} from "../../../root/GlobalAction";
-import {zAppBarHeight, zdp, zModalHeight, zsp} from "../../../utils/ScreenUtil";
+import {zAppBarHeight, zdp, zModalHeight, zsp, zWidth} from "../../../utils/ScreenUtil";
 
 import Picker from 'react-native-picker';
 
 import * as CitySelectUtil from "../../../utils/CitySelectUtil";
 import {getCreditCardDefault, getDebitCardDefault} from "../../../storage/schema_card";
+import ZText from "../../../views/ZText";
+import {cusColors} from "../../../value/cusColor/cusColors";
+import {cusStrings} from "../../../value/strings/cusStrings";
+import NavigationUtil from "../../../utils/NavigationUtil";
 
 class MerchantInfo extends BaseComponent {
 
@@ -63,6 +67,11 @@ class MerchantInfo extends BaseComponent {
             province: '广东',
             city: '深圳',
             district: '宝安区',
+
+
+            defaultUser: '',
+            defaultName:'',
+            defaultID:''
 
         }
         console.log(this.props.navigation.state);
@@ -110,6 +119,10 @@ class MerchantInfo extends BaseComponent {
                             city: data.city,
                             district: data.district,
                             register_ID: data.register_ID,
+
+                            defaultUser: data.appUser,
+                            defaultName:data.register_name,
+                            defaultID:data.register_ID
                         });
 
                     } else {
@@ -119,16 +132,22 @@ class MerchantInfo extends BaseComponent {
                             province: '广东',
                             city: '深圳',
                             district: '宝安区',
+
+                            defaultUser: data.appUser,
                         });
                     }
-                } else {
+                }  else if (res.respCode === 203) {
+                    toastAlert('登录超时,请重新登录',()=>{
+                        NavigationUtil.backToLogin(this.props.navigation);
+                    })
+                }else {
                     console.log(res.respMsg);
                     ToastUtil.showShort(res.respMsg);
                 }
             })
             .catch(err => {
                 console.log(err);
-                ToastUtil.showShort(err);
+                // ToastUtil.showShort(err);
             })
 
     }
@@ -141,8 +160,8 @@ class MerchantInfo extends BaseComponent {
 
 
     render() {
-        let registerName = this.state.register_name;
-        let register_ID = this.state.register_ID;
+        let registerName = this.state.defaultName;
+        let register_ID = this.state.defaultID;
 
         return (
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
@@ -168,48 +187,100 @@ class MerchantInfo extends BaseComponent {
 
                                </TouchableOpacity>
                            }/>
-                <ScrollView style={{flex: 1,}}
-                            keyboardShouldPersistTaps={'always'}
-                            contentContainerStyle={{
-                                justifyContent: 'flex-start',
-                                alignItems: 'center'
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    backgroundColor: 'white'
+                }}>
+
+                    <ImageBackground source={{uri: 'merchant_bg'}}
+                                     resizeMode={'stretch'}
+                                     style={{
+                                         width: zWidth,
+                                         height: zdp(80),
+                                         justifyContent: 'center',
+                                         alignItems: 'center'
+                                     }}>
+                        <ZText parentStyle={{
+                            padding: zdp(5), paddingLeft: zdp(10),
+                            paddingRight: zdp(10)
+                        }} content={cusStrings.merchant_title} fontSize={zsp(15)} color={'white'}
+                               textAlign={'left'}/>
+                    </ImageBackground>
+
+                    <View style={{
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                        width: zWidth,
+                        paddingLeft: zdp(10),
+                        paddingTop: zdp(20),
+                        paddingBottom: zdp(20),
+
+                    }}>
+
+                        <Image source={{uri: 'mine_my'}}
+                               resizeMode={'contain'}
+                               style={{
+                                   width: zdp(40),
+                                   height: zdp(40),
+                                   backgroundColor: 'transparent'
+                               }}/>
+
+                        <View
+                            style={{
+                                marginLeft: zdp(10),
+                                flex: 1,
+                                justifyContent: 'center',
+                                alignItems: 'flex-start',
                             }}>
+                            <ZText content={globalInfo.username ? globalInfo.username : undefined}
+                                   fontSize={zsp(20)} color={cusColors.text_main}/>
+                            <ZText content={`注册手机号: ${globalInfo.phone}`} fontSize={zsp(16)}
+                                   color={cusColors.verify_light}/>
 
-                    <Item style={{backgroundColor: '#cecbd755', marginTop: zdp(10)}}
-                          title={'注册手机号:'}
-                          editable={false} onChangeText={(text) => {
-                    }}
-                          value={globalInfo.phone}/>
+                        </View>
 
-                    <Item style={{marginTop: zdp(20)}} title={'用户名:'}
+                    </View>
+
+
+                    <Item style={{marginTop: zdp(0)}} title={'用户名:'}
+                          placeholder={'请输入用户名'}
                           onFocus={() => Picker.hide()}
                           onChangeText={(text) => {
                               this.setState({
                                   appUser: text
                               })
                           }}
-                          value={this.state.appUser}/>
+                          defaultValue={this.state.defaultUser}
+                        // value={this.state.appUser}
+                    />
 
                     <Item title={'真实姓名:'}
+                          placeholder={'请输入真实姓名'}
                           onFocus={() => Picker.hide()}
                           onChangeText={(text) => {
                               this.setState({
                                   register_name: text
                               })
                           }}
-                          value={registerName.length > 0 ?
+                          defaultValue={registerName.length > 0 ?
                               this.state.editable ? registerName
                                   : `**${registerName.substr(registerName.length - 1)}`
-                              : ''}/>
+                              : ''}
+                        // value={}
+                    />
 
-                    <Item title={'省份证号:'}
+                    <Item title={'身份证号:'}
+                          placeholder={'请输入身份证号'}
                           onFocus={() => Picker.hide()}
                           onChangeText={(text) => {
                               this.setState({
                                   register_ID: text
                               })
                           }}
-                          value={register_ID.length > 0 ?
+                          defaultValue={register_ID.length > 0 ?
                               this.state.editable ? register_ID
                                   : `${register_ID.substr(0, 6)}********${register_ID.substr(register_ID.length - 4)}`
                               : ''}/>
@@ -261,6 +332,39 @@ class MerchantInfo extends BaseComponent {
                         </TouchableOpacity>
 
                     </View>
+
+
+                    <View style={{
+                        width: width - zdp(20),
+                        height: zdp(1),
+                        backgroundColor: 'grey',
+                        opacity: 0.1,
+                        alignSelf: 'flex-end'
+                    }}/>
+
+                    {this.state.editable ?
+                        <MyButtonView style={{marginBottom: zdp(20)}}
+                                      title={'保 存'}
+                                      onPress={this.pressSaveInfo}/> : null}
+
+                </View>
+
+
+                {/*   <ScrollView style={{}}
+                            keyboardShouldPersistTaps={'always'}
+                            contentContainerStyle={{
+                                justifyContent: 'flex-start',
+                                alignItems: 'center'
+                            }}>
+
+                    <Item style={{backgroundColor: '#cecbd755', marginTop: zdp(10)}}
+                          title={'注册手机号:'}
+                          editable={false} onChangeText={(text) => {
+                    }}
+                          value={globalInfo.phone}/>
+
+
+
                     <View style={{
                         width: width - zdp(20),
                         height: zdp(1),
@@ -270,11 +374,7 @@ class MerchantInfo extends BaseComponent {
                     }}/>
 
 
-                    {this.state.editable ?
-                        <MyButtonView style={{width: width / 1.3, marginBottom: zdp(20)}}
-                                      title={'保 存'}
-                                      onPress={this.pressSaveInfo}/> : null}
-                </ScrollView>
+                </ScrollView>*/}
 
 
                 {/* <Region visible={this.state.visible} setChoosed={this.setChoosed.bind(this)}
@@ -439,12 +539,16 @@ class MerchantInfo extends BaseComponent {
                  }
 
                 console.log(this.props.globalInfo);
-            } else {
+            }  else if (res.respCode === 203) {
+                toastAlert('登录超时,请重新登录',()=>{
+                    NavigationUtil.backToLogin(this.props.navigation);
+                })
+            }else {
                 ToastUtil.showShort(res.respMsg);
             }
 
-        }).then(err => {
-            ToastUtil.showShort(err);
+        }).catch(err => {
+            // ToastUtil.showShort(err);
             console.log(err);
         });
     }

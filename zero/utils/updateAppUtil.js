@@ -44,6 +44,8 @@ const updateAppByLogin =()=> fetchRequest(Api.updateApp, 'GET')
 
                 })
 
+        }else {
+            ToastUtil.showShort(res.respMsg)
         }
     }).catch(err => {
         console.log(err);

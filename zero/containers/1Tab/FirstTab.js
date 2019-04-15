@@ -31,6 +31,8 @@ import realm from "../../storage/realm";
 import {onAppStateChanged, onBackPress} from "../../utils/GoBackUtil";
 import {updateAppByLogin} from "../../utils/updateAppUtil";
 import MyButtonView from "../../views/MyButtonView";
+import {zAppBarHeight, zdp, zHeight} from "../../utils/ScreenUtil";
+import {PageBackground} from "../../views/PageBackground";
 
 
 let lastBackPressed;
@@ -58,7 +60,6 @@ class FirstTab extends BaseComponent {
 
 
 
-
     componentWillUnmount() {
         BackHandler.removeEventListener("hardwareBackPress", this.onBackPress);
         AppState.removeEventListener('change', this._onAppStateChanged);
@@ -66,35 +67,11 @@ class FirstTab extends BaseComponent {
 
 
 
+
     _onAppStateChanged(nextState) {
         onAppStateChanged(nextState, lastBackPressed, navigation, () => {
             lastBackPressed = Date.now();
         });
-
-
-      /*  console.log(nextState);
-
-        if (nextState != null && nextState === 'active') {
-
-            if (this.flage) {
-
-                if (lastBackPressed && lastBackPressed + 3000 <= Date.now()) {
-
-                    let objects = realm.objects('Gesture');
-
-                    if (objects.length > 0) {
-                        navigation.navigate('VerifyByGesture');
-                    } else {
-                        NavigationUtil.reset(navigation, 'RegisterApp');
-                    }
-                }
-
-                lastBackPressed = Date.now();
-            }
-            this.flage = false;
-        } else if (nextState != null && nextState === 'background') {
-            this.flage = true;
-        }*/
     }
 
 
@@ -103,53 +80,20 @@ class FirstTab extends BaseComponent {
         return onBackPress(lastBackPressed,this.props.navigation,()=>{
             lastBackPressed = Date.now();
         })
-
-       /* if (!lastBackPressed) {
-            lastBackPressed = Date.now();
-            ToastUtil.showShort('再按一次退出应用');
-            console.log(lastBackPressed);
-            return true;
-        }
-        console.log(lastBackPressed);
-
-        let cutTime = Date.now() - lastBackPressed;
-        console.log(cutTime);
-        if (cutTime < 1500) {
-
-            this.props.navigation.dispatch({type:TYPES.ACTION_GLOBAL, data: null})
-
-            NavigationUtil.reset(this.props.navigation, 'RegisterApp')
-            BackHandler.exitApp();
-            return false;
-        } else {
-            ToastUtil.showShort('再按一次退出应用');
-            lastBackPressed = Date.now();
-            return true;
-        }
-
-        return true;
-*/
     };
 
 
     render() {
-        console.log(this.props.nav);
-                {/*<PageNull/>*/}
         return (
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
                 <MyTabView title={'首页'} leftView={false} navigation={this.props.navigation}/>
-{/*
-                <MyButtonView title={'跳转'} onPress={()=>{
-                    this.props.navigation.navigate('Test1');
-                }}/>*/}
+
+                <PageBackground content={'页面功能正在积极开发中'} height={zHeight-zAppBarHeight-zdp(60)}/>
+
+                {/*{PageBackground('页面功能正在积极开发中...')}*/}
+
             </View>
         );
-            // this.props.RS_AutoPay ?
-            //     <Page_Auto navigation={this.props.navigation} />
-            //     :
-            //     <MyProgressBar/>
-
-
     }
 }
 
@@ -157,7 +101,6 @@ const mapStateToProps = (state) => {
     return {
         RS_AutoPay: state.RS_AutoPay.data,
         nav:state.nav
-        // RS_Navigate:state.RS_Navigate.data,
     }
 
 };

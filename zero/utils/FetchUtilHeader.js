@@ -2,9 +2,12 @@
 // let common_url = 'https://api.douban.com/v2/movie/';  //服务器地址
 // let common_url = 'http://localhost:8080/';  //服务器地址
 // let common_url = 'http://sjpay.githubshop.com/app/';  //服务器地址
-let common_url = 'http://39.104.64.38:81/app/';  //服务器地址
+// let common_url = 'http://39.104.64.38:81/app/';  //服务器地址
 // let token = '';
 // ?start=0&count=10
+import {common_url} from "./FetchUtil";
+import ToastUtil from "./ToastUtil";
+
 /**
  * @param {string} url 接口地址
  * @param {string} method 请求方法：GET、POST，只能大写
@@ -41,6 +44,7 @@ export const fetchRequestHeader = (url, method, params) => {
                     .catch((err) => {
                         console.log('err:', url, err);     //网络请求失败返回的数据
                         console.log(err);
+                        ToastUtil.showShort(err);
                         reject(err);
                     });
 
@@ -56,6 +60,7 @@ export const fetchRequestHeader = (url, method, params) => {
                         resolve(responseData);
                     })
                     .catch((err) => {
+                        ToastUtil.showShort(err);
                         console.log('err:', url, err);   //网络请求失败返回的数据
                         reject('带参请求', err);
                     });

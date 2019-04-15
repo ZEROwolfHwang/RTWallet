@@ -18,6 +18,7 @@ import {
     ListView,
     TextInput
 } from 'react-native';
+import {cusColors} from "../../../value/cusColor/cusColors";
 export default class Item extends Component {
 
     constructor(props) {
@@ -30,7 +31,8 @@ export default class Item extends Component {
         editable: true,
         style: {},
         keyboardType: 'default',
-        value: '',
+        placeholder: '',
+        value: null,
         onFocus:()=>{},
     }
 
@@ -44,9 +46,9 @@ export default class Item extends Component {
                 justifyContent: 'flex-start',
                 alignItems: 'center',
                 flexDirection: 'row'
-            },params.style]}>
+            }, params.style]}>
                 <Text style={{
-                    fontFamily:Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
+                    fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
                     width: zdp(130),
                     fontSize: zsp(16),
                     paddingLeft: zdp(20),
@@ -56,17 +58,21 @@ export default class Item extends Component {
                 }}>{params.title}</Text>
                 <TextInput style={{
                     flex: 1, fontSize: zsp(17),
-                    fontFamily:Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
-                    color: 'grey', backgroundColor: 'transparent'
+                    fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
+                    color: 'grey', backgroundColor: 'transparent',
                 }}
+                    placeholderTextColor={cusColors.text_placeHold}
                            keyboardType={params.keyboardType}
                            editable={params.editable}
+                           placeholder={params.placeholder}
+                           defaultValue={params.defaultValue}
                            underlineColorAndroid={'transparent'}
                            onChangeText={(text) => {
                                params.onChangeText(text)
                            }}
                            onFocus={params.onFocus}
-                           value={params.value}/>
+                    // value={params.value}
+                />
 
 
             </View>
@@ -79,8 +85,6 @@ export default class Item extends Component {
             }}/>
         </View>);
 
-
-
     }
 }
 Item.propTypes = {
@@ -91,5 +95,5 @@ Item.propTypes = {
     editable: PropTypes.bool,
     keyboardType: PropTypes.string,
     onFocus: PropTypes.func,
-    value:PropTypes.string.isRequired
+    // value:PropTypes.string.isRequired
 };

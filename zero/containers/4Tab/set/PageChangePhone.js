@@ -28,11 +28,12 @@ import MyTextInput from "../../../views/MyTextInput";
 import {pressVerify} from "../../../utils/smsVerifyUtil";
 import MyButtonView from "../../../views/MyButtonView";
 import CountdownUtil from "../../../utils/CountdownUtil";
-import ToastUtil from "../../../utils/ToastUtil";
+import ToastUtil, {toastAlert} from "../../../utils/ToastUtil";
 import {fetchRequestToken} from "../../../utils/FetchUtilToken";
 import {zdp, zsp} from "../../../utils/ScreenUtil";
 import {cusColors} from "../../../value/cusColor/cusColors";
 import ZText from "../../../views/ZText";
+import NavigationUtil from "../../../utils/NavigationUtil";
 
 var globalInfo = null;
 
@@ -94,18 +95,22 @@ class PageChangePhone extends BaseComponent {
                     shadowOpacity: 0.6,
                     shadowRadius: zdp(2),
                 }}>
-                    <Text style={{
-                        fontSize: zsp(16),
-                        color: 'grey'
-                    }}>{`验证码(发送至(${phoneFirst + '****' + phoneLast})`}</Text>
+
+                    <ZText parentStyle={{alignSelf: 'flex-start'}}
+                           content={`验证码(发送至(${phoneFirst + '****' + phoneLast})`}
+                           fontSize={zsp(16)}
+                           color={cusColors.text_main}/>
+
 
                     <View style={{
                         width: width, height: zdp(50), marginTop: 0, flexDirection: 'row'
                     }}>
 
                         <MyTextInput
-                            style={{width: zdp(120), height: zdp(50), borderWidth: 0, marginTop: 0,
-                                borderBottomWidth:1, borderColor:'lightgrey'}}
+                            style={{
+                                width: zdp(120), height: zdp(50), borderWidth: 0, marginTop: 0,
+                                borderBottomWidth: 1, borderColor: 'lightgrey'
+                            }}
                             keyboardType={'numeric'} placeholder={'请输入验证码'}
                             onChangeText={(text) => {
                                 this.setState({
@@ -119,7 +124,7 @@ class PageChangePhone extends BaseComponent {
                             paddingRight: zdp(20),
                         }}
                                           activeOpacity={this.state.isSentVerify ? 0.5 : 1}
-                                          onPress={()=>{
+                                          onPress={() => {
                                               pressVerify(globalInfo.phone, this.state.isSentVerify,
                                                   () => {
                                                       console.log('回调1');
@@ -149,11 +154,11 @@ class PageChangePhone extends BaseComponent {
                                           }}>
 
                             <ZText
-                                parentStyle={{marginLeft:zdp(20)}}
+                                parentStyle={{marginLeft: zdp(20)}}
                                 content={this.state.timerTitle}
-                                   color={this.state.isSentVerify ? cusColors.verify_light : this.state.timerTitle.indexOf('s') > -1 ? cusColors.verify_dark : cusColors.verify_light}
-                                   fontSize={zsp(16)}/>
-                         {/*   <Text
+                                color={this.state.isSentVerify ? cusColors.verify_light : this.state.timerTitle.indexOf('s') > -1 ? cusColors.verify_dark : cusColors.verify_light}
+                                fontSize={zsp(16)}/>
+                            {/*   <Text
                                 style={{
                                     marginLeft: zdp(20),
                                     alignSelf: 'center',
@@ -169,7 +174,7 @@ class PageChangePhone extends BaseComponent {
                 </View>
                 <MyButtonView style={{width: width / 1.3, marginTop: zdp(80)}} title={'下一步'}
                               onPress={this.pressNext}/>
-            </View>)
+            </View>);
     }
 
 
@@ -192,6 +197,10 @@ class PageChangePhone extends BaseComponent {
                     console.log('旧手机验证通过');
                     CountdownUtil.stop();
                     this.props.navigation.navigate('PageChangePhoneNext');
+                } else if (res.respCode === 203) {
+                    toastAlert('登录超时,请重新登录',()=>{
+                        NavigationUtil.backToLogin(this.props.navigation);
+                    })
                 } else {
                     console.log(res.respMsg);
                     ToastUtil.showShort(res.respMsg)
@@ -199,7 +208,7 @@ class PageChangePhone extends BaseComponent {
             })
             .catch(err => {
                 console.log(err);
-                ToastUtil.showShort(err)
+                // ToastUtil.showShort(err)
             })
 
     }

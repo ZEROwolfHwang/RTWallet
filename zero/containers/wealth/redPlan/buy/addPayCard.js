@@ -13,7 +13,7 @@ import {
     TouchableOpacity,
     Image,
     Dimensions,
-    ListView,
+    ListView, Keyboard,
     TextInput, Modal, AppState, BackHandler, KeyboardAvoidingView, ScrollView
 } from 'react-native';
 
@@ -29,7 +29,7 @@ import {
     validateIdCard,
     isEmpty
 } from "../../../../utils/Verification";
-import ToastUtil, {toastShort} from "../../../../utils/ToastUtil";
+import ToastUtil, {toastAlert, toastShort} from "../../../../utils/ToastUtil";
 import {fetchRequestHeader} from "../../../../utils/FetchUtilHeader";
 import InvestBuy from "./InvestBuy";
 import realm from "../../../../storage/realm";
@@ -43,15 +43,25 @@ import bankList from '../../../../../resource/bankList';
 import bankMap from '../../../../../resource/bankMap';
 import {actions_card} from "../../../reduce/CardReduce";
 import MyButtonView from "../../../../views/MyButtonView";
-import {zdp, zsp} from "../../../../utils/ScreenUtil";
+import {zdp, zsp, zWidth} from "../../../../utils/ScreenUtil";
 import {onAppStateChanged} from "../../../../utils/GoBackUtil";
-import {bankNameIsCorrect, getBankMarkByBankName} from "../../../../utils/BankUtil";
+import {
+    bankNameIsCorrect,
+    getBankDetach,
+    getBankMarkByBankName,
+    trim_all
+} from "../../../../utils/BankUtil";
 import {
     addSingleBankCard,
     getCreditCardDefault,
     getDebitCardDefault
 } from "../../../../storage/schema_card";
 import {NavigationActions} from "react-navigation";
+import {cusColors} from "../../../../value/cusColor/cusColors";
+import ZText from "../../../../views/ZText";
+
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
+import NavigationUtil from "../../../../utils/NavigationUtil";
 //  "ABC": "中国农业银行",
 // let bankMap = require('../../../../../resource/bankMap.json');
 let globalInfo;
@@ -73,10 +83,10 @@ class addPayCard extends BaseComponent {
         this.pswIDCard = `${IDCardFirst}********${IDCardLast}`;
 
 
-        for (let key in bankMap) {
-            console.log(key);
-            console.log(bankMap[key]);
-        }
+        // for(let key in bankMap) {
+            // console.log(key);
+            // console.log(bankMap[key]);
+        // }
 
         this.state = {
             bankCard: '',
@@ -132,15 +142,24 @@ class addPayCard extends BaseComponent {
                            title={`添加新${this.cardType === 'CC' ? '支付' : '结算'}卡`}
                            navigation={this.props.navigation}/>
 
-
-                <ScrollView style={{flex: 1}}
+                {/*    <ScrollView style={{flex: 1}}
                             contentContainerStyle={{
                                 justifyContent: 'flex-start',
                                 alignItems: 'center'
                             }}
                             showsVerticalScrollIndicator={false}
                             keyboardShouldPersistTaps={'always'}
-                >
+                >*/}
+
+                <KeyboardAwareScrollView
+                    style={{flex: 1, width: zWidth}}
+                    behavior="padding"
+                    resetScrollToCoords={{x: 0, y: 0}}
+                    contentContainerStyle={{justifyContent: 'flex-start', alignItems: 'center'}}
+                    scrollEnabled={true}
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps={'always'}>
+
 
                     <ItemAddCard style={{marginTop: zdp(20)}}
                                  title={'持卡人姓名'}
@@ -158,23 +177,24 @@ class addPayCard extends BaseComponent {
                         justifyContent: 'flex-end'
                     }}>
 
-                        <Text style={{
-                            backgroundColor: 'transparent',
-                            color: 'grey',
-                            fontSize: zsp(16),
-                            marginLeft: zdp(20),
-                            marginBottom: zdp(10)
-                        }}>请填写银行卡信息</Text>
+
+                        <ZText parentStyle={{paddingLeft: zdp(20), paddingBottom: zdp(10)}}
+                               content={'请填写银行卡信息'}
+                               fontSize={zsp(16)}
+                               color={cusColors.text_secondary}/>
                     </View>
 
                     <Item title={'卡号'}
+                          maxLength={23}
                           isRequired={'*'}
                           placeholder={'请输入您的信用卡号'}
                           hasLine={true}
                           keyboardType={'numeric'}
                           onChangeText={(text) => {
                               this.changeTextCard(text);
-                          }}/>
+                          }}
+                          value={this.state.bankCard}
+                    />
 
 
                     <Item title={'所属银行'}
@@ -208,11 +228,12 @@ class addPayCard extends BaseComponent {
                                   title={'确认添加'} onPress={this.pressSubmit}/>
 
 
-                </ScrollView>
+                </KeyboardAwareScrollView>
             </View>
         );
 
     }
+
 
     viewCreditCardElse() {
         return <View>
@@ -254,6 +275,9 @@ class addPayCard extends BaseComponent {
                       this.setState({
                           creditBillingDay: text
                       })
+                      if (text.length === 2) {
+                          Keyboard.dismiss();
+                      }
                   }}/>
 
             <Text style={{
@@ -266,8 +290,16 @@ class addPayCard extends BaseComponent {
 
     pressSubmit = () => {
 
+        Keyboard.dismiss();
 
-        if (!(this.state.bankCard.length >= 16 && this.state.bankCard.length <= 19)) {
+
+        let isComplete = false;
+        let validComplete = false;
+        let Cvn2Complete = false;
+        let RepayDayComplete = false;
+        let BillingDayComplete = false;
+
+        if (!(trim_all(this.state.bankCard).length >= 16 && trim_all(this.state.bankCard).length <= 19)) {
             ToastUtil.showShort('银行卡位数错误')
             return
         }
@@ -291,6 +323,7 @@ class addPayCard extends BaseComponent {
 
 
         if (this.cardType === 'CC') {
+
             var regular = /^\d+$/;
             if (this.state.creditValidDay.length !== 0) {
 
@@ -302,6 +335,8 @@ class addPayCard extends BaseComponent {
                     if (parseInt(month) <= 0 || parseInt(month) > 12) {
                         toastShort('信用卡有效期格式错误(可不填)');
                         return;
+                    } else {
+                        validComplete = true;
                     }
                 }
             }
@@ -312,7 +347,10 @@ class addPayCard extends BaseComponent {
                 if (this.state.creditCvn2.length !== 3 || !regular.test(this.state.creditCvn2)) {
                     toastShort('信用卡cvn2码格式错误(可不填)');
                     return;
+                } else {
+                    Cvn2Complete = true;
                 }
+
             }
 
 
@@ -322,6 +360,8 @@ class addPayCard extends BaseComponent {
                     if (parseInt(this.state.creditRepayDay) <= 0 || parseInt(this.state.creditRepayDay) > 31) {
                         toastShort('信用卡还款日格式错误(可不填)');
                         return;
+                    } else {
+                        RepayDayComplete = true;
                     }
                 } else {
                     toastShort('信用卡还款日格式错误(可不填)');
@@ -329,12 +369,15 @@ class addPayCard extends BaseComponent {
                 }
             }
 
+
             if (this.state.creditBillingDay.length !== 0) {
 
                 if (this.state.creditBillingDay.length === 2 && regular.test(this.state.creditBillingDay)) {
                     if (parseInt(this.state.creditBillingDay) <= 0 || parseInt(this.state.creditBillingDay) > 31) {
                         toastShort('信用卡账单日格式错误(可不填)');
                         return;
+                    } else {
+                        BillingDayComplete = true;
                     }
                 } else {
                     toastShort('信用卡账单日格式错误(可不填)');
@@ -343,10 +386,18 @@ class addPayCard extends BaseComponent {
             }
         }
 
+        isComplete = validComplete && Cvn2Complete && RepayDayComplete && BillingDayComplete;
+
+        console.log('validComplete: ', validComplete);
+        console.log('Cvn2Complete: ', Cvn2Complete);
+        console.log('RepayDayComplete: ', RepayDayComplete);
+        console.log('BillingDayComplete: ', BillingDayComplete);
+        console.log('isComplete: ', isComplete);
+
 
         let formData = new FormData();
 
-        formData.append('bankCard', this.state.bankCard);
+        formData.append('bankCard', trim_all(this.state.bankCard));
         formData.append('bankPhone', this.state.bankPhone);
         formData.append('bank', this.state.bankName);
         formData.append('bankMark', this.state.bankMark);
@@ -358,6 +409,8 @@ class addPayCard extends BaseComponent {
         formData.append('creditCvn2', this.state.creditCvn2);
         formData.append('creditRepayDay', this.state.creditRepayDay);
         formData.append('creditBillingDay', this.state.creditBillingDay);
+        formData.append('isComplete', isComplete ? 1 : 0);
+
 
 
         let globalInfo = this.props.globalInfo;
@@ -366,9 +419,8 @@ class addPayCard extends BaseComponent {
             .then(res => {
                     console.log(res);
                     if (res.respCode === 200) {
-                        this._saveRealm(globalInfo.merCode);
+                        this._saveRealm(globalInfo.merCode, isComplete);
                         ToastUtil.showShort(`${this.state.cardType === 'DC' ? '储蓄卡' : '信用卡'}${this.state.bankCard}添加成功`);
-
 
                         if (this.params.enterType && this.params.enterType === 100) {
                             if (this.cardType === 'DC') {
@@ -422,8 +474,11 @@ class addPayCard extends BaseComponent {
 
                             this.props.navigation.goBack();
                         }
-                    }
-                    else {
+                    } else if (res.respCode === 203) {
+                        toastAlert('登录超时,请重新登录',()=>{
+                            NavigationUtil.backToLogin(this.props.navigation);
+                        })
+                    } else {
                         ToastUtil.showShort(res.respMsg)
                     }
                 }
@@ -433,13 +488,38 @@ class addPayCard extends BaseComponent {
         );
     };
 
+
     changeTextCard(text) {
+        console.log('text: ', text);
+
+        let newText = trim_all(text);
+
+
+        let size = newText.length % 4;
+
+
+        let number = parseInt(newText.length / 4);
+        let arrStr = '';
+        for(let j = 0; j < number; j++) {
+            if (size > 0 || j < number-1) {
+
+                arrStr = arrStr + newText.substring(j * 4, (j + 1) * 4) + ' ';
+            } else {
+                arrStr = arrStr + newText.substring(j * 4, (j + 1) * 4);
+            }
+        }
+        if (size !== 0) {
+            arrStr = arrStr + newText.substring(number * 4);
+        }
+
+
         this.setState({
-            bankCard: text
-        })
-        if (text.length >= 16) {
+            bankCard: arrStr
+        });
+
+        if (newText.length >= 16) {
             //https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo=6221506020009066385&cardBinCheck=true
-            var bankUrl = `https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo=${text}&cardBinCheck=true`;
+            var bankUrl = `https://ccdcapi.alipay.com/validateAndCacheCardInfo.json?_input_charset=utf-8&cardNo=${newText}&cardBinCheck=true`;
             fetch(bankUrl)
                 .then((response) => response.json())
                 .then((responseData) => {
@@ -502,9 +582,10 @@ class addPayCard extends BaseComponent {
     /**
      *
      * @param merCode
+     * @param isComplete
      * @private
      */
-    _saveRealm(merCode) {
+    _saveRealm(merCode, isComplete) {
         if (this.cardType === 'DC') {
             let hasData = getDebitCardDefault(merCode);
             if (hasData) {
@@ -516,16 +597,18 @@ class addPayCard extends BaseComponent {
 
             let hasData = getCreditCardDefault(merCode);
             if (hasData) {
-                this.saveCard('CC', false, merCode)
+                this.saveCard('CC', false, merCode, isComplete)
             } else {
-                this.saveCard('CC', true, merCode)
+                this.saveCard('CC', true, merCode, isComplete)
             }
         }
     }
 
-    saveCard(cardType, isDefault, merCode) {
-        addSingleBankCard(merCode, this.state.bankCard, this.state.bankName, this.state.bankPhone, this.state.bankMark, cardType,
-            isDefault, this.state.creditCvn2, this.state.creditValidDay, this.state.creditRepayDay, this.state.creditBillingDay)
+
+
+    saveCard(cardType, isDefault, merCode, isComplete = false) {
+        addSingleBankCard(merCode, trim_all(this.state.bankCard), this.state.bankName, this.state.bankPhone, this.state.bankMark, cardType,
+            isDefault, isComplete, this.state.creditCvn2, this.state.creditValidDay, this.state.creditRepayDay, this.state.creditBillingDay)
     }
 
     onBackPress = () => {

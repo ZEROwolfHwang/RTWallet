@@ -107,7 +107,7 @@ class ForgetPsw extends BaseComponent {
                                resizeMode={'contain'}/>
 
                         <MyTextInputWithIcon
-                            style={{marginTop: zdp(140)}}
+                            style={{marginTop: zdp(200)}}
 
                             placeholder={'请输入手机号'}
                             keyboardType={'numeric'}
@@ -253,7 +253,7 @@ class ForgetPsw extends BaseComponent {
                 }
             }).then(err => {
             console.log(err);
-            ToastUtil.showShort(err)
+            // ToastUtil.showShort(err)
 
         });
 

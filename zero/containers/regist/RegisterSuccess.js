@@ -27,11 +27,12 @@ import {getCardLength} from "../../storage/schema_card";
 import {NavigationActions} from "react-navigation";
 import {isIphoneX, zdp, zsp} from "../../utils/ScreenUtil";
 import NavigationUtil from "../../utils/NavigationUtil";
-import {save2Realm} from "./SaveRealmUtil";
+import {save2Global, save2Realm} from "./SaveRealmUtil";
 import {isGestureLogin} from "../../storage/schema_gesture";
 import {updateAppByLogin} from "../../utils/updateAppUtil";
 import {cusColors} from "../../value/cusColor/cusColors";
 import ZText from "../../views/ZText";
+import {SPSaveLoginInfo} from "../../storage/Storage";
 
 class RegisterSuccess extends BaseComponent {
 
@@ -122,8 +123,9 @@ class RegisterSuccess extends BaseComponent {
                             //长度不同则刷新本地数据库
                             save2Realm(res.data);
                         }
-                        this.save2Global(res.data);
+                        save2Global(this.props.navigation,res.data);
 
+                        SPSaveLoginInfo(this.params.phone, this.params.password);
 
                         NavigationUtil.reset(this.props.navigation, 'Tab');
 
@@ -135,26 +137,12 @@ class RegisterSuccess extends BaseComponent {
 
                 }).catch(err => {
 
-                ToastUtil.showShort(err);
+                // ToastUtil.showShort(err);
             })
 
         }
     }
-    /**
-     * 存储全局信息
-     * @param resData
-     */
-    save2Global = (resData) => {
-        this.props.initGlobalInfo({
-            token: resData.token,
-            phone: resData.phone,
-            IDCard: resData.identity,
-            username: resData.name,
-            merCode: resData.merCode,
-            appUser: resData.appUser,
-            recommend: resData.recommend
-        });
-    }
+
 }
 
 const mapStateToProps = (state) => {

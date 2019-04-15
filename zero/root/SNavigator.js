@@ -3,6 +3,7 @@
  */
 import React, {Component} from 'react';
 import {
+    Image,
     Platform,
 } from 'react-native';
 import {TabNavigator, StackNavigator, TabBarTop, NavigationActions} from 'react-navigation';
@@ -23,8 +24,15 @@ const TabNavigation = TabNavigator({
         screen: FirstTab, navigationOptions: {
             tabBarLabel: '钱包',
             tabBarIcon: ({tintColor, focused}) => (
-                <Icon name="ios-home-outline" size={zdp(25)}
-                      color={focused ? cusColors.linear_default : cusColors.main_default}/>
+                <Image source={{uri: focused?'tabbar_icon1':'tabbar_default_icon1'}}
+                       resizeMode={'contain'}
+                       style={{
+                           width: zdp(25),
+                           height:zdp(25),
+                           backgroundColor: 'transparent'
+                       }}/>
+                // <Icon name="ios-home-outline" size={zdp(25)}
+                //       color={focused ? cusColors.linear_default : cusColors.main_default}/>
             )
         }
     },
@@ -53,8 +61,15 @@ const TabNavigation = TabNavigator({
         screen: SecondTab, navigationOptions: {
             tabBarLabel: '刷卡支付',
             tabBarIcon: ({tintColor, focused}) => (
-                <Icon name="ios-appstore" size={zdp(25)}
-                      color={focused ? cusColors.linear_default : cusColors.main_default}/>
+                <Image source={{uri: focused?'tabbar_icon2':'tabbar_default_icon2'}}
+                       resizeMode={'contain'}
+                       style={{
+                           width: zdp(25),
+                           height:zdp(25),
+                           backgroundColor: 'transparent'
+                       }}/>
+                // <Icon name="ios-appstore" size={zdp(25)}
+                //       color={focused ? cusColors.linear_default : cusColors.main_default}/>
 
             )
         }
@@ -64,8 +79,15 @@ const TabNavigation = TabNavigator({
         screen: ThirdTab, navigationOptions: {
             tabBarLabel: '完美还款',
             tabBarIcon: ({tintColor, focused}) => (
-                <Icon name="ios-disc-outline" size={zdp(25)}
-                      color={focused ? cusColors.linear_default : cusColors.main_default}/>
+                <Image source={{uri: focused?'tabbar_icon3':'tabbar_default_icon3'}}
+                       resizeMode={'contain'}
+                       style={{
+                           width: zdp(25),
+                           height:zdp(25),
+                           backgroundColor: 'transparent'
+                       }}/>
+                // <Icon name="ios-disc-outline" size={zdp(25)}
+                //       color={focused ? cusColors.linear_default : cusColors.main_default}/>
 
             )
         }
@@ -74,8 +96,15 @@ const TabNavigation = TabNavigator({
         screen: FourthTab, navigationOptions: {
             tabBarLabel: '我的',
             tabBarIcon: ({tintColor, focused}) => (
-                <Icon name="md-person" size={zdp(25)}
-                      color={focused ? cusColors.linear_default : cusColors.main_default}/>
+                <Image source={{uri: focused?'tabbar_icon4':'tabbar_default_icon4'}}
+                       resizeMode={'contain'}
+                       style={{
+                           width: zdp(25),
+                           height:zdp(25),
+                           backgroundColor: 'transparent'
+                       }}/>
+                // <Icon name="md-person" size={zdp(25)}
+                //       color={focused ? cusColors.linear_default : cusColors.main_default}/>
 
             )
         },
@@ -88,42 +117,18 @@ const TabNavigation = TabNavigator({
     animationEnabled: false,
     mode: 'modal',
     headerMode: 'none',
-    // initialRouteName: 'FirstTab',
-    initialRouteName: 'SecondTab',
-    // initialRouteName: 'ThirdTab',
-    // initialRouteName: 'FourthTab',
+    initialRouteName: InitConfig.initialRouteName,
+    // backBehavior: 'none', // 按 back 键是否跳转到第一个Tab(首页)， none 为不跳转
     tabBarOptions: {
         showIcon: true,
         pressOpacity: 0.8,
         activeTintColor: cusColors.linear_default, // 文字和图片选中颜色
         inactiveTintColor: '#707070', // 文字和图片默认颜色
-
-        /*  style: {
-              // marginTop:0,
-              paddingTop: 0,
-              height: zdp(60),
-              backgroundColor: 'white',
-              zIndex: 0,
-              position:'relative'
-          },
-
-          labelStyle: {
-              fontSize: zsp(13),
-              paddingVertical: 0,
-              marginTop: Platform.OS === 'android' ? 0 : 0
-          },
-
-          tabStyle: {
-              backgroundColor: 'white',
-          },
-
-          indicatorStyle: {
-              height: 0  // 如TabBar下面显示有一条线，可以设高度为0后隐藏
-          },*/
-
         style: {
-            backgroundColor: 'white'
+            backgroundColor: 'white',
+            height: zdp(65)
         },
+
         indicatorStyle: {
             opacity: 0
         },
@@ -140,8 +145,9 @@ const TabNavigation = TabNavigator({
             marginTop: 0,
             padding: 0,
         },
+
         tabStyle: {
-            height: zdp(60),
+            height: zdp(65),
             alignItems: 'center',
             justifyContent: 'center',
 
@@ -181,7 +187,6 @@ import CardDefault from "../containers/4Tab/defaltCard/CardDefault";
 import ForgetPsw from "../containers/regist/ForgetPsw";
 import RegisterMerchant from "../containers/regist/RegisterMerchant";
 import RegisterMerchantNext from "../containers/regist/RegisterMerchantNext";
-import RegisterApp from "../containers/regist/RegisterApp";
 import LoginByVerify from "../containers/regist/LoginByVerify";
 import RegisterSuccess from "../containers/regist/RegisterSuccess";
 import DefaultCardManage from "../containers/4Tab/defaltCard/DefaultCardManage";
@@ -198,17 +203,24 @@ import LoginByGesture from "../containers/regist/LoginByGesture";
 import PageGesture from "../containers/4Tab/set/gesture/PageGesture";
 import PageSetGesturePsw from "../containers/4Tab/set/gesture/PageSetGesturePsw";
 import PageChangeGesturePsw from "../containers/4Tab/set/gesture/PageChangeGesturePsw";
-import PageReplayDetail from "../containers/3Tab/PageReplayDetail";
 import VerifyByGesture from "../containers/regist/VerifyByGesture";
 import {cusColors} from "../value/cusColor/cusColors";
 import {zdp, zsp} from "../utils/ScreenUtil";
 import Test1 from "../containers/1Tab/test/Test1";
 import Test2 from "../containers/1Tab/test/Test2";
-import Splash from "../containers/regist/Splash";
+import InviteFriend from "../containers/4Tab/InviteFriend";
+import AddCardPlan from "../containers/3Tab/AddCardPlan";
+import SelectCreditCard from "../containers/3Tab/SelectCreditCard";
+import EditCardInfo from "../containers/3Tab/EditCardInfo";
+import PlanDetail from "../containers/3Tab/PlanDetail";
+import {InitConfig} from "./InitConfig";
+import RepayPlanRecord from "../containers/3Tab/RepayPlanRecord";
 
 
 const setting = {
     MerchantInfo: {screen: MerchantInfo},
+    RepayPlanRecord: {screen: RepayPlanRecord},
+    InviteFriend: {screen: InviteFriend},
 }
 const main = {
     Test1: {screen: Test1},
@@ -220,19 +232,28 @@ const register = {
     RegisterMerchant: {screen: RegisterMerchant},
     LoginByVerify: {screen: LoginByVerify},
     ForgetPsw: {screen: ForgetPsw},
+};
+
+
+
+const cardPlan ={
+    AddCardPlan: {screen: AddCardPlan},
+    SelectCreditCard: {screen: SelectCreditCard},
+    EditCardInfo: {screen: EditCardInfo},
+    PlanDetail: {screen: PlanDetail},
+    // ThirdTab1: {screen: TabNavigation, path: 'ThirdTab'},
 }
 
 const SNavigator = StackNavigator({
 
         // Sign: {screen: SignPage},
-        RegisterApp: {screen: RegisterApp},
+        ...InitConfig.launch,
         ...register,
-        Splash: {screen: Splash},
+        ...cardPlan,
         Web: {screen: Web},
         ...setting,
         ...main,
         VerifyByGesture: {screen: VerifyByGesture},
-        PageReplayDetail: {screen: PageReplayDetail},
         // PageReplay: {screen: PageReplay},
         LaunchPage: {screen: LaunchPage},
         PageChangeGesturePsw: {screen: PageChangeGesturePsw},

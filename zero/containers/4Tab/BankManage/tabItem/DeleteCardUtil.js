@@ -3,9 +3,10 @@
  */
 
 import {fetchRequestToken} from "../../../../utils/FetchUtilToken";
-import ToastUtil from "../../../../utils/ToastUtil";
+import ToastUtil, {toastAlert} from "../../../../utils/ToastUtil";
 import realm from "../../../../storage/realm";
 import {getCreditCardList, getDebitCardList} from "../../../../storage/schema_card";
+import NavigationUtil from "../../../../utils/NavigationUtil";
 
 /**
  * 删除卡片
@@ -45,6 +46,10 @@ const deleteCard = (currentCard, merCode, token, callBack1, callBack2) => {
 
                     ToastUtil.showShort('银行卡删除成功')
                     callBack1();
+                } else if (res.respCode === 203) {
+                    toastAlert('登录超时,请重新登录',()=>{
+                        NavigationUtil.backToLogin(this.props.navigation);
+                    })
                 } else {
                     ToastUtil.showShort(res.respMsg)
                     callBack2();

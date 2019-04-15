@@ -32,7 +32,9 @@ export default class MyButtonView extends Component {
         style: {},
         onPress: null,
         modal: 0,     //null为普通界面风格  1 为登录界面风格
-        fontSize: zsp(18)
+        fontSize: zsp(18),
+        color1: cusColors.linear_default,
+        color2:cusColors.linear_light
     };
 
     render() {
@@ -60,7 +62,8 @@ export default class MyButtonView extends Component {
                     start={{x: 0.0, y: 0.0}}
                     end={{x: 0.0, y: 1.0}}
                     locations={[0, 1]}
-                    colors={params.modal ? [cusColors.button_light, cusColors.button_default] : [cusColors.linear_default, cusColors.linear_light]}
+                    // colors={params.modal ? [cusColors.button_light, cusColors.button_default] : [cusColors.linear_default, cusColors.linear_light]}
+                    colors={[params.color1, params.color2]}
                 >
 
 
@@ -73,18 +76,6 @@ export default class MyButtonView extends Component {
 
     }
 }
-{/*<TouchableOpacity activeOpacity={0.5}*/
-}
-{/*style={[styles.buttonViewStyle_01, params.style]}*/
-}
-{/*onPress={() => {*/
-}
-{/*params.onPress();*/
-}
-{/*}}>*/
-}
-{/*</TouchableOpacity>*/
-}
 
 MyButtonView.propTypes = {
     title: PropTypes.string.isRequired,
@@ -93,20 +84,3 @@ MyButtonView.propTypes = {
     modal: PropTypes.number,
     fontSize: PropTypes.number,
 }
-
-const styles = StyleSheet.create({
-    buttonViewStyle_01: {
-        marginTop: zdp(40),
-        // width: zdp(220),
-        // height: zdp(50),
-        // backgroundColor: '#4e73ff',
-        borderRadius: zdp(25),
-        justifyContent: 'center',
-        alignItems: 'center',
-        // elevation: zdp(5),
-        // shadowOffset: {width: zdp(5), height: 5},
-        // shadowColor: cusColors.shadowColor,
-        // shadowOpacity: 0.6,
-        // shadowRadius: 2,
-    },
-});

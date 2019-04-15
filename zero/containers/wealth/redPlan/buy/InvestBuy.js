@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
     Image,
     Dimensions,
-    ListView, KeyboardAvoidingView, BackHandler, AppState,
+    ListView, KeyboardAvoidingView, BackHandler, AppState,Keyboard,
     TextInput, Modal, StatusBar, FlatList
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -32,7 +32,7 @@ import {
     getDebitCardDefault, getDebitCardList,
 } from "../../../../storage/schema_card";
 import {fetchRequestToken} from "../../../../utils/FetchUtilToken";
-import ToastUtil from "../../../../utils/ToastUtil";
+import ToastUtil, {toastAlert} from "../../../../utils/ToastUtil";
 import {actions_card} from "../../../reduce/CardReduce";
 import {actions} from "../../../../root/GlobalAction";
 import {checkIsNull} from "../../../../utils/CheckUitls";
@@ -44,6 +44,7 @@ import {onAppStateChanged} from "../../../../utils/GoBackUtil";
 import ZText from "../../../../views/ZText";
 import MyTextInput from "../../../../views/MyTextInput";
 import {getBankABC, getBankName, getLimitAmountByMark} from "../../../../utils/BankUtil";
+import NavigationUtil from "../../../../utils/NavigationUtil";
 
 var cardList = null;
 var debitCardList = null;
@@ -182,8 +183,12 @@ class InvestBuy extends BaseComponent {
         console.log(bankCard);
         console.log(bankLimitList);
 
+        let limit = this.props.redData.limit;
+        // limit.splice('')
+
 
         let bankMark = bankCard.bankMark;
+
         let limitAmount = getLimitAmountByMark(bankMark, bankLimitList);
 
 
@@ -236,10 +241,11 @@ class InvestBuy extends BaseComponent {
                         paddingTop: zdp(10),
                         paddingBottom: zdp(10)
                     }}>
-                        <ZText content={`单笔限额${limitAmount.limit}元`} fontSize={zsp(15)}
+                        <ZText content={`单笔限额¥ [${limit[0]} , ${limitAmount.limit}]`}
+                               fontSize={zsp(15)}
                                color={cusColors.text_secondary}
                                parentStyle={{marginRight: zdp(15)}}/>
-                        <ZText content={`当日限额${limitAmount.upper}元`} fontSize={zsp(15)}
+                        <ZText content={`当日最大额度¥ ${limitAmount.upper}`} fontSize={zsp(15)}
                                color={cusColors.text_secondary}/>
                     </View> :
                     <View style={{
@@ -248,8 +254,13 @@ class InvestBuy extends BaseComponent {
                         paddingTop: zdp(10),
                         paddingBottom: zdp(10)
                     }}>
-                    <ZText content={`暂无${bankCard.bank}信用卡的限额额度`} fontSize={zsp(15)}
-                           color={cusColors.text_secondary}/>
+                       <ZText content={`通道单笔限额¥ [${limit[0]} , ${limit[1]}]`} fontSize={zsp(15)}
+                               color={cusColors.text_secondary}/>
+
+                     {/*   <ZText content={`暂无${bankCard.bank}信用卡的限额额度,通道单笔限额¥ [${limit[0]} , ${limit[1]}]`} fontSize={zsp(15)}
+                               color={cusColors.text_secondary}/>
+
+*/}
                     </View>
             }
         </View>;
@@ -273,7 +284,11 @@ class InvestBuy extends BaseComponent {
                     justifyContent: 'center',
                     alignItems: 'center'
                 }}>
-                    <Text style={{fontSize: zsp(13), color: 'orange', textAlign: 'center'}}>提示:
+                    <Text style={{
+                        fontSize: zsp(13),
+                        fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
+                        color: 'orange', textAlign: 'center'
+                    }}>提示:
                         支付前请确认信息填写及支付金额无误</Text>
                 </View>
 
@@ -340,6 +355,7 @@ class InvestBuy extends BaseComponent {
                                    }}/>
 
                     <Text style={{
+                        fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
                         fontSize: zsp(13),
                         color: '#837d82',
                         marginLeft: zdp(10)
@@ -359,6 +375,60 @@ class InvestBuy extends BaseComponent {
      */
     pressInvestSure = () => {
         console.log('确认支付');
+
+        let bankCard = this.state.bankCard;
+
+        let limit = this.props.redData.limit;
+
+        let bankMark = bankCard.bankMark;
+        let limitAmount = getLimitAmountByMark(bankMark, bankLimitList);
+
+
+        let limitAll = parseInt(limit[1].replace(/,/g, ""));
+
+        console.log(limitAmount);
+
+
+        if (limitAmount) {
+            let limitDetail = limitAmount.limit.replace(/,/g, "");
+            let minLimit = Math.min(limitAll, limitDetail);
+            if (parseInt(this.state.buyMoney) < limit[0]) {
+                toastAlert(`当前收款金额小于单笔最小额度${limit[0]}元,请调整收款金额后继续`, () => {
+
+                });
+            } else if (parseInt(this.state.buyMoney) > minLimit) {
+                toastAlert(`当前收款金额大于单笔最大额度${minLimit}元,请调整收款金额后继续`, () => {
+
+                });
+            } else {
+                this.sureBuy();
+            }
+        } else {
+           /* toastAlert(`当前支付卡所属银行不在支持银行列表中,可能导致支付失败,是否确定继续支付?`, () => {
+                this.sureBuy();
+            });*/
+            if (parseInt(this.state.buyMoney) < limit[0]) {
+                toastAlert(`当前收款金额小于该通道单笔最小额度${limit[0]}元,请调整收款金额后继续`, () => {
+
+                });
+            } else if (this.state.buyMoney > parseInt(limitAll)) {
+                toastAlert(`当前收款金额大于该通道单笔最大额度${parseInt(limitAll)}元,请调整收款金额后继续`, () => {
+
+                });
+            } else {
+                toastAlert(`当前支付卡所属银行不在支持银行列表中,可能导致支付失败,是否确定继续支付?`, () => {
+                    Keyboard.dismiss();
+                    this.sureBuy();
+                });
+            }
+        }
+
+
+    };
+
+
+    sureBuy = () => {
+
         var timestamp3 = new Date().getTime();
         // Alert.alert('银行卡号' + this.state.bankCard + '\n买入金额' + this.state.buyMoney)
         let formData = new FormData();
@@ -381,22 +451,17 @@ class InvestBuy extends BaseComponent {
                 console.log(res);
                 if (res.respCode === 200) {
                     this.props.navigation.navigate('Web', {payUrl: res.respMsg})
+                } else if (res.respCode === 203) {
+                    toastAlert('登录超时,请重新登录', () => {
+                        NavigationUtil.backToLogin(this.props.navigation);
+                    })
                 } else {
                     ToastUtil.showShort(res.respMsg);
                 }
             }).then(err => {
             console.log(err);
-            ToastUtil.showShort(err)
         });
-
-        // fetchRequestHeader('pay/20', 'POST',formData)
-        //     .then(res => {
-        //         console.log(res);
-        //     }).then(err => {
-        //     console.log(err);
-        // })
-    };
-
+    }
 
     /**
      * 点击打开对话框的条目,这里要填充默认值,可以进行修改
@@ -428,7 +493,11 @@ class InvestBuy extends BaseComponent {
                 alignItems: 'center',
                 flexDirection: 'row'
             }}>
-                <Text style={{paddingLeft: zdp(15), width: zdp(120), fontSize: zsp(15)}}
+                <Text style={{
+                    paddingLeft: zdp(15),
+                    fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
+                    width: zdp(120), fontSize: zsp(15)
+                }}
                       numberOfLines={1}>{title}</Text>
 
                 <TouchableOpacity activeOpacity={0.9} style={{
@@ -443,6 +512,7 @@ class InvestBuy extends BaseComponent {
 
                     <Text style={{
                         flex: 1,
+                        fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
                         fontSize: zsp(16),
                         color: 'black'
                     }} numberOfLines={1}>{showItemText}</Text>
@@ -505,6 +575,7 @@ class InvestBuy extends BaseComponent {
                         }}>
 
                             <Text style={{
+                                fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
                                 marginLeft: zdp(10),
                                 fontSize: zsp(18),
                                 color: 'white',
@@ -547,6 +618,7 @@ class InvestBuy extends BaseComponent {
                     }}
                                       onPress={this.pressAddCard}>
                         <Text style={{
+                            fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
                             fontSize: zsp(16),
                             color: cusColors.linear_default,
                             marginLeft: zdp(10)
@@ -608,6 +680,7 @@ class InvestBuy extends BaseComponent {
 
                 <Text style={{
                     flex: 1,
+                    fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
                     fontSize: zsp(18),
                     marginLeft: zdp(10),
                     color: 'black'
@@ -681,7 +754,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(InvestBuy);
                             // dataSource: this.state.dataSource.cloneWithRows(this._renderList(cardList._payList))
                             dataSource: creditCardList
                         })
-                    })}*/}
+                    })}*/
+}
 
 {/*
                     <View style={{
@@ -718,7 +792,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(InvestBuy);
                             />
                         </View>
 
-                    </View>*/}
+                    </View>*/
+}
 
 {/*    {this.viewBankCard('结算银行卡', 0, this.state.debitCard, () => {
                         console.log('ajsd');
@@ -727,7 +802,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(InvestBuy);
                             modalType: 1,
                             dataSource: debitCardList
                         })
-                    })}*/}
+                    })}*/
+}
 
 {/*  <View style={{
                         width,
@@ -743,7 +819,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(InvestBuy);
                         <Text style={{fontSize: 16, color: 'grey'}}>优惠券</Text>
                         <Text style={{fontSize: 16, color: 'grey'}}>无优惠券可用</Text>
                     </View>
-*/}
+*/
+}
 
 {/*  <Text style={{
                     color: 'grey',
@@ -751,4 +828,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(InvestBuy);
                     marginTop: zdp(40),
                     textAlign: 'center'
                 }}>当前余额¥10000.00</Text>
-*/}
+*/
+}

@@ -90,15 +90,16 @@ class PageChangePsw extends BaseComponent {
                     padding: zdp(20),
                     elevation: zdp(5),
                     shadowOffset: {width: zdp(5), height: 5},
-                    shadowColor: cusColors.shadowColor,
+                    shadowColor: 'lightgrey',
                     shadowOpacity: 0.6,
                     shadowRadius: 2
                 }}>
 
-                    <Text style={{
-                        fontSize: zsp(16),
-                        color: 'grey'
-                    }}>{`验证码(发送至(${this.phoneFirst + '****' + this.phoneLast})`}</Text>
+
+                     <ZText parentStyle={{alignSelf:'flex-start'}}
+                             content={`验证码(发送至(${this.phoneFirst + '****' + this.phoneLast})`}
+                             fontSize={zsp(16)}
+                             color={cusColors.text_main}/>
 
                     <View style={{
                         width: width, height: zdp(50), marginTop: 0, flexDirection: 'row'
@@ -155,6 +156,7 @@ class PageChangePsw extends BaseComponent {
                                    fontSize={zsp(16)}/>
 
 
+
                         </TouchableOpacity>
                     </View>
 
@@ -199,10 +201,10 @@ class PageChangePsw extends BaseComponent {
                         } else {
                             ToastUtil.showShort(res.respMsg)
                         }
-                    }).then(err => {
+                    }).catch(err => {
                     console.log(err);
-                    ToastUtil.showShort(err)
-
+                    // ToastUtil.showShort(err)
+                //
                 });
 
 

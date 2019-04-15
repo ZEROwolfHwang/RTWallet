@@ -20,6 +20,8 @@ CardSchema.schema = {
         cardType: {type: 'string', default: 'DC'},                  //CC  信用卡     DC 储蓄卡    SCC 准贷记卡  PC 预付费卡
         isDefault: {type: 'bool', default: false},                 //false  非默认卡     true 默认卡
 
+        isComplete: {type: 'bool', default: false},                 //false  信息是否完善(信用卡)     true 默认卡
+
         creditCvn2: {type: 'string', default: ''},               //信用卡cvn2(cardType==CC时可以有值)
         creditValidDay: {type: 'string', default: ''},               //信用卡有效期(cardType==CC时可以有值)
         creditRepayDay: {type: 'string', default: ''},          //信用卡还款日(cardType==CC时可以有值)
@@ -66,12 +68,14 @@ const getCardLength = (merCode) => {
  * @param bankMark
  * @param cardType
  * @param isDefault
+ * @param isComplete
  * @param creditCvn2
  * @param creditValidDay
  * @param creditRepayDay
  * @param creditBillingDay
  */
 const addSingleBankCard = (merCode, bankCard, bank, bankPhone, bankMark, cardType, isDefault,
+                           isComplete,
                            creditCvn2,
                            creditValidDay,
                            creditRepayDay,
@@ -86,10 +90,13 @@ const addSingleBankCard = (merCode, bankCard, bank, bankPhone, bankMark, cardTyp
             cardType: cardType,//0  支付卡     1 储蓄卡
             isDefault: isDefault,
 
+            isComplete: isComplete,
+
             creditCvn2: creditCvn2? creditCvn2 : '',               //信用卡cvn2(cardType==CC时可以有值)
             creditValidDay: creditValidDay?creditValidDay : '',               //信用卡有效期(cardType==CC时可以有值)
             creditRepayDay: creditRepayDay ?creditRepayDay : '',          //信用卡还款日(cardType==CC时可以有值)
-            creditBillingDay: creditBillingDay ? creditBillingDay : ''
+            creditBillingDay: creditBillingDay ? creditBillingDay : '',
+
         });
     });
 
@@ -145,6 +152,43 @@ const deleteAllCard = () => {
         let allCard = realm.objects('Card');
         realm.delete(allCard);
     })
+};
+
+const getCardInfoById = (merCode, bankCard) => {
+    let allCard = realm.objects('Card');
+    let filterList = allCard.filtered(`merCode == '${merCode}' and bankCard == '${bankCard}'`);
+    return filterList[0];
+};
+
+/**
+ * 修改完善数据库中某条信用卡的信息
+ * @param merCode
+ * @param bankCard
+ * @param creditValidDay
+ * @param creditCvn2
+ * @param creditRepayDay
+ * @param creditBillingDay
+ */
+const editCardInfoById = (merCode,bankCard,creditValidDay,creditCvn2,creditRepayDay,creditBillingDay)=>{
+
+    realm.write(() => {
+
+        let allCard = realm.objects('Card');
+        let filterList = allCard.filtered(`merCode == '${merCode}' and bankCard == '${bankCard}'`);
+
+        let creditItem = filterList[0];
+
+        console.log('filterList: ', filterList);
+
+        console.log('creditItem: ', creditItem);
+
+        creditItem.creditValidDay = creditValidDay;
+        creditItem.creditCvn2 = creditCvn2;
+        creditItem.creditRepayDay = creditRepayDay;
+        creditItem.creditBillingDay = creditBillingDay;
+
+        creditItem.isComplete = true;
+    });
 }
 
 export {
@@ -157,5 +201,7 @@ export {
     getDebitCardDefault,
     getCreditCardDefault,
     getAllCard,
-    deleteAllCard
+    deleteAllCard,
+    getCardInfoById,
+    editCardInfoById
 };

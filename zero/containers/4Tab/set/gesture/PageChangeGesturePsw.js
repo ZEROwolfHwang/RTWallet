@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 
 const {width, height} = Dimensions.get('window')
-import PasswordGesture from 'react-native-gesture-password';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import BaseComponent from "../../../global/BaseComponent";
@@ -26,7 +25,9 @@ import {actions} from "../../../../root/GlobalAction";
 import {fetchRequest} from "../../../../utils/FetchUtil";
 import {save2Realm} from "../../../regist/SaveRealmUtil";
 import NavigationUtil from "../../../../utils/NavigationUtil";
-import {zdp, zsp} from "../../../../utils/ScreenUtil";
+import {zdp, zsp, zWidth} from "../../../../utils/ScreenUtil";
+import LinearGradient from "react-native-linear-gradient";
+import GesturePassword from "../../../../utils/getstureUtil";
 
 
 class PageChangeGesturePsw extends BaseComponent {
@@ -183,8 +184,7 @@ class PageChangeGesturePsw extends BaseComponent {
 
     render() {
         return (
-            <View style={{flex: 1}}>
-                <PasswordGesture
+                <GesturePassword
                     ref={refs => this.gesture = refs}
                     status={this.state.status}
                     message={this.state.message}
@@ -192,12 +192,11 @@ class PageChangeGesturePsw extends BaseComponent {
                     onEnd={(password) => this.onEnd(password)}
                     innerCircle={true}
                     outerCircle={true}
+                    normalColor={'white'}
+                    rightColor={'white'}
+                    wrongColor={'#ff737b'}
                     interval={this.state.timeOut}
-                    style={{flex: 1, backgroundColor: 'white'}}
-                    textStyle={{fontSize: zsp(16), marginTop: Platform.OS === 'android' ? zdp(60) : zdp(40), paddingTop: 0}}
                 />
-
-            </View>
         );
     }
 

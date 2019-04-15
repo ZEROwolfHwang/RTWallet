@@ -26,12 +26,23 @@ import {fetchRequest} from '../../utils/FetchUtil';
 import BaseComponent from '../global/BaseComponent';
 import ToastUtil from "../../utils/ToastUtil";
 import {Api} from "../../utils/Api";
+import {fetchRequestToken} from "../../utils/FetchUtilToken";
+import {PageBackground} from "../../views/PageBackground";
 
+        let globalInfo;
 class SecondTab extends BaseComponent {
 
+    constructor(props) {
+        super(props);
+        globalInfo = this.props.globalInfo;
+        this.state={
+            isRefreshing:false
+        }
+    }
 
     componentWillMount() {
-        fetchRequest(Api.enchashment, "GET")
+        // fetchRequest(Api.enchashment, "GET")
+        fetchRequestToken(Api.enchashment,'GET',globalInfo.token)
             .then(res => {
                 console.log(res);
                 if (res.respCode === 200) {
@@ -45,9 +56,34 @@ class SecondTab extends BaseComponent {
     }
 
 
-    constructor(props) {
-        super(props);
+
+    refreshData=()=>{
+
+        this.setState({isRefreshing: true});
+
+        // fetchRequest('enchashment ', 'GET')
+        fetchRequestToken(Api.enchashment,'GET',globalInfo.token)
+            .then(res => {
+                console.log(res);
+                if (res.respCode === 200) {
+                    this.props.initGetWebData(res.data)
+                } else {
+                    ToastUtil.showShort(res.respMsg)
+                }
+            })
+            .catch(err => {
+
+            });
+
+        var timer = setTimeout(() => {
+            // let cardList1 = getAllCard(this.globalInfo.phone);
+            this.setState({
+                isRefreshing: false,
+            });
+            clearTimeout(timer);
+        }, 1500);
     }
+
 
     render() {
         return (
@@ -56,9 +92,8 @@ class SecondTab extends BaseComponent {
                            navigation={this.props.navigation}/>
                 {this.props.bills
                     ? <Wealth navigation={this.props.navigation}/>
-                    : <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                        <ProgressBarAndroid styleAttr="Inverse"/>
-                    </View>
+                    :  <PageBackground content={''} onRefresh={this.refreshData}
+                                       isRefreshing={this.state.isRefreshing}/>
                 }
 
             </View>
@@ -70,6 +105,7 @@ const mapStateToProps = (state) => {
     return {
         bills: state.bills.data,
         nav: state.nav,
+        globalInfo: state.globalInfo.data,
     }
 
 };

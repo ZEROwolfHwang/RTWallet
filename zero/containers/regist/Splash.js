@@ -25,11 +25,12 @@ class Splash extends BaseComponent {
 
     componentDidMount() {
 
-        setTimeout(() => {
+        this.timeout = setTimeout(() => {
             this.setState({
                 swipeShow: true
             });
-        }, 0)
+            clearTimeout(this.timeout);
+        }, 0);
     }
 
 
@@ -43,9 +44,10 @@ class Splash extends BaseComponent {
                     scrollEnabled={true}
                     loop={false}
                     removeClippedSubviews={false}
+                    style={Platform.OS==='ios'?{}:{width: zWidth, height: zHeight}}
                     containerStyle={{width: zWidth, height: zHeight}}
-                    style={{width: zWidth, height: zHeight}}
                     autoplay={true}
+
                 >
 
                     <View style={{flex: 1}}>

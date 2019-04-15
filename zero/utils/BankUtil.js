@@ -126,6 +126,22 @@ const getLimitAmountByMark = (bankMark, bankLimitList) => {
     }
     return limitAmount;
 }
+/**
+ * 去除字符串所有的空格,实现trim效果
+ * @param text
+ * @returns {*}
+ */
+const trim_all = (text) => {
+    // text = text.replace(/^\s+/, '');
+    text = text.replace(/\s+/g,"")
+    // for(var i = text.length - 1; i >= 0; i--) {
+    //     if (/\S/.test(text.charAt(i))) {
+    //         text = text.substring(0, i + 1);
+    //         break;
+    //     }
+    // }
+    return text;
+};
 
 export {
     getBankMarkByBankName,
@@ -135,6 +151,6 @@ export {
     getBankType,
     getBankDetach,
     getBankDetachClose,
-    getLimitAmountByMark
-
+    getLimitAmountByMark,
+    trim_all
 };

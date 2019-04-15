@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { addNavigationHelpers } from 'react-navigation';
 import { SNavigator } from './SNavigator';
 
 import { addListener } from '../root/redux';
@@ -14,7 +13,7 @@ const AppNavigator = ({dispatch, nav}) => {
         }}
     />
 };
-  
+
 const mapStateToProps = state => ({
         nav: state.nav,
 });

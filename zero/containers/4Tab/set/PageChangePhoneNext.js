@@ -20,7 +20,7 @@ import MyButtonView from "../../../views/MyButtonView";
 import {fetchRequestToken} from "../../../utils/FetchUtilToken";
 import CountdownUtil from "../../../utils/CountdownUtil";
 import NavigationUtil from "../../../utils/NavigationUtil";
-import ToastUtil from "../../../utils/ToastUtil";
+import ToastUtil, {toastAlert} from "../../../utils/ToastUtil";
 import {checkMobile} from "../../../utils/CheckUitls";
 import {zdp, zsp} from "../../../utils/ScreenUtil";
 import {cusColors} from "../../../value/cusColor/cusColors";
@@ -196,14 +196,18 @@ onBackPress = () => {
                     // this.props.navigation.navigate('PageChangePhoneNext');
                     CountdownUtil.stop();
                     NavigationUtil.reset(this.props.navigation, 'RegisterApp');
-                } else {
+                }  else if (res.respCode === 203) {
+                    toastAlert('登录超时,请重新登录',()=>{
+                        NavigationUtil.backToLogin(this.props.navigation);
+                    })
+                }else {
                     console.log(res.respMsg);
                     ToastUtil.showShort(res.respMsg)
                 }
             })
             .catch(err => {
                 console.log(err);
-                ToastUtil.showShort(err)
+                // ToastUtil.showShort(err)
             })
 
     }

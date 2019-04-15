@@ -57,10 +57,37 @@ const toastLong = (content, isAlert) => {
 };
 
 
+const toastAlert = (content, callBack,title='提示') => {
+    // console.log(callBack);
+    Alert.alert(title, content,
+        callBack ? [
+                {text: '取消', style: 'cancel'},
+                {
+                    text: '确定', onPress: () => {
+                        callBack()
+                    }
+                },
+            ] :
+            [
+                {
+                    text: '确定', onPress: () => {
+                    }, style: 'cancel'
+                }
+            ]
+        ,
+        {cancelable: true});
+};
+
+
+
+
+
+
 
 export {
   toastShort,
   toastLong,
+    toastAlert
 }
 
 export default {

@@ -30,6 +30,8 @@ import {
 } from "../../../../storage/schema_gesture";
 import realm from "../../../../storage/realm";
 import {zdp, zsp} from "../../../../utils/ScreenUtil";
+import {cusColors} from "../../../../value/cusColor/cusColors";
+import ZText from "../../../../views/ZText";
 
 class PageGesture extends BaseComponent {
 
@@ -58,39 +60,73 @@ class PageGesture extends BaseComponent {
                     backgroundColor: 'white',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    flexDirection: 'row'
+                    flexDirection: 'row',
+                    paddingLeft: zdp(10),
                 }}>
 
-                    <Text style={{color: 'grey', marginLeft: zdp(20), fontSize: zsp(18)}}>使用手势密码解锁</Text>
-
+                    <ZText content={'使用手势密码解锁'}
+                           fontSize={zsp(18)}
+                           color={cusColors.text_main}
+                           parentStyle={{alignItems: 'flex-start'}}
+                           textAlign={'left'}/>
+                    {/*
                     <CheckBox
                         style={{marginRight: zdp(10)}}
                         value={this.state.isCheck}
-                        onChange={this.pressCheckChange}/>
+                        onChange={this.pressCheckChange}/>*/}
+
+                    <TouchableOpacity activeOpacity={0.9}
+                                      style={{justifyContent: 'center', alignItems: 'center'}}
+                                      onPress={this.pressCheckChange}>
+
+
+                        <Image source={{uri: this.state.isCheck ? 'toggle_on' : 'toggle_off'}}
+                               resizeMode={'contain'}
+                               style={{
+                                   width: zdp(80),
+                                   height: zdp(40),
+                                   backgroundColor: 'transparent'
+                               }}/>
+                    </TouchableOpacity>
+
 
                 </View>
+
+                <View style={{
+                    width: width - zdp(20),
+                    height: zdp(1),
+                    backgroundColor: 'grey',
+                    opacity: 0.1,
+                    alignSelf: 'flex-end'
+                }}/>
+
 
                 {this.state.isCheck ?
                     <TouchableOpacity activeOpacity={0.9}
                                       style={{
-                                          marginTop: zdp(20),
+                                          // marginTop: zdp(20),
                                           width,
                                           height: zdp(60),
                                           backgroundColor: 'white',
                                           justifyContent: 'space-between',
                                           alignItems: 'center',
-                                          flexDirection: 'row'
+                                          flexDirection: 'row',
+                                          paddingLeft: zdp(10),
+                                          paddingRight: zdp(10)
                                       }}
                                       onPress={this.pressChangeGesturePsw}>
 
-                        <Text style={{color: 'grey', marginLeft: zdp(20), fontSize: zsp(18)}}>修改手势密码</Text>
 
-                        <Icon size={zdp(30)} name={'angle-right'}
-                              style={{
-                                  color: 'black',
-                                  marginRight: zdp(10),
-                                  backgroundColor: 'transparent'
-                              }}/>
+                        <ZText content={'修改手势密码'}
+                               fontSize={zsp(18)}
+                               color={cusColors.text_main}
+                               parentStyle={{alignItems: 'flex-start'}}
+                               textAlign={'left'}/>
+
+
+                        <Icon size={zdp(25)} name={'angle-right'}
+                              style={{color: '#a9adad', marginRight: zdp(10)}}/>
+
                     </TouchableOpacity>
                     : null
                 }
@@ -105,28 +141,28 @@ class PageGesture extends BaseComponent {
             this.setState({
                 isCheck: false
             });
-            deleteGestureLogin();   //删除数据库中的手势密码
+            // deleteGestureLogin();   //删除数据库中的手势密码
         } else {
-            this.setState({
-                isCheck: true
-            });
-            this.props.navigation.navigate('PageSetGesturePsw', {
-                type:1,
-                onGoBack: () => {
-                    console.log(isGestureLogin());
-                    getGestureData();
-                    if (isGestureLogin()) {
-                        this.setState({
-                            isCheck: true
-                        });
-                    } else {
-                        this.setState({
-                            isCheck: false
-                        });
+            isGestureLogin() ? this.setState({
+                    isCheck: true
+                }) :
+                this.props.navigation.navigate('PageSetGesturePsw', {
+                    type: 1,
+                    onGoBack: () => {
+                        console.log(isGestureLogin());
+                        getGestureData();
+                        if (isGestureLogin()) {
+                            this.setState({
+                                isCheck: true
+                            });
+                        } else {
+                            this.setState({
+                                isCheck: false
+                            });
 
+                        }
                     }
-                }
-            });
+                });
 
         }
     };

@@ -16,6 +16,7 @@ import TabTwo from './tabItem/TabTwo';
 import TabThree from './tabItem/TabThree';
 import {zsp} from "../../../utils/ScreenUtil";
 import {cusColors} from "../../../value/cusColor/cusColors";
+import {cusTabUtil} from "../../../utils/TabUtil";
 
 
 export default TabNavigator({
@@ -32,36 +33,10 @@ export default TabNavigator({
     // activeBackgroundColor:'transparent',
     // inactiveBackgroundColor:'transparent',
     initialRouteName:'TabOne',
-    tabBarOptions: {
-        backgroundColor:'white',
-        activeTintColor: cusColors.linear_default,
-        inactiveTintColor: 'grey',
-        activeBackgroundColor:'black',
-        inactiveBackgroundColor:'yellow',
-        labelStyle: {
-            fontSize: zsp(14),
-            paddingVertical: 0,
-            marginTop: Platform.OS === 'android' ? 0 : 0,
-        },
-        style :{
-            backgroundColor:'white',
-            elevation:0
-        },
-
-        // iconStyle: {
-        //     marginTop: zdp(10)
-        // },
-        tabStyle: {
-            backgroundColor: 'transparent',
-        },
-        indicatorStyle: {
-            // height: 10 , // 如TabBar下面显示有一条线，可以设高度为0后隐藏
-            backgroundColor:cusColors.linear_default
-        },
-    },
     tabBarComponent: TabBarTop,
     tabBarPosition: 'top',
     animationEnabled: true,
     swipeEnabled: true,
+    tabBarOptions: cusTabUtil.tabBarOptions,
 });
 

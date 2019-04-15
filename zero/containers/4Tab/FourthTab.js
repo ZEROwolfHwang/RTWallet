@@ -13,7 +13,7 @@ import {
     Image,
     Dimensions,
     Modal,
-    BackHandler, AppState
+    BackHandler, AppState, ImageBackground
 } from 'react-native';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -24,13 +24,24 @@ import MyTabView from '../../views/MyTabView';
 import BaseComponent from '../global/BaseComponent';
 import TopView from './Mine_TopView';
 import Item from './Item';
-import {zdp, zModalHeight, zModalMarginTop, zsp, zWidth} from "../../utils/ScreenUtil";
+import {
+    zAppBarHeight,
+    zdp,
+    zHeight,
+    zModalHeight,
+    zModalMarginTop,
+    zsp, zStatusBarHeight,
+    zWidth
+} from "../../utils/ScreenUtil";
 import {onAppStateChanged, onBackPress} from "../../utils/GoBackUtil";
 import * as wechat from "react-native-wechat";
 import ZText from "../../views/ZText";
 import {cusColors} from "../../value/cusColor/cusColors";
-import {toastShort} from "../../utils/ToastUtil";
+import {toastAlert, toastShort} from "../../utils/ToastUtil";
 import {common_url} from "../../utils/FetchUtil";
+import MyButtonView from "../../views/MyButtonView";
+import InviteFriend from "./InviteFriend";
+import NavigationUtil from "../../utils/NavigationUtil";
 
 // import Realm from 'realm';
 // import * as hh from "../../storage/schema_gesture";
@@ -49,6 +60,8 @@ class FourthTab extends BaseComponent {
             showModal: false,
             showModalWX: false
         }
+
+
     }
 
     componentDidMount() {
@@ -95,34 +108,95 @@ class FourthTab extends BaseComponent {
     render() {
         return (
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
-                <MyTabView titleColor={'black'} title={'我的'}
-                           leftView={false}
-                           navigation={this.props.navigation}/>
 
-                <ScrollView
-                    contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
-                    style={{backgroundColor: '#e7e9e9'}}>
+ <ScrollView style={{width: zWidth, height:zHeight}}
+             showsVerticalScrollIndicator={false}
+             contentContainerStyle={{
+                 justifyContent: 'flex-start',
+                 alignItems: 'center'
+             }}
+             scrollEnabled={true}
+             bounces={false}
+             overScrollMode={'always'}>
+
+                    <ImageBackground source={{uri: 'tab_mine_bg'}}
+                                     resizeMode={'contain'}
+                                     style={{
+                                         width: zWidth,
+                                         height: zdp(300),
+                                         backgroundColor: 'transparent',
+                                         justifyContent: 'center',
+                                         alignItems: 'center'
+                                     }}>
+
+                        <Image source={{uri: 'mine_touxiang'}}
+                               resizeMode={'contain'}
+                               style={{
+                                   marginTop: zdp(40),
+                                   width: zdp(80),
+                                   height: zdp(80),
+                                   backgroundColor: 'transparent'
+                               }}/>
+                        <ZText parentStyle={{margin: zdp(5)}} content={globalInfo.appUser}
+                               fontSize={zsp(22)}
+                               color={'white'}/>
+
+                        <TouchableOpacity activeOpacity={0.9}
+                                          style={{justifyContent: 'center', alignItems: 'center'}}
+                                          onPress={() => {
+                                              this.props.navigation.navigate('MerchantInfo');
+                                          }}>
+
+
+                            <ZText parentStyle={{
+                                backgroundColor: '#00000022',
+                                paddingTop: zdp(3),
+                                paddingBottom: zdp(3),
+                                paddingLeft: zdp(30),
+                                paddingRight: zdp(30),
+                                borderRadius: zdp(20),
+                            }} content={'完善信息 >'} color={'white'} fontSize={zsp(16)}/>
+
+                        </TouchableOpacity>
+                    </ImageBackground>
+
 
                     <View style={{
-                        marginTop: zdp(70),
+                        marginTop: zdp(50),
                         width: width - zdp(20),
                         borderRadius: zdp(5),
                         top: -zdp(70)
                     }}>
 
-
                         <View style={styles.centerView}>
-                            <Item onPress={() => {
+                            {/*  <Item onPress={() => {
                                 this.props.navigation.navigate('MerchantInfo');
                             }}
                                   title={'账户信息'}
-                                  image={'user-circle-o'}/>
+                                  image={'user-circle-o'}/>*/}
+
                             <Item onPress={() => {
                                 this.props.navigation.navigate('TransactionRecord');
                             }}
                                   title={'订单明细'}
-                                  image={'th-list'}
+                                  image={'mine_dingdna'}
                             />
+
+                        </View>
+
+
+                        <View style={styles.centerView}>
+                            <Item onPress={() => {
+                                this.props.navigation.navigate('RepayPlanRecord');
+                            }}
+                                  title={'还款计划记录'}
+                                  image={'mine_dingdna'}
+                            />
+
+                        </View>
+
+
+                        <View style={styles.centerView}>
                             <Item onPress={() => {
                                 if (this.props.globalInfo.IDCard) {
 
@@ -134,22 +208,21 @@ class FourthTab extends BaseComponent {
                                 }
                             }}
                                   title={'卡号管理'}
-                                  image={'credit-card-alt'}/>
+                                  image={'mine_card'}/>
                         </View>
 
+                        <View style={styles.centerView}>
+                            <Item onPress={() => {
+                                this.props.navigation.navigate('InviteFriend');
+                                // Platform.OS === 'android' ?
+                                //     this.setState({
+                                //         showModalWX: true
+                                //     }) : alert('ios微信分享');
+                            }}
+                                  title={'微信分享'}
+                                  image={'wechat_set'}/>
 
-                        {Platform.OS === 'android' ?
-                            <View style={styles.centerView}>
-                                <Item onPress={() => {
-                                    this.setState({
-                                        showModalWX: true
-                                    })
-                                }}
-                                      title={'微信分享'}
-                                      image={'wechat'}/>
-
-                            </View> : null
-                        }
+                        </View>
 
 
                         <View style={styles.centerView}>
@@ -158,28 +231,46 @@ class FourthTab extends BaseComponent {
                                 this.props.navigation.navigate('PageSetting')
                             }}
                                   title={'设置'}
-                                  image={'gear'}/>
+                                  image={'mine_set'}/>
 
                         </View>
 
-                        <View style={styles.centerView}>
-                            <Item onPress={() => {
-                                // NavigationUtil.reset(this.props.navigation, 'RegisterApp')
-                                // deleteGestureLogin();
-                                this.props.navigation.navigate('RegisterApp', {type: 0});
-                            }}
-                                  title={'退出登录'}
-                                  image={'backward'}/>
 
-                        </View>
+                        <TouchableOpacity activeOpacity={0.9}
+                                          style={{
+                                              marginTop: zdp(40),
+                                              alignSelf: 'center',
+                                              justifyContent: 'center',
+                                              alignItems: 'center',
+                                              borderRadius: zdp(30),
+                                              borderColor: '#0094FD',
+                                              borderWidth: zdp(1.5),
+                                              padding: zdp(10),
+                                              width: zWidth - zdp(40)
+                                          }}
+                                          onPress={() => {
+                                              toastAlert('是否确定退出当前账号', () => {
+                                                  NavigationUtil.backToLogin(this.props.navigation);
+                                              })
+                                              // this.props.navigation.navigate('RegisterApp', {type: 0});
+                                          }}>
 
-                    </View>
+                            <ZText content={'退出登录'} fontSize={zsp(22)}
+                                   color={'#0094FD'}/>
+                        </TouchableOpacity>
 
-                </ScrollView>
+
+
+                </View>
                 {this.viewModal()}
                 {this.viewModalWXShare()}
+                <MyTabView linear_style={{position: 'absolute', top: 0}} titleColor={'black'}
+                           title={'我的'}
+                           leftView={false}
+                           navigation={this.props.navigation}/>
+                </ScrollView>
+                    </View>
 
-            </View>
         );
 
     }
@@ -279,7 +370,7 @@ class FourthTab extends BaseComponent {
                                           this.pressShare2WX()
                                       }}>
 
-                        <Image source={{uri: 'wechat'}}
+                        <Image source={{uri: 'mine_wechat'}}
                                resizeMode={'contain'}
                                style={{
                                    width: zdp(80),
@@ -347,8 +438,8 @@ class FourthTab extends BaseComponent {
             <View
                 style={{
                     width: width,
-                    height: zModalHeight,
-                    marginTop: zModalMarginTop,
+                    height: zHeight,
+                    marginTop: -zStatusBarHeight,
                     justifyContent: 'center',
                     alignItems: 'center',
                     backgroundColor: 'rgba(0,0,0,0.5)'
@@ -410,7 +501,7 @@ class FourthTab extends BaseComponent {
                                           onPress={() => {
                                               this.setState({
                                                   showModal: false,
-                                              })
+                                              });
                                               this.props.navigation.navigate('MerchantInfo')
                                           }}>
                             <Text style={{fontSize: zsp(18), color: 'grey'}}>完善信息</Text>
@@ -456,12 +547,12 @@ const styles = {
         borderRadius: zdp(5),
         shadowColor: '#d7d9d9',
         shadowOffset: {height: zdp(5)},
-        shadowOpacity: 0.6,
+        shadowOpacity: 0.4,
         shadowRadius: zdp(2),
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
-        marginTop: zdp(10)
+        marginTop: zdp(10),
     },
 };
 const mapStateToProps = (state) => {

@@ -35,7 +35,7 @@ const pressVerify = (phone, isSentVerify, callBack1, callBack2, callBack3) => {
                         ToastUtil.showShort(res.respMsg);
                     }
                 }).catch(err => {
-                ToastUtil.showShort(err);
+                // ToastUtil.showShort(err);
 
                 callBack3();
                 console.log(err);

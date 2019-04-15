@@ -68,53 +68,14 @@ class BankCardManage extends BaseComponent {
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
                 <MyTabView title={'卡片管理'} leftView={true} navigation={this.props.navigation}
                            hasRight={true}
-                           rightView={<View activeOpacity={0.5}
-                                            style={{
-                                                width: width / 4,
-                                                justifyContent: 'center',
-                                                alignItems: 'flex-end',
-                                                paddingRight: zdp(10),
-                                                flexDirection: 'row'
-                                            }}>
-
-
-                               {this.state.isEye ?
-
-                                   <EvilIcons size={zdp(35)} name={'eye'}
-                                              style={{
-                                                  marginBottom: zdp(5),
-                                                  color: 'white',
-                                                  backgroundColor: 'transparent',
-                                                  marginRight: zdp(10)
-                                              }}
-                                              onPress={() => {
-                                                  this.props.navigation.dispatch({
-                                                      type: Types.ACTION_BANK_EYE,
-                                                      isEye: !this.state.isEye
-                                                  });
-                                                  this.setState({
-                                                      isEye: !this.state.isEye
-                                                  })
-                                              }}/>
-                                   : <FontAwesome size={zdp(25)} name={'eye-slash'}
-                                                  style={{
-                                                      padding: zdp(5),
-                                                      color: 'white',
-                                                      backgroundColor: 'transparent',
-                                                      marginRight: zdp(10)
-                                                  }}
-                                                  onPress={() => {
-                                                      this.props.navigation.dispatch({
-                                                          type: Types.ACTION_BANK_EYE,
-                                                          isEye: !this.state.isEye
-                                                      });
-                                                      this.setState({
-                                                          isEye: !this.state.isEye
-                                                      })
-                                                  }}/>
-                               }
-                               {/*    <TouchableOpacity activeOpacity={0.9}
-                                                 onPress={()=>{
+                           rightView={<TouchableOpacity activeOpacity={0.9}
+                                                 style={{
+                                                     paddingRight: zdp(15),
+                                                     width: width / 4,
+                                                     justifyContent: 'center',
+                                                     alignItems: 'flex-end'
+                                                 }}
+                                                 onPress={() => {
                                                      this.props.navigation.dispatch({
                                                          type: Types.ACTION_BANK_EYE,
                                                          isEye: !this.state.isEye
@@ -124,29 +85,17 @@ class BankCardManage extends BaseComponent {
                                                      })
                                                  }}>
 
-                               <Image source={{uri: this.state.isEye ? 'eye_open' : 'eye_close'}}
-                                      resizeMode={'contain'}
-                                      style={{
-                                          width: zdp(30),
-                                          height: zdp(30),
-                                          backgroundColor: 'transparent'
-                                      }} />
-                               </TouchableOpacity>*/}
+                                   <Image
+                                       source={{uri: this.state.isEye ? 'eye_open' : 'eye_close'}}
+                                       resizeMode={'contain'}
+                                       style={{
+                                           width: zdp(25),
+                                           height: zdp(25),
+                                           backgroundColor: 'transparent'
+                                       }}/>
 
-                               <Ionicons size={zdp(25)} name={'md-add'}
-                                         style={{
-                                             padding: zdp(5),
-                                             color: 'white',
-                                             backgroundColor: 'transparent'
-                                         }}
-                                         onPress={() => {
-                                             this.setState({
-                                                 showModal: true
-                                             })
-                                         }}/>
+                               </TouchableOpacity>}/>
 
-
-                           </View>}/>
 
                 <View style={{flex: 1, width: width, height}}>
 
@@ -176,7 +125,7 @@ class BankCardManage extends BaseComponent {
                     marginTop: zModalMarginTop,
                     justifyContent: 'flex-end',
                     alignItems: 'center',
-                    backgroundColor: 'rgba(0,0,0,0.5)'
+                    backgroundColor: 'rgba(0,0,0,0.2)'
                 }}
                 onPress={() => {
                     this.setState({

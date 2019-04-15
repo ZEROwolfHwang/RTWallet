@@ -34,6 +34,8 @@ import ToastUtil from "../../../utils/ToastUtil";
 import ZText from "../../../views/ZText";
 import {AnimatedCircularProgress} from "react-native-circular-progress";
 import {Api} from "../../../utils/Api";
+import MyCutLine from "../../../views/MyCutLine";
+
 let navigation;
 let lastBackPressed;
 let globalInfo;
@@ -96,28 +98,45 @@ class PageSetting extends BaseComponent {
                 <MyTabView title={'设置'} navigation={this.props.navigation}/>
 
 
-                <ItemIconTextIconView title={'完善用户信息'} iconName={'user-circle-o'}
+                <ItemIconTextIconView style={{marginTop: zdp(20)}}
+                                      title={'完善用户信息'}
+                    // iconName={'user-circle-o'}
                                       onPress={this.pressCompleteInfo}/>
+                <MyCutLine/>
 
 
-                <ItemIconTextIconView title={'修改登录手机'} iconName={'mobile-phone'}
-                                      onPress={this.pressChangePhone}/>
+                <ItemIconTextIconView title={'修改登录手机'}
+                    // iconName={'mobile-phone'}
+                                      onPress={this.pressChangePhone}
+                                      rightContent={globalInfo.phone}
+                                      rightFontSize={zsp(18)}
+                                      rightColor={cusColors.text_secondary}/>
 
-                <ItemIconTextIconView title={'修改登录密码'} iconName={'lock'}
+                <ItemIconTextIconView style={{marginTop: zdp(20)}} title={'修改登录密码'}
+                    // iconName={'lock'}
                                       onPress={this.pressChangePsw}/>
 
-            {/*    {Platform.OS === 'android' ?
+                {/*    {Platform.OS === 'android' ?
                     <ItemIconTextIconView title={'微信分享'} iconName={'wechat'}
                                           onPress={this.pressShare2WX}/> : null
                 }*/}
+                <MyCutLine/>
 
                 {Platform.OS === 'android' ?
-                    <ItemIconTextIconView title={'版本升级'} iconName={'arrow-circle-up'}
-                                          onPress={this.pressUpdateApp}/> : null
+                    <View>
+
+                        <ItemIconTextIconView title={'版本升级'}
+                            // iconName={'arrow-circle-up'}
+                                              onPress={this.pressUpdateApp}/>
+
+                        <MyCutLine/>
+                    </View>
+                    : null
                 }
 
 
-                <ItemIconTextIconView title={'手势密码'} iconName={'lock'}
+                <ItemIconTextIconView title={'手势密码'}
+                    // iconName={'lock'}
                                       onPress={this.pressGesturePsw}/>
 
 
@@ -155,7 +174,6 @@ class PageSetting extends BaseComponent {
                     backgroundColor={cusColors.RefreshBackground}/>
 
 
-
                 <ZText parentStyle={{marginTop: zdp(20)}}
                        content={`当前下载进度: ${this.state.currentProcess}%`}
                        color={cusColors.progress_title} fontSize={zsp(18)}/>
@@ -168,36 +186,36 @@ class PageSetting extends BaseComponent {
     /**
      * 微信分享
      */
-  /*  pressShare2WX = () => {
-        console.log(globalInfo);
-        console.log(`http://sjpay.githubshop.com/app/reg/${globalInfo.recommend}`);
+    /*  pressShare2WX = () => {
+          console.log(globalInfo);
+          console.log(`http://sjpay.githubshop.com/app/reg/${globalInfo.recommend}`);
 
 
-        wechat.isWXAppInstalled()
-            .then((isInstalled) => {
-                if (isInstalled) {
-                    //发送授权请求
-                    wechat.shareToSession({
-                        type: 'news',
-                        title: '锐通钱包 快捷收款 完美还款',
-                        webpageUrl: `http://sjpay.githubshop.com/app/reg/${globalInfo.recommend}`
-                    }).then(res => {
-                        console.log(res);
-                    })
-                        .catch(err => {
-                            console.log("分享失败", err);
-                        });
-                } else {
+          wechat.isWXAppInstalled()
+              .then((isInstalled) => {
+                  if (isInstalled) {
+                      //发送授权请求
+                      wechat.shareToSession({
+                          type: 'news',
+                          title: '锐通钱包 快捷收款 完美还款',
+                          webpageUrl: `http://sjpay.githubshop.com/app/reg/${globalInfo.recommend}`
+                      }).then(res => {
+                          console.log(res);
+                      })
+                          .catch(err => {
+                              console.log("分享失败", err);
+                          });
+                  } else {
 
-                    Alert.alert('没有安装微信', '请先安装微信客户端在进行登录', [
-                        {text: '确定'}
-                    ])
-                }
-            }).catch(err=>{
-            console.log(err);
-        })
+                      Alert.alert('没有安装微信', '请先安装微信客户端在进行登录', [
+                          {text: '确定'}
+                      ])
+                  }
+              }).catch(err=>{
+              console.log(err);
+          })
 
-    }*/
+      }*/
 
     pressUpdateApp = () => {
         fetchRequest(Api.updateApp, 'GET')
@@ -238,6 +256,8 @@ class PageSetting extends BaseComponent {
 
                         })
 
+                }else {
+                    ToastUtil.showShort(res.respMsg)
                 }
             }).catch(err => {
             console.log(err);

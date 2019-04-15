@@ -12,7 +12,7 @@ import {GestureSchema} from "./schema_gesture";
 // export const MySchemas = [UserSchema, CardSchema];
 
 export default new Realm({
-    schemaVersion: 17,
+    schemaVersion: 19,
     schema: [UserSchema, CardSchema,GestureSchema],
     // path: Platform.OS==='ios'?'/Users/zerowolf/Desktop/realmDB/myModel.realm':'/data/data/com.ltwallet/files/default.realm',
 });

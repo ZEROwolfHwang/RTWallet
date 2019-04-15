@@ -2,8 +2,9 @@
 
 import ToastUtil from "./ToastUtil";
 
-// let common_url = 'http://sjpay.githubshop.com/app/';  //服务器地址
-export const common_url = 'http://39.104.64.38:81/app/';  //服务器地址
+// export const common_url = 'http://sjpay.githubshop.com/app/';  //服务器地址
+export const common_url = 'http://agency.githubshop.com/app/';  //服务器地址
+// export const common_url = 'http://39.104.64.38:81/app/';  //服务器地址
 /**
  * @param {string} url 接口地址
  * @param {string} method 请求方法：GET、POST，只能大写
@@ -29,9 +30,9 @@ export const fetchRequest = (url, method, params) => {
                 .then((response) => response.json())
                 .then((responseData) => {
                     console.log(responseData);  //网络请求成功返回的数据
-                    if (responseData.respCode !== 200) {
-                        ToastUtil.showShort(responseData.respMsg);
-                    }
+                    // if (responseData.respCode !== 200) {
+                    //     ToastUtil.showShort(responseData.respMsg);
+                    // }
                     resolve(responseData);
                 })
                 .catch((err) => {
@@ -50,9 +51,9 @@ export const fetchRequest = (url, method, params) => {
             }).then((response) => response.json())
                 .then((responseData) => {
                     console.log(responseData);   //网络请求成功返回的数据
-                    if (responseData.respCode !== 200) {
-                        ToastUtil.showShort(responseData.respMsg);
-                    }
+                    // if (responseData.respCode !== 200) {
+                        // ToastUtil.showShort(responseData.respMsg);
+                    // }
                     resolve(responseData);
                 })
                 .catch((err) => {

@@ -12,8 +12,9 @@ import MyTabView from '../../../views/MyTabView';
 import BaseComponent from '../../global/BaseComponent';
 import RecordTabs from "./RecordTabs";
 import {fetchRequestToken} from "../../../utils/FetchUtilToken";
-import ToastUtil from "../../../utils/ToastUtil";
+import ToastUtil, {toastAlert} from "../../../utils/ToastUtil";
 import {actions} from "./reduce";
+import NavigationUtil from "../../../utils/NavigationUtil";
  class TransactionRecord extends BaseComponent {
 
     constructor(props) {
@@ -26,10 +27,14 @@ import {actions} from "./reduce";
                 console.log(res);
                 if (res.respCode === 200) {
                     this.props.initRecordData(res.data)
+                } else if (res.respCode === 203) {
+                    toastAlert('登录超时,请重新登录',()=>{
+                        NavigationUtil.backToLogin(this.props.navigation);
+                    })
                 } else {
                     ToastUtil.showShort(res.respMsg)
                 }
-            }).then(err=>{
+            }).catch(err=>{
             console.log(err);
         })
     }

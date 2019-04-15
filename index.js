@@ -6,7 +6,8 @@ import { AppRegistry } from 'react-native';
 import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader','Module RCTWeChat']);
 
-YellowBox.ignoreWarnings(['Class RCTCxxModule']);
+YellowBox.ignoreWarnings(['Class RCTCxxModule', 'RCTBridge required dispatch_sync']);
+
 
 
 console.ignoredYellowBox = ['Remote debugger'];

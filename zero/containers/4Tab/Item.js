@@ -12,18 +12,19 @@ import {
     Dimensions
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/FontAwesome'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import {zdp, zsp} from "../../utils/ScreenUtil";
 import {cusColors} from "../../value/cusColor/cusColors";
 
 const {width, height} = Dimensions.get('window');
-export default class Navigator extends Component {
+export default class Item extends Component {
     constructor(props) {
         super(props);
 
     }
 
     render() {
+        var params = this.props;
         return (
             <View style={{
                 justifyContent: 'center',
@@ -53,8 +54,16 @@ export default class Navigator extends Component {
                         padding: zdp(8)
                     }}>
 
-                        <Icon size={zdp(20)} resizeMode={'cover'} name={this.props.image}
-                              color={cusColors.linear_default}/>
+                        {/*<Icon size={zdp(20)} resizeMode={'cover'} name={this.props.image}
+                              color={cusColors.linear_default}/>*/}
+                              <Image source={{uri: params.image}}
+                                     resizeMode={'contain'}
+                                     style={{
+                                         width: zdp(30),
+                                         height:zdp(30),
+                                         backgroundColor: 'transparent'
+                                     }}/>
+
                     </View>
 
                     <Text style={{
@@ -63,7 +72,7 @@ export default class Navigator extends Component {
                         color: '#3d3f3f',
                         marginLeft: zdp(10)
                     }}>{this.props.title}</Text>
-                    <Icon size={zdp(25)} name={'angle-right'}
+                    <FontAwesome size={zdp(25)} name={'angle-right'}
                           style={{color: '#a9adad', marginRight: zdp(10)}}/>
 
 

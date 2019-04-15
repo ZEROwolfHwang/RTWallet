@@ -2,14 +2,17 @@
 // let common_url = 'https://api.douban.com/v2/movie/';  //服务器地址
 // let common_url = 'http://localhost:8080/';  //服务器地址
 import ToastUtil from "./ToastUtil";
+import {common_url} from "./FetchUtil";
+
 
 // let common_url = 'http://sjpay.githubshop.com/app/';  //服务器地址
-let common_url = 'http://39.104.64.38:81/app/';  //服务器地址
+// let common_url = 'http://39.104.64.38:81/app/';  //服务器地址
 // let token = '';
 // ?start=0&count=10
 /**
  * @param {string} url 接口地址
  * @param {string} method 请求方法：GET、POST，只能大写
+ * @param token
  * @param {JSON} [params=''] body的请求参数，默认为空
  * @return 返回Promise
  */
@@ -19,6 +22,8 @@ export const fetchRequestToken = (url, method, token, params) => {
     console.log('token:'+token);
     console.log(params);
     // if (!params) {   //如果网络请求中没有参数
+
+    console.log('url: ', common_url + url,'method:',method, 'token:',token, params);
     return new Promise(function (resolve, reject) {
         let header = {
             "Content-Type": "multipart/form-data;charset=UTF-8",

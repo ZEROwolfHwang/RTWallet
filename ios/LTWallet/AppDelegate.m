@@ -9,8 +9,24 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import "React/RCTLinkingManager.h"
 
 @implementation AppDelegate
+
+// ios 9.0+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+            options:(NSDictionary<NSString*, id> *)options
+{
+  return [RCTLinkingManager application:application openURL:url options:options];
+}
+
+// ios 8.x or older
+//- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+//  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+//{
+//  return [RCTLinkingManager application:application openURL:url
+//                      sourceApplication:sourceApplication annotation:annotation];
+//}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

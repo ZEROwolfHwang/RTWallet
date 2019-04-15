@@ -19,6 +19,9 @@ import {
     ListView,
     TextInput
 } from 'react-native';
+import {cusColors} from "../../../value/cusColor/cusColors";
+import ZText from "../../../views/ZText";
+
 export default class Item extends Component {
 
     constructor(props) {
@@ -38,14 +41,13 @@ export default class Item extends Component {
 
 
     render() {
-        var params  = this.props;
+        var params = this.props;
         return (
             <View style={{marginTop: zdp(10)}}>
-                <Text style={[{
-                    fontSize: zsp(16),
-                    color: 'grey'
-                }, params.textStyle]}>{params.title}</Text>
-
+                <ZText parentStyle={{alignSelf: 'flex-start'}}
+                       content={params.title}
+                       fontSize={zsp(16)}
+                       color={cusColors.text_main}/>
 
                 <TextInput
                     keyboardType={params.keyboardType}
@@ -56,7 +58,8 @@ export default class Item extends Component {
                         fontSize: zsp(15),
                         borderBottomWidth: 1,
                         borderColor: 'lightgrey',
-                        alignSelf: 'flex-end'
+                        alignSelf: 'flex-end',
+                        fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
                     }, params.textInputStyle]}
                     placeholder={params.placeholder}
                     placeholderTextColor={'lightgrey'}

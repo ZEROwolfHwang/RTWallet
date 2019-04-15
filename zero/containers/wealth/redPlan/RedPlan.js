@@ -23,13 +23,18 @@ import {actions_wealth} from '../reduce/index';
 import MyProgressBar from "../../../views/MyProgressBar";
 import {fetchRequestToken} from "../../../utils/FetchUtilToken";
 import MyButtonView from "../../../views/MyButtonView";
-import {zdp, zModalHeight, zModalMarginTop, zsp} from "../../../utils/ScreenUtil";
+import {zdp, zModalHeight, zModalMarginTop, zsp, zWidth} from "../../../utils/ScreenUtil";
 import {onAppStateChanged, onBackPress} from "../../../utils/GoBackUtil";
 import {types} from "../reduce/index";
 import {
     getCreditCardDefault,
     getDebitCardDefault,
 } from "../../../storage/schema_card";
+import ZText from "../../../views/ZText";
+import {cusColors} from "../../../value/cusColor/cusColors";
+import ToastUtil, {toastAlert} from "../../../utils/ToastUtil";
+import NavigationUtil from "../../../utils/NavigationUtil";
+import {Api} from "../../../utils/Api";
 
 let navigation;
 let lastBackPressed;
@@ -92,20 +97,20 @@ class RedPlan extends BaseComponent {
         console.log(entranceId);
         if (entranceId) {
 
-            fetchRequest(`detail/${entranceId}`, 'GET')
+            fetchRequestToken(`${Api.detail}/${entranceId}`, 'GET', globalInfo.token)
                 .then(res => {
                     if (res.respCode === 200) {
                         this.props.initRedData(res.data)
                         console.log(res);
                     } else {
+                        ToastUtil.showShort(res.respMsg)
                         // this.props.initGetWebData(netData)
                     }
-                })
-                .then(err => {
-                    if (err) {
-                        console.log(err);
-                    }
-                });
+                }).catch(err => {
+                if (err) {
+                    console.log(err);
+                }
+            });
 
         }
     }
@@ -155,16 +160,13 @@ class RedPlan extends BaseComponent {
                                                   this.setState({
                                                       showBottom: false
                                                   })
-                                              }
-                                              }
-                            >
+                                              }}>
 
-                                <Text style={{
-                                    fontSize: zsp(16),
-                                    color: '#837d82',
-                                    marginTop: zdp(10),
-                                    marginBottom: zdp(10)
-                                }}>---------点击回返上一页---------</Text>
+                                <ZText parentStyle={{}}
+                                       content={'---------点击回返上一页---------'}
+                                       fontSize={zsp(16)}
+                                       color={cusColors.text_secondary}/>
+
                             </TouchableOpacity>
 
                             {Tab}
@@ -180,23 +182,26 @@ class RedPlan extends BaseComponent {
                             }/> :
                     <MyProgressBar/>}
 
-                <View style={{
-                    width,
-                    height: zdp(80),
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    backgroundColor: '#ece4ff33',
-                    position: 'absolute',
-                    bottom: 0
-                }}>
-
-
-                    <MyButtonView style={{marginTop: zdp(0), width: width - zdp(40)}} title={'点击收款'}
-                                  onPress={this.joinNow}/>
-                </View>
-                {/*{this.state.showBottom?:}*/}
-                {/*<View style={[{backgroundColor: 'white'}, pageStyle]}>*/}
-                {/*</View>*/}
+                <TouchableOpacity activeOpacity={0.9}
+                                  style={{
+                                      justifyContent: 'center',
+                                      alignItems: 'center',
+                                      position: 'absolute',
+                                      bottom: zdp(10),
+                                      width: zWidth,
+                                  }}
+                                  onPress={this.joinNow}>
+                    <ZText parentStyle={{
+                        width: zWidth - zdp(40),
+                        padding: zdp(12),
+                        alignItems: 'center',
+                        backgroundColor: cusColors.linear_light,
+                        borderRadius: zdp(30)
+                    }}
+                           content={'点击收款'}
+                           fontSize={zsp(18)}
+                           color={'white'}/>
+                </TouchableOpacity>
 
                 {this.viewModal()}
             </View>
@@ -305,8 +310,76 @@ class RedPlan extends BaseComponent {
         let token = this.props.globalInfo.token;
         console.log(this.props.globalInfo);
         console.log(token);
-        if (token) {
-            fetchRequestToken('isRegister ', 'POST', token)
+        // if (token) {
+        fetchRequestToken('isRegister','GET',token)
+            .then(res=>{
+                console.log(res);
+                if (res.respCode === 200) {
+                    console.log(res);
+                    if (res.data.status !== 1) {
+                        this.setState({
+                            showModal: true,
+                        });
+                        return;
+                    }
+
+
+                    if (!getDebitCardDefault(globalInfo.merCode)) {
+
+                        Alert.alert('检测该用户尚未添加结算银行卡', '请添加默认结算卡', [
+                            {
+                                text: '取消', onPress: () => {
+                                }
+                            },
+                            {
+                                text: '确定', onPress: () => {
+                                    this.props.navigation.navigate('addPayCard', {
+                                        cardType: 'DC',
+                                        enterType: 100,
+                                    });
+                                }
+                            },
+                        ]);
+
+                    } else {
+                        if (!getCreditCardDefault(globalInfo.merCode)) {
+                            //双卡都没有
+                            Alert.alert('检测该用户尚未添加支付银行卡', '请添加默认支付卡', [
+                                {
+                                    text: '取消', onPress: () => {
+                                    }
+                                },
+                                {
+                                    text: '确定', onPress: () => {
+                                        this.props.navigation.navigate('addPayCard', {
+                                            cardType: 'CC',
+                                            enterType: 100,
+                                        });
+                                    }
+                                },
+                            ]);
+                        } else {
+                            this.props.navigation.navigate('InvestBuy')
+                        }
+                    }
+
+                } else if (res.respCode === 203) {
+                    toastAlert('登录超时,请重新登录',()=>{
+                        NavigationUtil.backToLogin(this.props.navigation);
+                    })
+                } else {
+                    ToastUtil.showShort(res.respMsg)
+                    // this.setState({
+                    //     showModal: true,
+                    // });
+                    console.log('有返回,但状态错误');
+                    // this.props.initGetWebData(netData)
+                }
+
+            }).catch(err=>{
+            console.log(err);
+        })
+           /* fetchRequestToken('isRegister ', 'GET', token)
                 .then(res => {
                     if (res.respCode === 200) {
                         // this.props.initGetWebData(res.data)
@@ -367,9 +440,9 @@ class RedPlan extends BaseComponent {
                 })
                 .catch(err => {
                     console.log(err);
-                });
+                });*/
         }
-    };
+    // };
 }
 
 const mapStateToProps = (state) => {

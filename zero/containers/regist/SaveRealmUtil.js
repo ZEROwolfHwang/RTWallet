@@ -1,5 +1,6 @@
 import {getAllCard, getDebitCardList, getCreditCardList} from "../../storage/schema_card";
 import realm from "../../storage/realm";
+import {TYPES} from "../../root/GlobalAction";
 
 /**
  * Created by zerowolf Date: 2018/5/21 Time: 下午9:34
@@ -22,7 +23,7 @@ const save2Realm = (data) => {
             phone: data.phone,
         });
 
-        for (const index in resList) {
+        for(const index in resList) {
             let carItem = resList[index];
             realm.create('Card', {
 
@@ -34,12 +35,15 @@ const save2Realm = (data) => {
                 cardType: carItem.cardType,
                 isDefault: false,
 
+                isComplete: carItem.isComplete === 0 ? false : true,
+
                 creditCvn2: carItem.creditCvn2,               //信用卡cvn2(cardType==CC时可以有值)
                 creditValidDay: carItem.creditValidDay,               //信用卡有效期(cardType==CC时可以有值)
                 creditRepayDay: carItem.creditRepayDay,          //信用卡还款日(cardType==CC时可以有值)
                 creditBillingDay: carItem.creditBillingDay
             })
         }
+
         let debitCardList = getDebitCardList(data.merCode);
         if (debitCardList.length > 0) {
             debitCardList[0].isDefault = true;
@@ -50,7 +54,30 @@ const save2Realm = (data) => {
         }
     });
 
+};
+
+
+/**
+ * 存储全局信息
+ * @param navigation
+ * @param resData
+ */
+const save2Global = (navigation, resData) => {
+    navigation.dispatch({
+        type: TYPES.ACTION_GLOBAL,
+        data: {
+            token: resData.token,
+            phone: resData.phone,
+            IDCard: resData.identity,
+            username: resData.name,
+            merCode: resData.merCode,
+            appUser: resData.appUser,
+            recommend: resData.recommend
+        }
+    });
 }
+
 export {
-    save2Realm
+    save2Realm,
+    save2Global
 };

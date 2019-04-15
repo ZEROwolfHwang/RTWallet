@@ -3,10 +3,22 @@
  */
 import React, {Component} from 'react';
 import {
-    Platform, StyleSheet, Text, Alert, View, TouchableOpacity, Image, Dimensions,ListView,TextInput
+    Platform,
+    StyleSheet,
+    Text,
+    Alert,
+    View,
+    TouchableOpacity,
+    Image,
+    Dimensions,
+    ListView,
+    TextInput
 } from 'react-native';
 import {zdp, zsp} from "../../../../utils/ScreenUtil";
 import PropTypes from 'prop-types';
+import ZText from "../../../../views/ZText";
+import {cusColors} from "../../../../value/cusColor/cusColors";
+
 const {width, height} = Dimensions.get('window');
 export default class Item extends Component {
 
@@ -15,50 +27,66 @@ export default class Item extends Component {
 
     }
 
-    static defaultProps={
-        isRequired:'',
-        maxLength: 21
-    }
+    static defaultProps = {
+        isRequired: '',
+        maxLength: 21,
+        editable: true,
+        defaultValue: ''
+    };
+
 
     render() {
-        var params  = this.props;
+        var params = this.props;
         return <View style={[{
             width,
             height: zdp(50),
-            backgroundColor: 'white',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            marginBottom: params.hasLine ? zdp(1) : 0,
+            backgroundColor: 'white',
+            flexDirection: 'row', paddingLeft: zdp(15)
         }, params.style]}>
-            <View style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'row',paddingLeft:zdp(15)}}>
 
-                <Text style={{fontSize:zsp(16),color:'red',width:zdp(10)}}>{params.isRequired}</Text>
-                <Text style={[{
-                    width: zdp(130),
-                    fontSize: zsp(16),
-                    textAlign: 'left'
-                }, params.textStyle]}>{params.title}</Text>
-                <TextInput underlineColorAndroid={'transparent'}
-                           maxLength={params.maxLength}
-                           keyboardType={params.keyboardType}
-                           placeholder={params.placeholder}
-                           placeholderTextColor={'lightgrey'}
-                           style={{flex: 1, fontSize: zsp(16), backgroundColor: 'transparent'}}
-                           onChangeText={(text) => {
-                               params.onChangeText(text);
-                           }}
-                           value={params.value}/>
-            </View>
-            <View style={{
-                height: params.hasLine ? 0.5 : 0,
-                backgroundColor: 'lightgrey',
-                width: width - zdp(30)
-            }}/>
+            <ZText parentStyle={{}}
+                   textStyle={{width: zdp(10)}}
+                   content={params.isRequired}
+                   fontSize={zsp(16)}
+                   color={'red'}/>
+
+            <ZText parentStyle={{}}
+                   textStyle={[{
+                       width: zdp(130),
+                       textAlign: 'left'
+                   }, params.textStyle]}
+                   textAlign={'left'}
+                   content={params.title}
+                   fontSize={zsp(16)}
+                   color={cusColors.text_main}/>
+            <TextInput underlineColorAndroid={'transparent'}
+                       maxLength={params.maxLength}
+                       keyboardType={params.keyboardType}
+                       placeholder={params.placeholder}
+                       placeholderTextColor={'lightgrey'}
+                       editable={params.editable}
+                       style={{
+                           flex: 1,
+                           height: zdp(50),
+                           fontSize: zsp(16),
+                           backgroundColor: 'transparent',
+                           fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
+                           color: cusColors.text_secondary
+                       }}
+                       onChangeText={(text) => {
+                           params.onChangeText(text);
+                       }}
+                       defaultValue={params.defaultValue}
+                       value={params.value}/>
         </View>;
     }
-}
+};
 Item.propTypes = {
-    maxLength:PropTypes.number
+    maxLength: PropTypes.number,
+    isRequired: PropTypes.string,
+    editable: PropTypes.bool,
+    defaultValue: PropTypes.string
 }

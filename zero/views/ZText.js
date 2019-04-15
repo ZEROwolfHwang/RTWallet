@@ -80,12 +80,15 @@ export default class ZText extends Component {
 }
 ZText.propTypes = {
     parentActiveOpacity: PropTypes.number,
-    parentStyle: PropTypes.object,
+    parentStyle:PropTypes.object,
 
 
-    textStyle: PropTypes.object,
+    textStyle:  PropTypes.oneOfType([PropTypes.object,PropTypes.array]),
     fontSize: PropTypes.number,
-    content: PropTypes.string.isRequired,
+    content: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.number
+    ]).isRequired,
     color: PropTypes.string,
     textAlign: PropTypes.string,
 

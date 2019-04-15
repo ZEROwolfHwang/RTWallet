@@ -29,10 +29,12 @@ import {pressVerify} from "../../utils/smsVerifyUtil";
 import CountdownUtil from "../../utils/CountdownUtil";
 import {checkMobile} from "../../utils/CheckUitls";
 import {getCardLength} from "../../storage/schema_card";
-import {save2Realm} from "./SaveRealmUtil";
+import {save2Global, save2Realm} from "./SaveRealmUtil";
 import {cusColors} from "../../value/cusColor/cusColors";
 import {isIphoneX, zAppBarHeight, zdp, zsp} from "../../utils/ScreenUtil";
 import ZText from "../../views/ZText";
+import {SPSaveLoginInfo} from "../../storage/Storage";
+import NavigationUtil from "../../utils/NavigationUtil";
 // import storage from '../../storage/Storage'
 class LoginByVerify extends BaseComponent {
     constructor(props) {
@@ -111,7 +113,7 @@ class LoginByVerify extends BaseComponent {
                            resizeMode={'contain'}/>
 
                     <MyTextInputWithIcon
-                        style={{marginTop: zdp(140)}}
+                        style={{marginTop: zdp(200)}}
                         placeholder={'请输入手机号'}
                         iconName={'login_phone'}
                         keyboardType={'numeric'}
@@ -222,7 +224,7 @@ class LoginByVerify extends BaseComponent {
                 .then(res => {
                         console.log(res);
                         console.log(res.data);
-                        if (res.respCode === 200) {
+                       /* if (res.respCode === 200) {
                             CountdownUtil.stop();
 
                             let cardLength = getCardLength(res.data.phone);
@@ -240,25 +242,35 @@ class LoginByVerify extends BaseComponent {
                         } else {
                             ToastUtil.showShort(res.respMsg);
                         }
+*/
+
+                    if (res.respCode === 200) {
+
+                        CountdownUtil.stop();
+
+                        let cardLength = getCardLength(res.data.phone);
+                        if (cardLength !== res.data.CardLen) {
+                            //长度不同则刷新本地数据库
+                            save2Realm(res.data);
+                        }
+                        save2Global(this.props.navigation,res.data);
+
+                        SPSaveLoginInfo(this.state.phone, undefined);
+
+                        NavigationUtil.reset(this.props.navigation, 'Tab');
+
+
+                    } else {
+
+                        ToastUtil.showShort(res.respCode)
+                    }
+
                     }
                 ).then(err => {
 
                 console.log(err);
             });
         }
-    }
-
-    /**
-     * 存储全局信息
-     * @param resData
-     */
-    save2Global = (resData) => {
-        this.props.initGlobalInfo({
-            token: resData.token,
-            phone: resData.phone,
-            IDCard: resData.identity,
-            username: resData.name
-        });
     }
 
 
@@ -301,7 +313,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        initGlobalInfo: actions.getGlobalInfo,
+        // initGlobalInfo: actions.getGlobalInfo,
     }, dispatch);
 };
 

@@ -16,6 +16,8 @@
  *
  */
 import { NavigationActions } from 'react-navigation';
+import {actions} from "../root/GlobalAction";
+import {actions_wealth} from "../containers/wealth/reduce";
 
 const reset = (navigation, routeName) => {
   const resetAction = NavigationActions.reset({
@@ -25,6 +27,22 @@ const reset = (navigation, routeName) => {
   navigation.dispatch(resetAction);
 };
 
+
+
+const backToLogin = (navigation) => {
+
+    navigation.dispatch(actions.getGlobalInfo(undefined));
+    navigation.dispatch(actions_wealth.fetchData(undefined));
+
+    const resetAction = NavigationActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({routeName: 'RegisterApp'})],
+    });
+    navigation.dispatch(resetAction);
+};
+
 export default {
-  reset
+  reset,
+    backToLogin
+
 };

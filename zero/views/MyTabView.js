@@ -29,15 +29,15 @@ export default class MyTabView extends Component {
     static defaultProps = {
         title: '标题',
         globalTitleColor: 'white',
-        backgroundColor:'transparent',
-        style:{},
+        backgroundColor: 'transparent',
+        style: {},
         linear_style: {},
         leftView: true,
         hasRight: false,
         rightView: null,
         rightIcon: 'md-more',
-        cutLineHeight:0.2,
-        barStyle:'light-content',
+        cutLineHeight: 0.2,
+        barStyle: 'light-content',
         isTransparent: false
     }
 
@@ -51,13 +51,13 @@ export default class MyTabView extends Component {
                 locations={[0, 1]}
                 colors={params.isTransparent ? ['transparent', 'transparent'] : [cusColors.linear_light, cusColors.linear_default]}>
 
-            <View style={[{
+                <View style={[{
                     width: width,
                     height: zAppBarHeight,
                     backgroundColor: params.backgroundColor,
                     flexDirection: 'row',
                     justifyContent: 'space-around',
-                    paddingTop: isIphoneX()?zdp(30):zdp(20),
+                    paddingTop: isIphoneX() ? zdp(30) : zdp(20),
                     alignItems: 'center'
                 }, params.style]}>
 
@@ -69,6 +69,9 @@ export default class MyTabView extends Component {
                                                              paddingLeft: zdp(15)
                                                          }}
                                                          onPress={() => {
+                                                             if (params.onTabBack) {
+                                                                 params.onTabBack()
+                                                             }
                                                              params.navigation.goBack();
                                                          }}>
                         <Icon size={zdp(30)} name={'angle-left'}
@@ -94,7 +97,7 @@ export default class MyTabView extends Component {
                     }}>
 
                         <Text style={{
-                            fontFamily:Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
+                            fontFamily: Platform.OS === 'ios' ? 'PingFang TC' : 'PingFang TC',
                             fontSize: zsp(18),
                             textAlign: 'center',
                             backgroundColor: 'transparent',

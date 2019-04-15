@@ -18,7 +18,8 @@ button_light: '#4D8EFE',
     tab_default: '#4D8EFB',
 
     linear_light: '#5190FB',
-    linear_default: '#37a4ff',
+    // linear_default: '#37a4ff',
+    linear_default: '#5190FB',
 
 
 
@@ -37,8 +38,10 @@ button_light: '#4D8EFE',
 
     main_light: '#9AB6FC',
     main_orange: '#FF8D00',
+    main_red: '#ffc7fa',
     main_default: '#979797',
     main_default_light: '#97979788',
+    main_dark: '#4d4d4d',
 
     cutLine_dark:'#c5c4d055',
     //
@@ -55,6 +58,7 @@ button_light: '#4D8EFE',
     text_main: '#333333',
     // text_main: '#333333',
     text_secondary:'#999999',
+    text_666:'#666666',
     // text_third:'#c1c1c1',
     text_placeHold: '#BCBCBC',
 

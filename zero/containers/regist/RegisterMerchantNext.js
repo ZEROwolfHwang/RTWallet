@@ -29,8 +29,10 @@ import CountdownUtil from "../../utils/CountdownUtil";
 import {checkMobile} from "../../utils/CheckUitls";
 import MyLinearGradient from "../../views/MyLinearGradient";
 import {cusColors} from "../../value/cusColor/cusColors";
-import {isIphoneX, zAppBarHeight, zdp, zsp} from "../../utils/ScreenUtil";
+import {isIphoneX, zAppBarHeight, zdp, zsp, zStatusBarHeight} from "../../utils/ScreenUtil";
 import ZText from "../../views/ZText";
+import {Api} from "../../utils/Api";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
 const {width, height} = Dimensions.get('window');
 
@@ -72,6 +74,21 @@ class RegisterMerchantNext extends BaseComponent {
     render() {
         return (
             <View style={{flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
+                <KeyboardAwareScrollView
+                    style={{
+                        flex: 1, backgroundColor: 'white',
+                        marginTop: Platform.OS === 'ios' ? -zStatusBarHeight : 0
+                    }}
+                    resetScrollToCoords={{x: 0, y: 0}}
+                    contentContainerStyle={{
+                        justifyContent: 'flex-start',
+                        alignItems: 'center'
+                    }}
+                    showsVerticalScrollIndicator={false}
+                    scrollEnabled={true}
+                    keyboardShouldPersistTaps={'always'}>
+
+
                 <Image source={{uri: isIphoneX() ? 'login_bg_x' : 'login_bg'}}
                        resizeMode={'cover'}
                        style={{
@@ -178,6 +195,8 @@ class RegisterMerchantNext extends BaseComponent {
                 <MyButtonView modal={1} style={{width: width / 1.3, marginTop: zdp(30)}}
                               title={'注册'}
                               onPress={this.pressRegister}/>
+
+                </KeyboardAwareScrollView>
             </View>
         )
     }
@@ -198,7 +217,7 @@ class RegisterMerchantNext extends BaseComponent {
         formData.append('password', this.registerInfo.password);
         formData.append('recommend', this.registerInfo.recommend);
 
-        fetchRequest('Register', 'POST', formData)
+        fetchRequest(Api.Register, 'POST', formData)
             .then(res => {
                 console.log(res);
                 if (res.respCode === 200) {

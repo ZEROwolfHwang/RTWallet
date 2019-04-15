@@ -25,7 +25,7 @@ import {cusColors} from "../../../../value/cusColor/cusColors";
 
 let navigation;
 let lastBackPressed
-import {zdp, zsp} from "../../../../utils/ScreenUtil";
+import {zdp, zsp, zWidth} from "../../../../utils/ScreenUtil";
 import {onAppStateChanged} from "../../../../utils/GoBackUtil";
 import ZText from "../../../../views/ZText";
 
@@ -64,13 +64,10 @@ class TabOne extends BaseComponent {
         var redData = this.props.redData;
         console.log(this.props.redData);
         return (
-            <ScrollView style={{flex: 1}}
-                        contentContainerStyle={{
-                            justifyContent: 'flex-start',
-                            alignItems: 'center'
-                        }}>
+            <View style={{flex: 1, justifyContent: 'flex-start',
+                alignItems: 'center'}}>
 
-                <View style={{flexDirection: 'row'}}>
+           {/*     <View style={{flexDirection: 'row'}}>
                     <View style={{flex: 3}}>
 
 
@@ -79,7 +76,7 @@ class TabOne extends BaseComponent {
                         {this.getTextView('交易额度', redData.limit)}
                         {this.getTextView(`${redData.pay_type}时间`, redData.time)}
                         {this.getTextView(`${redData.other_name}时间`, redData.other_time)}
-                    </View>
+                    </View>*/}
                    {/* <View style={{
                         flex: 2,
                         paddingRight: zdp(20),
@@ -95,16 +92,35 @@ class TabOne extends BaseComponent {
                                source={require('../../../../../resource/image/guildimage.png')}/>
                     </View>
 */}
-                </View>
-
+               {/* </View>*/}
+                <ZText parentStyle={{alignSelf: 'flex-start', padding: zdp(10), paddingLeft: zdp(20)}}
+                       content={'安全保障'}
+                       fontWeight={'500'}
+                       fontSize={zsp(20)}
+                       color={cusColors.text_main}/>
+                <View style={{
+                    width: zWidth,
+                    height: 1,
+                    backgroundColor: 'grey',
+                    opacity: 0.1,
+                    alignSelf: 'flex-end'
+                }}/>
+               <Image source={{uri: 'zhifu_anquan'}}
+                      resizeMode={'contain'}
+                      style={{
+                          marginBottom: zdp(20),
+                          width: zWidth - zdp(20),
+                          height: zdp(80),
+                          backgroundColor: 'transparent'
+                      }}/>
 
                 {this.viewCommend('收款方式',redData.pay_way)}
                 {this.viewCommend('交易流程',redData.process)}
                 {this.viewCommend('交易失败',redData.pay_fail)}
 
 
-
-            </ScrollView>);
+            </View>
+    );
 
     }
 
@@ -115,8 +131,8 @@ class TabOne extends BaseComponent {
             margin: zdp(zdp(5)),
             padding: zdp(5)
         }}>
-            <ZText parentStyle={{alignSelf: 'flex-start',width:zdp(80)}} content={title} fontSize={zsp(17)} color={'black'}/>
-            <ZText parentStyle={{alignSelf: 'flex-start',flex:1, marginRight:zdp(20)}} content={content} fontSize={zsp(16)} color={'grey'} textAlign={'left'} textStyle={{flexWrap:'wrap'}}/>
+            <ZText parentStyle={{alignSelf: 'flex-start',width:zdp(80)}} content={title} fontSize={zsp(17)} color={cusColors.text_main}/>
+            <ZText parentStyle={{alignSelf: 'flex-start', alignItems: 'flex-start',flex:1, marginRight:zdp(20)}} content={content} fontSize={zsp(16)} color={cusColors.text_secondary} textAlign={'left'} textStyle={{flexWrap:'wrap'}}/>
 
         </View>
     }

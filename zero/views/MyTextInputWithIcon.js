@@ -34,8 +34,9 @@ export default class MyTextInputWithIcon extends Component {
         iconColor:'#999999',
         placeholderTextColor:cusColors.text_placeHold,
         maxLength :19,
-        secureTextEntry:false
-
+        secureTextEntry: false,
+        defaultValue: '',
+        autoCapitalize: 'none'
     };
 
 
@@ -76,12 +77,13 @@ export default class MyTextInputWithIcon extends Component {
                     secureTextEntry={param.secureTextEntry}
                     editable={param.editable?param.editable:true}
                     keyboardType={param.keyboardType}
-                    autoCapitalize={'none'}
+                    autoCapitalize={param.autoCapitalize}
                     underlineColorAndroid={'transparent'}
                     style={[styles.textInputStyle_01, param.textInputStyle]}
                     placeholder={param.placeholder}
                     placeholderTextColor={param.placeholderTextColor}
                     maxLength={param.maxLength}
+                    defaultValue={param.defaultValue}
                     onChangeText={(text) => {
                         param.onChangeText(text)
                     }}
@@ -117,5 +119,6 @@ MyTextInputWithIcon.propTypes = {
     iconSize:PropTypes.number,
     iconColor:PropTypes.string,
     maxLength: PropTypes.number,
-    secureTextEntry:PropTypes.bool
+    secureTextEntry: PropTypes.bool,
+    defaultValue:PropTypes.string
 };

@@ -1,7 +1,7 @@
 /**
  * Created by zerowolf on 2018/3/26.
  */
-import React, {Component} from 'react';
+import React, {Component,PureComponent} from 'react';
 import {
     AppState,
     BackHandler, Platform
@@ -16,11 +16,12 @@ import ToastUtil from "../../utils/ToastUtil";
 
 // let navigation;
 // let lastBackPressed;
-export default class BaseComponent extends Component {
+export default class BaseComponent extends PureComponent {
     static navigationOptions = ({
             headerTitle: '分红计划',
             header: null,
             headerBackTitle: null,
+            gesturesEnabled:false
         }
     );
 
